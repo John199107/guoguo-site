@@ -50,7 +50,7 @@
             100% { transform: translateY(110vh) rotate(600deg) scale(1.1); opacity: .1; }
         }
 
-        /* ===== Float Notes (subtle decoration) ===== */
+        /* ===== Float Notes ===== */
         .float-note {
             position: fixed;
             font-size: 20px;
@@ -61,6 +61,52 @@
         @keyframes floatNote {
             0%, 100% { transform: translate(0,0) rotate(0); opacity: .15; }
             50%      { transform: translate(25px, -35px) rotate(12deg); opacity: .4; }
+        }
+
+        /* ===== Auto-play Welcome Overlay ===== */
+        .welcome-overlay {
+            position: fixed; inset: 0;
+            background: rgba(107,63,122,.55);
+            backdrop-filter: blur(6px);
+            z-index: 200;
+            display: flex; align-items: center; justify-content: center;
+            animation: fadeIn .5s ease;
+        }
+        .welcome-overlay.hidden {
+            display: none;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; } to { opacity: 1; }
+        }
+        .welcome-overlay .start-card {
+            background: var(--white-glass);
+            backdrop-filter: blur(14px);
+            border-radius: 36px;
+            padding: 32px 28px;
+            text-align: center;
+            box-shadow: 0 14px 40px rgba(180,100,200,.3);
+            border: 2px solid var(--pink-mid);
+            cursor: pointer;
+            max-width: 320px;
+            animation: popIn .4s ease;
+        }
+        @keyframes popIn {
+            from { transform: scale(.8); opacity: 0; }
+            to   { transform: scale(1); opacity: 1; }
+        }
+        .welcome-overlay .start-card .icon {
+            font-size: 50px;
+            animation: floatY 2s ease-in-out infinite;
+        }
+        .welcome-overlay .start-card .text {
+            font-size: 20px; color: var(--purple); margin-top: 12px;
+            line-height: 1.5;
+        }
+        .welcome-overlay .start-card .hint {
+            font-size: 14px; color: var(--purple-light); margin-top: 8px;
+            background: var(--pink-mid);
+            padding: 6px 16px; border-radius: 28px;
+            border: 1px solid var(--pink-deep);
         }
 
         /* ===== BGM Toggle Button ===== */
@@ -112,6 +158,83 @@
         }
         .bgm-toggle:hover .tooltip {
             opacity: 1;
+        }
+
+        /* ===== Modal Overlay ===== */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(107,63,122,.5);
+            backdrop-filter: blur(5px);
+            z-index: 150;
+            display: none;
+            align-items: center; justify-content: center;
+            padding: 20px;
+            animation: fadeIn .3s ease;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-card {
+            background: var(--white-glass);
+            backdrop-filter: blur(14px);
+            border-radius: 28px;
+            padding: 20px;
+            max-width: 420px; width: 100%;
+            box-shadow: 0 14px 40px rgba(180,100,200,.3);
+            border: 2px solid var(--pink-mid);
+            position: relative;
+            animation: popIn .3s ease;
+        }
+        .modal-close {
+            position: absolute; top: 10px; right: 14px;
+            background: var(--pink-mid);
+            border: 1.5px solid var(--pink-deep);
+            border-radius: 50%;
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; color: var(--purple);
+            cursor: pointer;
+            box-shadow: 0 2px 0 #dbb0dd;
+            transition: .2s;
+        }
+        .modal-close:hover {
+            transform: scale(1.1);
+            background: var(--pink-deep);
+        }
+        .modal-title {
+            font-size: 18px; font-weight: 700; color: var(--purple);
+            text-align: center; margin-bottom: 12px;
+            border-bottom: 2px dashed var(--lavender);
+            padding-bottom: 8px;
+        }
+        .modal-content {
+            text-align: center;
+        }
+        .modal-content img {
+            max-width: 100%;
+            border-radius: 16px;
+            border: 2.5px solid var(--pink-mid);
+            box-shadow: 0 4px 0 #dbb0dd, 0 8px 20px rgba(200,130,200,.15);
+        }
+        .modal-content .mini-gallery {
+            display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+        }
+        .modal-content .mini-gallery img {
+            max-width: 48%; border-radius: 14px;
+            border: 2px solid var(--pink-mid);
+            box-shadow: 0 3px 0 #dbb0dd;
+            cursor: pointer; transition: .2s;
+        }
+        .modal-content .mini-gallery img:hover {
+            transform: scale(1.04);
+        }
+        .modal-content audio {
+            width: 100%; margin-top: 8px;
+            border-radius: 30px;
+        }
+        .modal-desc {
+            font-size: 14px; color: var(--purple-light);
+            margin-top: 8px;
         }
 
         /* ===== Main Card ===== */
@@ -345,14 +468,47 @@
             font-weight: 600; white-space: nowrap;
         }
 
-        /* ===== Poster Showcase ===== */
-        .poster-section {
-            text-align: center; margin: 10px 0;
-        }
-        .poster-section img {
-            max-width: 100%; border-radius: 20px;
+        /* ===== Poster Carousel ===== */
+        .poster-carousel {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 20px;
             box-shadow: 0 6px 0 #dbb0dd, 0 10px 25px rgba(200,130,200,.18);
             border: 2.5px solid var(--pink-mid);
+            background: #fff0f6;
+        }
+        .poster-carousel .slides {
+            display: flex;
+            transition: transform .8s ease;
+        }
+        .poster-carousel .slide {
+            width: 100%;
+            flex-shrink: 0;
+        }
+        .poster-carousel .slide img {
+            width: 100%;
+            display: block;
+            border-radius: 0;
+        }
+        .poster-nav {
+            display: flex; justify-content: center;
+            gap: 8px; margin-top: 10px;
+        }
+        .poster-nav .dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: var(--pink-mid);
+            border: 1.5px solid var(--pink-deep);
+            cursor: pointer;
+            transition: .2s;
+        }
+        .poster-nav .dot.active {
+            background: var(--purple);
+            transform: scale(1.2);
+        }
+        .poster-nav .dot:hover {
+            background: var(--purple-light);
         }
 
         /* ===== Status Bar ===== */
@@ -400,29 +556,40 @@
             .name-wall .real-name { font-size: 22px; }
             .time-capsule .counter { font-size: 24px; }
             .bgm-toggle { bottom: 12px; right: 12px; width: 40px; height: 40px; font-size: 18px; }
+            .modal-card { padding: 16px; border-radius: 22px; }
+            .modal-content .mini-gallery img { max-width: 80%; }
         }
     </style>
 </head>
 <body>
 
 <!-- Hidden BGM Audio (looping background music) -->
-<!-- ============================================
-  BGM 替换说明：
-  把下面的 src="" 改成你的舒缓BGM文件路径或URL。
-  推荐3个免费来源（需要下载后放到 images/ 同级目录）：
-  1. Pixabay 音乐库（搜索"lullaby"或"calm"）：https://pixabay.com/music/
-  2. Mixkit（搜索"calm"或"children"）：https://mixkit.co/free-stock-music/mood/calm/
-  3. Bensound（搜索"ukulele"或"little idea"）：https://www.bensound.com/
-  下载后把文件命名为 bgm.mp3 放到本项目根目录，src 改成 "bgm.mp3" 即可。
-  ============================================ -->
 <audio id="bgmAudio" loop preload="auto">
     <source src="images/guoguo-music.mp3" type="audio/mpeg" />
 </audio>
 
+<!-- Auto-play Welcome Overlay: first click triggers BGM -->
+<div class="welcome-overlay" id="welcomeOverlay">
+    <div class="start-card" onclick="startExperience()">
+        <div class="icon">&#x1F451;</div>
+        <div class="text">欢迎来到果果的梦幻小城堡</div>
+        <div class="hint">&#x2728; 点击开始探索</div>
+    </div>
+</div>
+
 <!-- BGM Floating Toggle Button -->
 <div class="bgm-toggle paused" id="bgmToggle" onclick="toggleBGM()">
     <span id="bgmIcon">&#x1F3B5;</span>
-    <span class="tooltip" id="bgmTooltip">点击播放城堡BGM</span>
+    <span class="tooltip" id="bgmTooltip">BGM 正在播放中</span>
+</div>
+
+<!-- Modal Overlay (for hobby popup) -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+        <div class="modal-close" onclick="closeModalForce()">&times;</div>
+        <div class="modal-title" id="modalTitle"></div>
+        <div class="modal-content" id="modalContent"></div>
+    </div>
 </div>
 
 <!-- Falling Stars -->
@@ -473,9 +640,7 @@
         <span>&#x1F43E; 蛋卷小可爱</span>
     </div>
     <div class="eggroll-card">
-        <!-- 点击蛋卷照片跳转到蛋卷视频 -->
-        <!-- TODO: 把 href="#" 替换成蛋卷视频的实际链接（比如抖音视频链接或本地视频路径） -->
-        <a class="avatar-link" href="#" target="_blank" title="点击看蛋卷的视频">
+        <a class="avatar-link" href="#" target="_blank" title="点击看蛋卷的视频" onclick="openModal('danjuan'); return false;">
             <img class="avatar" src="images/danjuan-real.jpg" alt="蛋卷（点击看视频）" />
         </a>
         <div class="info">
@@ -499,19 +664,18 @@
         <span>&#x1F308; 果果喜欢做的事</span>
     </div>
     <div class="hobby-grid">
-        <!-- TODO: 把 href="#" 替换成对应的素材链接（画画作品/街舞视频/唱歌视频） -->
-        <a class="hobby-item" href="images/guoguo-painting1.jpg" target="_blank" title="看果果的画作">
+        <div class="hobby-item" onclick="openModal('painting')" title="看果果的画作">
             <span class="icon">&#x1F3A8;</span>画画
             <span class="link-hint">点击看看</span>
-        </a>
-        <a class="hobby-item" href="images/guoguo-dance.jpg" target="_blank" title="看果果跳街舞">
+        </div>
+        <div class="hobby-item" onclick="openModal('dance')" title="看果果跳街舞">
             <span class="icon">&#x1F483;</span>街舞
             <span class="link-hint">点击看看</span>
-        </a>
-        <a class="hobby-item" href="images/guoguo-music.mp3" target="_blank" title="听果果唱歌">
+        </div>
+        <div class="hobby-item" onclick="openModal('sing')" title="听果果唱歌">
             <span class="icon">&#x1F3A4;</span>唱歌
             <span class="link-hint">点击看看</span>
-        </a>
+        </div>
         <a class="hobby-item" href="#hobby-ai" title="果果的AI探索">
             <span class="icon">&#x2728;</span>AI
         </a>
@@ -524,19 +688,27 @@
     <div class="music-player">
         <span class="note-icon">&#x1F3B5;</span>
         <span class="label">&#x2728; AI唱的歌</span>
-        <!-- TODO: 替换为果果的AI歌曲文件链接 -->
         <audio controls>
             <source src="images/guoguo-music.mp3" type="audio/mpeg" />
             你的浏览器不支持音频播放。
         </audio>
     </div>
 
-    <!-- ===== Poster ===== -->
+    <!-- ===== Poster Carousel ===== -->
     <div class="section-title">
         <span>&#x1F5BC; 果果的海报</span>
     </div>
-    <div class="poster-section">
-        <img src="images/poster-v2.png" alt="果果海报" />
+    <div class="poster-carousel" id="posterCarousel">
+        <div class="slides" id="posterSlides">
+            <div class="slide"><img src="images/poster-v2.png" alt="果果海报 1" /></div>
+            <div class="slide"><img src="images/poster-v3.png" alt="果果海报 2" /></div>
+            <div class="slide"><img src="images/poster-v4.png" alt="果果海报 3" /></div>
+        </div>
+    </div>
+    <div class="poster-nav" id="posterNav">
+        <div class="dot active" onclick="goSlide(0)"></div>
+        <div class="dot" onclick="goSlide(1)"></div>
+        <div class="dot" onclick="goSlide(2)"></div>
     </div>
 
     <!-- ===== Status Bar ===== -->
@@ -557,16 +729,30 @@
 </div>
 
 <script>
-/* ===== BGM Toggle ===== */
+/* ===== Auto-play BGM via Welcome Overlay ===== */
 var bgmPlaying = false;
 var bgmAudio = document.getElementById('bgmAudio');
 var bgmToggle = document.getElementById('bgmToggle');
 var bgmIcon = document.getElementById('bgmIcon');
 var bgmTooltip = document.getElementById('bgmTooltip');
+var welcomeOverlay = document.getElementById('welcomeOverlay');
+
+function startExperience() {
+    bgmAudio.volume = 0.35;
+    bgmAudio.play().then(function() {
+        bgmPlaying = true;
+        bgmToggle.className = 'bgm-toggle playing';
+        bgmTooltip.textContent = 'BGM 正在播放中';
+    }).catch(function() {
+        bgmTooltip.textContent = '请点击右下角音符按钮播放';
+        setTimeout(function() { bgmTooltip.textContent = '点击播放城堡BGM'; }, 3000);
+    });
+    welcomeOverlay.classList.add('hidden');
+}
 
 function toggleBGM() {
     if (!bgmAudio.src || bgmAudio.src === window.location.href) {
-        bgmTooltip.textContent = '还没加载BGM，请先添加音乐文件';
+        bgmTooltip.textContent = '还没加载BGM';
         setTimeout(function() { bgmTooltip.textContent = '点击播放城堡BGM'; }, 2500);
         return;
     }
@@ -578,14 +764,107 @@ function toggleBGM() {
     } else {
         bgmAudio.volume = 0.35;
         bgmAudio.play().catch(function() {
-            bgmTooltip.textContent = '浏览器阻止了自动播放，请再试一次';
+            bgmTooltip.textContent = '浏览器阻止了播放，请再试一次';
             setTimeout(function() { bgmTooltip.textContent = '点击播放城堡BGM'; }, 2500);
         });
         bgmPlaying = true;
         bgmToggle.className = 'bgm-toggle playing';
-        bgmTooltip.textContent = '点击暂停BGM';
+        bgmTooltip.textContent = 'BGM 正在播放中';
     }
 }
+
+/* ===== Modal System ===== */
+var modalOverlay = document.getElementById('modalOverlay');
+var modalTitle = document.getElementById('modalTitle');
+var modalContent = document.getElementById('modalContent');
+
+var hobbyData = {
+    painting: {
+        title: '&#x1F3A8; 果果的画作',
+        html: '<div class="mini-gallery">' +
+              '<img src="images/guoguo-painting1.jpg" alt="果果画作1" onclick="zoomImage(this)" />' +
+              '<img src="images/guoguo-painting2.jpg" alt="果果画作2" onclick="zoomImage(this)" />' +
+              '</div>' +
+              '<div class="modal-desc">果果画的画，每一幅都是小公主的心事 &#x2728;</div>'
+    },
+    dance: {
+        title: '&#x1F483; 果果跳街舞',
+        html: '<img src="images/guoguo-dance.jpg" alt="果果跳街舞" style="max-width:90%;" />' +
+              '<div class="modal-desc">果果跳街舞的样子，超级酷 &#x1F3BE;</div>'
+    },
+    sing: {
+        title: '&#x1F3A4; 果果唱歌',
+        html: '<img src="images/poster-v3.png" alt="果果唱歌海报" style="max-width:70%;border-radius:18px;margin-bottom:10px;" />' +
+              '<audio controls style="width:100%;">' +
+              '<source src="images/guoguo-music.mp3" type="audio/mpeg" />' +
+              '</audio>' +
+              '<div class="modal-desc">果果的AI歌声，好听吧 &#x1F3B5;</div>'
+    },
+    danjuan: {
+        title: '&#x1F43E; 蛋卷小可爱',
+        html: '<img src="images/danjuan-real.jpg" alt="蛋卷" style="max-width:70%;border-radius:18px;margin-bottom:6px;" />' +
+              '<div class="modal-desc">蛋卷的视频链接待补充 &#x1F634; 点击右上角关闭</div>'
+    }
+};
+
+function openModal(type) {
+    var data = hobbyData[type];
+    if (!data) return;
+    modalTitle.innerHTML = data.title;
+    modalContent.innerHTML = data.html;
+    modalOverlay.classList.add('active');
+}
+
+function closeModal(e) {
+    if (e.target === modalOverlay) {
+        modalOverlay.classList.remove('active');
+    }
+}
+
+function closeModalForce() {
+    modalOverlay.classList.remove('active');
+}
+
+function zoomImage(img) {
+    // toggle zoom on mini-gallery images
+    if (img.style.maxWidth === '100%') {
+        img.style.maxWidth = '48%';
+    } else {
+        img.style.maxWidth = '100%';
+    }
+}
+
+/* ===== Poster Carousel ===== */
+var currentSlide = 0;
+var totalSlides = 3;
+var carouselTimer;
+
+function goSlide(n) {
+    currentSlide = n;
+    var slides = document.getElementById('posterSlides');
+    slides.style.transform = 'translateX(-' + (n * 100) + '%)';
+    // update dots
+    var dots = document.querySelectorAll('#posterNav .dot');
+    for (var i = 0; i < dots.length; i++) {
+        dots[i].classList.toggle('active', i === n);
+    }
+}
+
+function nextSlide() {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    goSlide(currentSlide);
+}
+
+function startCarousel() {
+    carouselTimer = setInterval(nextSlide, 3500);
+}
+
+// pause carousel on hover
+var carouselEl = document.getElementById('posterCarousel');
+carouselEl.addEventListener('mouseenter', function() { clearInterval(carouselTimer); });
+carouselEl.addEventListener('mouseleave', startCarousel);
+
+startCarousel();
 
 /* ===== Falling Stars ===== */
 (function() {
