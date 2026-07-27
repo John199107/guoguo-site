@@ -228,6 +228,7 @@
         .modal-content .mini-gallery img:hover {
             transform: scale(1.04);
         }
+        .modal-content .mini-gallery img.zoomed { max-width: 100%; }
         .modal-content audio {
             width: 100%; margin-top: 8px;
             border-radius: 30px;
@@ -545,6 +546,143 @@
             50%     { transform: scale(1.18); }
         }
 
+        /* ===== Album Grid ===== */
+        .album-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px; margin: 6px 0;
+        }
+        .album-grid img {
+            width: 100%; aspect-ratio: 1; object-fit: cover;
+            border-radius: 18px;
+            border: 2.5px solid var(--pink-mid);
+            box-shadow: 0 3px 0 #dbb0dd;
+            cursor: pointer; transition: .2s;
+        }
+        .album-grid img:hover { transform: scale(1.03); }
+        .album-grid img.zoomed { max-width: 100%; width: 100%; z-index: 5; }
+
+        /* ===== Game Grid ===== */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px; margin: 6px 0;
+        }
+        .game-item {
+            display: block;
+            background: rgba(255,240,248,.65);
+            border-radius: 22px; padding: 12px 4px;
+            text-align: center;
+            border: 1.5px solid #ffffffd0;
+            box-shadow: 0 2.5px 0 #dbb0dd, 0 3px 10px rgba(200,130,200,.08);
+            transition: .2s;
+            font-size: 13px; font-weight: 600; color: var(--purple);
+            cursor: pointer;
+        }
+        .game-item:hover {
+            transform: translateY(-3px) scale(1.03);
+            background: rgba(255,235,248,.88);
+            border-color: var(--pink-deep);
+        }
+        .game-item .icon { display: block; font-size: 30px; margin-bottom: 2px; }
+
+        /* ===== Game Modal ===== */
+        .game-modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(107,63,122,.6);
+            backdrop-filter: blur(6px);
+            z-index: 160;
+            display: none;
+            align-items: center; justify-content: center;
+            padding: 16px;
+            animation: fadeIn .3s ease;
+        }
+        .game-modal-overlay.active { display: flex; }
+        .game-modal-card {
+            background: var(--white-glass);
+            backdrop-filter: blur(14px);
+            border-radius: 28px;
+            padding: 16px;
+            max-width: 92vw; width: 100%;
+            max-height: 92vh; overflow: auto;
+            box-shadow: 0 14px 40px rgba(180,100,200,.35);
+            border: 2px solid var(--pink-mid);
+            position: relative;
+            animation: popIn .3s ease;
+            text-align: center;
+        }
+        .game-modal-close {
+            position: absolute; top: 10px; right: 14px;
+            background: var(--pink-mid);
+            border: 1.5px solid var(--pink-deep);
+            border-radius: 50%;
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; color: var(--purple);
+            cursor: pointer;
+            box-shadow: 0 2px 0 #dbb0dd;
+            transition: .2s;
+        }
+        .game-modal-close:hover { transform: scale(1.1); background: var(--pink-deep); }
+        .game-modal-title {
+            font-size: 18px; font-weight: 700; color: var(--purple);
+            text-align: center; margin-bottom: 8px;
+            border-bottom: 2px dashed var(--lavender);
+            padding-bottom: 8px;
+        }
+        .game-info {
+            font-size: 13px; color: var(--purple-light);
+            margin: 6px 0;
+        }
+        .game-canvas {
+            background: #fff8fc;
+            border-radius: 16px;
+            border: 3px solid var(--pink-mid);
+            box-shadow: 0 4px 0 #dbb0dd;
+            margin: 0 auto;
+            display: block;
+            max-width: 100%;
+        }
+        .game-controls {
+            display: flex;
+            justify-content: center;
+            gap: 8px; flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .game-btn {
+            background: var(--pink-mid);
+            border: 2px solid var(--pink-deep);
+            border-radius: 12px;
+            padding: 8px 14px;
+            font-family: inherit;
+            font-size: 14px; color: var(--purple);
+            cursor: pointer;
+            box-shadow: 0 2px 0 #dbb0dd;
+            transition: .2s;
+        }
+        .game-btn:active { transform: translateY(2px); box-shadow: none; }
+
+        /* ===== Video Grid ===== */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px; margin: 6px 0;
+        }
+        .video-card {
+            background: rgba(255,240,248,.65);
+            border-radius: 18px; padding: 8px;
+            border: 1.5px solid #ffffffd0;
+            box-shadow: 0 2.5px 0 #dbb0dd;
+        }
+        .video-card video {
+            width: 100%; border-radius: 12px; display: block;
+        }
+        .video-card .label {
+            text-align: center;
+            font-size: 12px; color: var(--purple);
+            margin-top: 6px;
+        }
+
         /* ===== Responsive ===== */
         @media (max-width: 480px) {
             .castle { padding: 18px 14px 28px; border-radius: 36px; }
@@ -552,6 +690,9 @@
             .photo-frame img { width: 120px; height: 120px; }
             .photo-frame .glow { width: 140px; height: 140px; }
             .hobby-grid { grid-template-columns: repeat(2, 1fr); }
+            .album-grid { grid-template-columns: repeat(2, 1fr); }
+            .game-grid { grid-template-columns: repeat(2, 1fr); }
+            .video-grid { grid-template-columns: 1fr; }
             .music-player { flex-direction: column; align-items: stretch; }
             .name-wall .real-name { font-size: 22px; }
             .time-capsule .counter { font-size: 24px; }
@@ -592,6 +733,17 @@
     </div>
 </div>
 
+<!-- Game Modal Overlay -->
+<div class="game-modal-overlay" id="gameModalOverlay" onclick="closeGameModal(event)">
+    <div class="game-modal-card" onclick="event.stopPropagation()">
+        <div class="game-modal-close" onclick="closeGameModalForce()">&times;</div>
+        <div class="game-modal-title" id="gameModalTitle"></div>
+        <div class="game-info" id="gameInfo"></div>
+        <div id="gameContainer"></div>
+        <div class="game-controls" id="gameControls"></div>
+    </div>
+</div>
+
 <!-- Falling Stars -->
 <div class="stars-box" id="starsBox"></div>
 
@@ -614,7 +766,7 @@
     <!-- Hero Photo -->
     <div class="photo-frame">
         <div class="glow"></div>
-        <img src="images/avatar-main-v2.png" alt="AI果果" />
+        <img src="images/avatar-main-v3.jpg" alt="果果" />
         <div class="crown-icon">&#x1F451;</div>
     </div>
 
@@ -709,6 +861,49 @@
         <div class="dot active" onclick="goSlide(0)"></div>
         <div class="dot" onclick="goSlide(1)"></div>
         <div class="dot" onclick="goSlide(2)"></div>
+    </div>
+
+    <!-- ===== Sister Album ===== -->
+    <div class="section-title">
+        <span>&#x1F48E; 我的小姐妹</span>
+    </div>
+    <div class="album-grid">
+        <img src="images/sister-1.jpg" alt="冰雪小姐妹1" onclick="zoomImage(this)" />
+        <img src="images/sister-2.jpg" alt="冰雪小姐妹2" onclick="zoomImage(this)" />
+        <img src="images/sister-3.jpg" alt="冰雪小姐妹3" onclick="zoomImage(this)" />
+    </div>
+
+    <!-- ===== Games Section ===== -->
+    <div class="section-title">
+        <span>&#x1F3AE; 小游戏乐园</span>
+    </div>
+    <div class="game-grid">
+        <div class="game-item" onclick="openGame('tetris')">
+            <span class="icon">&#x1F9E9;</span>俄罗斯方块
+        </div>
+        <div class="game-item" onclick="openGame('snake')">
+            <span class="icon">&#x1F40D;</span>贪吃蛇
+        </div>
+        <div class="game-item" onclick="openGame('finddiff')">
+            <span class="icon">&#x1F50D;</span>大家来找茬
+        </div>
+        <div class="game-item" onclick="openGame('gomoku')">
+            <span class="icon">&#x26AA;</span>五子棋
+        </div>
+    </div>
+
+    <!-- ===== Video Gallery ===== -->
+    <div class="section-title">
+        <span>&#x1F3A5; 果果的视频</span>
+    </div>
+    <div class="video-grid">
+        <div class="video-card"><video controls preload="metadata" src="videos/video-1.mp4"></video><div class="label">果果短视频 1</div></div>
+        <div class="video-card"><video controls preload="metadata" src="videos/video-2.mp4"></video><div class="label">果果短视频 2</div></div>
+        <div class="video-card"><video controls preload="metadata" src="videos/video-3.mp4"></video><div class="label">果果短视频 3</div></div>
+        <div class="video-card"><video controls preload="metadata" src="videos/video-4.mp4"></video><div class="label">果果短视频 4</div></div>
+        <div class="video-card"><video controls preload="metadata" src="videos/video-5.mp4"></video><div class="label">果果短视频 5</div></div>
+        <div class="video-card"><video controls preload="metadata" src="videos/video-6.mp4"></video><div class="label">果果短视频 6</div></div>
+        <div class="video-card"><video controls preload="metadata" src="videos/video-7.mp4"></video><div class="label">果果短视频 7</div></div>
     </div>
 
     <!-- ===== Status Bar ===== -->
@@ -826,11 +1021,13 @@ function closeModalForce() {
 }
 
 function zoomImage(img) {
-    // toggle zoom on mini-gallery images
-    if (img.style.maxWidth === '100%') {
-        img.style.maxWidth = '48%';
-    } else {
-        img.style.maxWidth = '100%';
+    var wasZoomed = img.classList.contains('zoomed');
+    var all = document.querySelectorAll('.zoomed');
+    for (var i = 0; i < all.length; i++) {
+        all[i].classList.remove('zoomed');
+    }
+    if (!wasZoomed) {
+        img.classList.add('zoomed');
     }
 }
 
@@ -890,6 +1087,532 @@ startCarousel();
     var days = Math.floor((now - birth) / (1000 * 60 * 60 * 24));
     document.getElementById('dayCounter').textContent = days;
 })();
+
+/* ===== Games ===== */
+var activeGame = null;
+
+function openGame(type) {
+    activeGame = type;
+    var titles = {tetris: '俄罗斯方块', snake: '贪吃蛇', finddiff: '大家来找茬', gomoku: '五子棋'};
+    document.getElementById('gameModalTitle').textContent = titles[type] || '';
+    document.getElementById('gameContainer').innerHTML = '';
+    document.getElementById('gameInfo').textContent = '';
+    document.getElementById('gameControls').innerHTML = '';
+    document.getElementById('gameModalOverlay').classList.add('active');
+    if (type === 'tetris') initTetris();
+    else if (type === 'snake') initSnake();
+    else if (type === 'finddiff') initFindDiff();
+    else if (type === 'gomoku') initGomoku();
+}
+
+function closeGameModal(e) {
+    if (e.target === document.getElementById('gameModalOverlay')) stopActiveGame();
+}
+function closeGameModalForce() { stopActiveGame(); }
+
+function stopActiveGame() {
+    document.getElementById('gameModalOverlay').classList.remove('active');
+    if (activeGame === 'tetris') {
+        clearInterval(tetrisInterval);
+        document.removeEventListener('keydown', tetrisKey);
+    }
+    if (activeGame === 'snake') {
+        clearInterval(snakeInterval);
+        document.removeEventListener('keydown', snakeKey);
+    }
+    activeGame = null;
+}
+
+/* ----- Tetris ----- */
+var tetrisInterval, tetrisBoard, tetrisPiece, tetrisX, tetrisY, tetrisColor, tetrisScore, tetrisGameOver;
+var TETRIS_COLS = 10, TETRIS_ROWS = 20, TETRIS_SIZE = 22;
+var TETRIS_SHAPES = [
+    [[1,1,1,1]],
+    [[1,1],[1,1]],
+    [[0,1,0],[1,1,1]],
+    [[0,1,1],[1,1,0]],
+    [[1,1,0],[0,1,1]],
+    [[1,0,0],[1,1,1]],
+    [[0,0,1],[1,1,1]]
+];
+var TETRIS_COLORS = ['#00f0f0','#f0f000','#a000f0','#00f000','#f00000','#0000f0','#f0a000'];
+
+function initTetris() {
+    var c = document.createElement('canvas');
+    c.width = TETRIS_COLS * TETRIS_SIZE;
+    c.height = TETRIS_ROWS * TETRIS_SIZE;
+    c.className = 'game-canvas';
+    c.id = 'tetrisCanvas';
+    document.getElementById('gameContainer').appendChild(c);
+    tetrisBoard = [];
+    for (var i = 0; i < TETRIS_ROWS; i++) {
+        tetrisBoard.push(new Array(TETRIS_COLS).fill(0));
+    }
+    tetrisScore = 0; tetrisGameOver = false;
+    spawnTetrisPiece();
+    drawTetris();
+    tetrisInterval = setInterval(tetrisLoop, 600);
+    document.addEventListener('keydown', tetrisKey);
+    document.getElementById('gameInfo').textContent = '得分：0 | 方向键移动，上键旋转，空格直落';
+    document.getElementById('gameControls').innerHTML =
+        '<button class="game-btn" onclick="tetrisMove(-1,0)">←</button>' +
+        '<button class="game-btn" onclick="tetrisRotate()">旋转</button>' +
+        '<button class="game-btn" onclick="tetrisMove(1,0)">→</button>' +
+        '<button class="game-btn" onclick="tetrisMove(0,1)">↓</button>' +
+        '<button class="game-btn" onclick="tetrisDrop()">直落</button>';
+}
+function spawnTetrisPiece() {
+    var t = Math.floor(Math.random() * 7);
+    tetrisPiece = TETRIS_SHAPES[t];
+    tetrisColor = TETRIS_COLORS[t];
+    tetrisX = Math.floor((TETRIS_COLS - tetrisPiece[0].length) / 2);
+    tetrisY = 0;
+    if (!validTetris(tetrisX, tetrisY, tetrisPiece)) {
+        tetrisGameOver = true;
+        clearInterval(tetrisInterval);
+        document.getElementById('gameInfo').textContent = '游戏结束！得分：' + tetrisScore;
+    }
+}
+function validTetris(x, y, shape) {
+    for (var r = 0; r < shape.length; r++) {
+        for (var c = 0; c < shape[r].length; c++) {
+            if (shape[r][c]) {
+                var nx = x + c, ny = y + r;
+                if (nx < 0 || nx >= TETRIS_COLS || ny >= TETRIS_ROWS) return false;
+                if (ny >= 0 && tetrisBoard[ny][nx]) return false;
+            }
+        }
+    }
+    return true;
+}
+function drawTetris() {
+    var c = document.getElementById('tetrisCanvas');
+    var ctx = c.getContext('2d');
+    ctx.fillStyle = '#fff8fc';
+    ctx.fillRect(0, 0, c.width, c.height);
+    for (var r = 0; r < TETRIS_ROWS; r++) {
+        for (var c2 = 0; c2 < TETRIS_COLS; c2++) {
+            if (tetrisBoard[r][c2]) {
+                ctx.fillStyle = tetrisBoard[r][c2];
+                ctx.fillRect(c2 * TETRIS_SIZE, r * TETRIS_SIZE, TETRIS_SIZE - 1, TETRIS_SIZE - 1);
+            }
+        }
+    }
+    for (var r = 0; r < tetrisPiece.length; r++) {
+        for (var c2 = 0; c2 < tetrisPiece[r].length; c2++) {
+            if (tetrisPiece[r][c2]) {
+                ctx.fillStyle = tetrisColor;
+                ctx.fillRect((tetrisX + c2) * TETRIS_SIZE, (tetrisY + r) * TETRIS_SIZE, TETRIS_SIZE - 1, TETRIS_SIZE - 1);
+            }
+        }
+    }
+}
+function tetrisLoop() {
+    if (tetrisGameOver) return;
+    if (validTetris(tetrisX, tetrisY + 1, tetrisPiece)) {
+        tetrisY++;
+        drawTetris();
+    } else {
+        mergeTetris();
+        clearTetrisLines();
+        spawnTetrisPiece();
+        drawTetris();
+    }
+}
+function mergeTetris() {
+    for (var r = 0; r < tetrisPiece.length; r++) {
+        for (var c = 0; c < tetrisPiece[r].length; c++) {
+            if (tetrisPiece[r][c] && tetrisY + r >= 0) {
+                tetrisBoard[tetrisY + r][tetrisX + c] = tetrisColor;
+            }
+        }
+    }
+}
+function clearTetrisLines() {
+    var lines = 0;
+    for (var r = TETRIS_ROWS - 1; r >= 0; r--) {
+        var full = true;
+        for (var c = 0; c < TETRIS_COLS; c++) {
+            if (!tetrisBoard[r][c]) { full = false; break; }
+        }
+        if (full) {
+            tetrisBoard.splice(r, 1);
+            tetrisBoard.unshift(new Array(TETRIS_COLS).fill(0));
+            lines++;
+            r++;
+        }
+    }
+    if (lines > 0) {
+        tetrisScore += lines * 100;
+        document.getElementById('gameInfo').textContent = '得分：' + tetrisScore + ' | 方向键移动，上键旋转，空格直落';
+    }
+}
+function tetrisMove(dx, dy) {
+    if (tetrisGameOver) return;
+    if (validTetris(tetrisX + dx, tetrisY + dy, tetrisPiece)) {
+        tetrisX += dx; tetrisY += dy;
+        drawTetris();
+    } else if (dy === 1) {
+        mergeTetris(); clearTetrisLines(); spawnTetrisPiece(); drawTetris();
+    }
+}
+function tetrisRotate() {
+    if (tetrisGameOver) return;
+    var rotated = [];
+    for (var c = 0; c < tetrisPiece[0].length; c++) {
+        rotated[c] = [];
+        for (var r = tetrisPiece.length - 1; r >= 0; r--) {
+            rotated[c].push(tetrisPiece[r][c]);
+        }
+    }
+    if (validTetris(tetrisX, tetrisY, rotated)) {
+        tetrisPiece = rotated;
+        drawTetris();
+    }
+}
+function tetrisDrop() {
+    if (tetrisGameOver) return;
+    while (validTetris(tetrisX, tetrisY + 1, tetrisPiece)) tetrisY++;
+    mergeTetris(); clearTetrisLines(); spawnTetrisPiece(); drawTetris();
+}
+function tetrisKey(e) {
+    if (activeGame !== 'tetris') return;
+    if (e.key === 'ArrowLeft') tetrisMove(-1, 0);
+    else if (e.key === 'ArrowRight') tetrisMove(1, 0);
+    else if (e.key === 'ArrowDown') tetrisMove(0, 1);
+    else if (e.key === 'ArrowUp') tetrisRotate();
+    else if (e.key === ' ') { e.preventDefault(); tetrisDrop(); }
+}
+
+/* ----- Snake ----- */
+var snakeInterval, snakeCtx, snake, snakeDir, snakeFood, snakeGrid, snakeSize, snakeScore, snakeGameOver;
+function initSnake() {
+    snakeGrid = 20; snakeSize = 18;
+    var c = document.createElement('canvas');
+    c.width = snakeGrid * snakeSize; c.height = snakeGrid * snakeSize;
+    c.className = 'game-canvas'; c.id = 'snakeCanvas';
+    document.getElementById('gameContainer').appendChild(c);
+    snakeCtx = c.getContext('2d');
+    snake = [{x: 10, y: 10}, {x: 9, y: 10}, {x: 8, y: 10}];
+    snakeDir = {x: 1, y: 0};
+    snakeFood = {x: 5, y: 5};
+    snakeScore = 0; snakeGameOver = false;
+    snakeInterval = setInterval(snakeLoop, 150);
+    document.addEventListener('keydown', snakeKey);
+    document.getElementById('gameInfo').textContent = '得分：0 | 不要撞墙或咬到自己';
+    document.getElementById('gameControls').innerHTML =
+        '<button class="game-btn" onclick="snakeSetDir(0,-1)">↑</button>' +
+        '<button class="game-btn" onclick="snakeSetDir(-1,0)">←</button>' +
+        '<button class="game-btn" onclick="snakeSetDir(1,0)">→</button>' +
+        '<button class="game-btn" onclick="snakeSetDir(0,1)">↓</button>';
+    drawSnake();
+}
+function drawSnake() {
+    snakeCtx.fillStyle = '#fff8fc';
+    snakeCtx.fillRect(0, 0, snakeGrid * snakeSize, snakeGrid * snakeSize);
+    snakeCtx.fillStyle = '#f28bb0';
+    for (var i = 0; i < snake.length; i++) {
+        snakeCtx.fillRect(snake[i].x * snakeSize + 1, snake[i].y * snakeSize + 1, snakeSize - 2, snakeSize - 2);
+    }
+    snakeCtx.fillStyle = '#ffd966';
+    snakeCtx.beginPath();
+    snakeCtx.arc(snakeFood.x * snakeSize + snakeSize / 2, snakeFood.y * snakeSize + snakeSize / 2, snakeSize / 2 - 2, 0, Math.PI * 2);
+    snakeCtx.fill();
+}
+function snakeLoop() {
+    if (snakeGameOver) return;
+    var head = {x: snake[0].x + snakeDir.x, y: snake[0].y + snakeDir.y};
+    if (head.x < 0 || head.x >= snakeGrid || head.y < 0 || head.y >= snakeGrid) { snakeEnd(); return; }
+    for (var i = 0; i < snake.length; i++) {
+        if (snake[i].x === head.x && snake[i].y === head.y) { snakeEnd(); return; }
+    }
+    snake.unshift(head);
+    if (head.x === snakeFood.x && head.y === snakeFood.y) {
+        snakeScore += 10;
+        document.getElementById('gameInfo').textContent = '得分：' + snakeScore + ' | 不要撞墙或咬到自己';
+        placeSnakeFood();
+    } else {
+        snake.pop();
+    }
+    drawSnake();
+}
+function snakeEnd() {
+    snakeGameOver = true;
+    clearInterval(snakeInterval);
+    document.getElementById('gameInfo').textContent = '游戏结束！得分：' + snakeScore;
+}
+function placeSnakeFood() {
+    while (true) {
+        var x = Math.floor(Math.random() * snakeGrid);
+        var y = Math.floor(Math.random() * snakeGrid);
+        var ok = true;
+        for (var i = 0; i < snake.length; i++) {
+            if (snake[i].x === x && snake[i].y === y) { ok = false; break; }
+        }
+        if (ok) { snakeFood = {x: x, y: y}; break; }
+    }
+}
+function snakeSetDir(dx, dy) {
+    if (snakeGameOver) return;
+    if (dx === -snakeDir.x && dy === -snakeDir.y) return;
+    snakeDir = {x: dx, y: dy};
+}
+function snakeKey(e) {
+    if (activeGame !== 'snake') return;
+    if (e.key === 'ArrowUp') snakeSetDir(0, -1);
+    else if (e.key === 'ArrowDown') snakeSetDir(0, 1);
+    else if (e.key === 'ArrowLeft') snakeSetDir(-1, 0);
+    else if (e.key === 'ArrowRight') snakeSetDir(1, 0);
+}
+
+/* ----- Spot the Difference ----- */
+var diffCanvas, diffCtx, diffScene, diffDifferences, diffFoundCount;
+function initFindDiff() {
+    diffCanvas = document.createElement('canvas');
+    diffCanvas.width = 620; diffCanvas.height = 360;
+    diffCanvas.className = 'game-canvas'; diffCanvas.id = 'findDiffCanvas';
+    document.getElementById('gameContainer').appendChild(diffCanvas);
+    diffCtx = diffCanvas.getContext('2d');
+    generateDiffScene();
+    diffCanvas.addEventListener('click', diffClick);
+    document.getElementById('gameInfo').textContent = '找出右边图中的 5 处不同，点击标记';
+    document.getElementById('gameControls').innerHTML = '<button class="game-btn" onclick="generateDiffScene()">换一题</button>';
+    drawDiff();
+}
+function generateDiffScene() {
+    diffScene = [];
+    var types = ['circle','square','triangle','star','flower'];
+    var colors = ['#f28bb0','#ffd966','#a0c4ff','#b9fbc0','#c9a0dc'];
+    for (var i = 0; i < 25; i++) {
+        diffScene.push({
+            x: 30 + Math.random() * 240,
+            y: 35 + Math.random() * 280,
+            type: types[Math.floor(Math.random() * types.length)],
+            color: colors[Math.floor(Math.random() * colors.length)],
+            size: 14 + Math.random() * 16
+        });
+    }
+    diffDifferences = [];
+    var used = [];
+    while (used.length < 5) {
+        var idx = Math.floor(Math.random() * 25);
+        if (used.indexOf(idx) === -1) used.push(idx);
+    }
+    for (var i = 0; i < used.length; i++) {
+        var orig = diffScene[used[i]];
+        var kind = Math.floor(Math.random() * 3);
+        var d = {index: used[i], x: orig.x, y: orig.y, kind: kind, found: false};
+        if (kind === 0) {
+            d.newColor = colors[Math.floor(Math.random() * colors.length)];
+        } else if (kind === 1) {
+            d.newX = Math.max(20, Math.min(280, orig.x + (Math.random() * 60 - 30)));
+            d.newY = Math.max(30, Math.min(330, orig.y + (Math.random() * 60 - 30)));
+            d.x = d.newX; d.y = d.newY;
+        } else {
+            var nt = types[Math.floor(Math.random() * types.length)];
+            while (nt === orig.type) nt = types[Math.floor(Math.random() * types.length)];
+            d.newType = nt;
+        }
+        diffDifferences.push(d);
+    }
+    diffFoundCount = 0;
+}
+function drawShape(ctx, shape, isRight, diffObj) {
+    var x = isRight ? shape.x + 300 : shape.x;
+    var y = shape.y;
+    var color = shape.color;
+    var type = shape.type;
+    if (isRight && diffObj) {
+        if (diffObj.kind === 0) color = diffObj.newColor;
+        if (diffObj.kind === 1) { x = diffObj.newX + 300; y = diffObj.newY; }
+        if (diffObj.kind === 2) type = diffObj.newType;
+    }
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    if (type === 'circle') {
+        ctx.arc(x, y, shape.size / 2, 0, Math.PI * 2);
+    } else if (type === 'square') {
+        ctx.rect(x - shape.size / 2, y - shape.size / 2, shape.size, shape.size);
+    } else if (type === 'triangle') {
+        ctx.moveTo(x, y - shape.size / 2);
+        ctx.lineTo(x + shape.size / 2, y + shape.size / 2);
+        ctx.lineTo(x - shape.size / 2, y + shape.size / 2);
+        ctx.closePath();
+    } else if (type === 'star') {
+        drawStar(ctx, x, y, 5, shape.size / 2, shape.size / 4);
+    } else if (type === 'flower') {
+        drawFlower(ctx, x, y, shape.size / 2);
+    }
+    ctx.fill();
+}
+function drawStar(ctx, cx, cy, spikes, outer, inner) {
+    var rot = Math.PI / 2 * 3;
+    var x = cx, y = cy;
+    var step = Math.PI / spikes;
+    ctx.moveTo(cx, cy - outer);
+    for (var i = 0; i < spikes; i++) {
+        x = cx + Math.cos(rot) * outer; y = cy + Math.sin(rot) * outer;
+        ctx.lineTo(x, y); rot += step;
+        x = cx + Math.cos(rot) * inner; y = cy + Math.sin(rot) * inner;
+        ctx.lineTo(x, y); rot += step;
+    }
+    ctx.lineTo(cx, cy - outer);
+    ctx.closePath();
+}
+function drawFlower(ctx, cx, cy, r) {
+    for (var i = 0; i < 5; i++) {
+        var a = i * Math.PI * 2 / 5;
+        ctx.beginPath();
+        ctx.arc(cx + Math.cos(a) * r * 0.6, cy + Math.sin(a) * r * 0.6, r * 0.35, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    ctx.beginPath();
+    ctx.fillStyle = '#ffd966';
+    ctx.arc(cx, cy, r * 0.25, 0, Math.PI * 2);
+    ctx.fill();
+}
+function drawDiff() {
+    diffCtx.fillStyle = '#fff8fc';
+    diffCtx.fillRect(0, 0, 620, 360);
+    diffCtx.strokeStyle = '#dbb0dd';
+    diffCtx.lineWidth = 2;
+    diffCtx.beginPath();
+    diffCtx.moveTo(300, 0); diffCtx.lineTo(300, 360);
+    diffCtx.stroke();
+    diffCtx.fillStyle = '#6b3f7a';
+    diffCtx.font = '16px ZCOOL KuaiLe, sans-serif';
+    diffCtx.textAlign = 'center';
+    diffCtx.fillText('原图', 150, 24);
+    diffCtx.fillText('找不同', 450, 24);
+    for (var i = 0; i < diffScene.length; i++) {
+        var diffObj = null;
+        for (var j = 0; j < diffDifferences.length; j++) {
+            if (diffDifferences[j].index === i) { diffObj = diffDifferences[j]; break; }
+        }
+        drawShape(diffCtx, diffScene[i], false, null);
+        drawShape(diffCtx, diffScene[i], true, diffObj);
+    }
+    for (var i = 0; i < diffDifferences.length; i++) {
+        if (diffDifferences[i].found) {
+            var d = diffDifferences[i];
+            diffCtx.strokeStyle = '#00c853';
+            diffCtx.lineWidth = 3;
+            diffCtx.beginPath();
+            diffCtx.arc(d.x + 300, d.y, 22, 0, Math.PI * 2);
+            diffCtx.stroke();
+        }
+    }
+}
+function diffClick(e) {
+    var rect = diffCanvas.getBoundingClientRect();
+    var x = (e.clientX - rect.left) * (diffCanvas.width / rect.width);
+    var y = (e.clientY - rect.top) * (diffCanvas.height / rect.height);
+    if (x < 300 || x > 600) return;
+    var rx = x - 300, ry = y;
+    for (var i = 0; i < diffDifferences.length; i++) {
+        var d = diffDifferences[i];
+        if (d.found) continue;
+        var dx = rx - d.x, dy = ry - d.y;
+        if (Math.sqrt(dx * dx + dy * dy) < 28) {
+            d.found = true; diffFoundCount++;
+            drawDiff();
+            if (diffFoundCount === 5) {
+                document.getElementById('gameInfo').textContent = '太棒了！5 处不同全部找到啦';
+            } else {
+                document.getElementById('gameInfo').textContent = '已找到 ' + diffFoundCount + '/5 处不同';
+            }
+            return;
+        }
+    }
+}
+
+/* ----- Gomoku ----- */
+var gomokuCanvas, gomokuCtx, gomokuSize = 15, gomokuCell = 26, gomokuBoard, gomokuCurrent, gomokuEnded;
+function initGomoku() {
+    gomokuCanvas = document.createElement('canvas');
+    gomokuCanvas.width = gomokuSize * gomokuCell + 1;
+    gomokuCanvas.height = gomokuSize * gomokuCell + 1;
+    gomokuCanvas.className = 'game-canvas'; gomokuCanvas.id = 'gomokuCanvas';
+    document.getElementById('gameContainer').appendChild(gomokuCanvas);
+    gomokuCtx = gomokuCanvas.getContext('2d');
+    gomokuBoard = [];
+    for (var i = 0; i < gomokuSize; i++) gomokuBoard.push(new Array(gomokuSize).fill(0));
+    gomokuCurrent = 1;
+    gomokuEnded = false;
+    drawGomoku();
+    gomokuCanvas.addEventListener('click', gomokuClick);
+    document.getElementById('gameInfo').textContent = '黑子先下，五子连珠获胜';
+    document.getElementById('gameControls').innerHTML = '<button class="game-btn" onclick="resetGomoku()">重新开始</button>';
+}
+function drawGomoku() {
+    gomokuCtx.fillStyle = '#f5d0a9';
+    gomokuCtx.fillRect(0, 0, gomokuCanvas.width, gomokuCanvas.height);
+    gomokuCtx.strokeStyle = '#8b5a2b';
+    gomokuCtx.lineWidth = 1;
+    for (var i = 0; i < gomokuSize; i++) {
+        gomokuCtx.beginPath();
+        gomokuCtx.moveTo(gomokuCell / 2, i * gomokuCell + gomokuCell / 2);
+        gomokuCtx.lineTo((gomokuSize - 1) * gomokuCell + gomokuCell / 2, i * gomokuCell + gomokuCell / 2);
+        gomokuCtx.stroke();
+        gomokuCtx.beginPath();
+        gomokuCtx.moveTo(i * gomokuCell + gomokuCell / 2, gomokuCell / 2);
+        gomokuCtx.lineTo(i * gomokuCell + gomokuCell / 2, (gomokuSize - 1) * gomokuCell + gomokuCell / 2);
+        gomokuCtx.stroke();
+    }
+    for (var r = 0; r < gomokuSize; r++) {
+        for (var c = 0; c < gomokuSize; c++) {
+            if (gomokuBoard[r][c]) {
+                var x = c * gomokuCell + gomokuCell / 2, y = r * gomokuCell + gomokuCell / 2;
+                gomokuCtx.beginPath();
+                gomokuCtx.arc(x, y, 10, 0, Math.PI * 2);
+                gomokuCtx.fillStyle = gomokuBoard[r][c] === 1 ? '#333' : '#fff';
+                gomokuCtx.fill();
+                gomokuCtx.strokeStyle = gomokuBoard[r][c] === 1 ? '#000' : '#ccc';
+                gomokuCtx.stroke();
+            }
+        }
+    }
+}
+function gomokuClick(e) {
+    if (gomokuEnded) return;
+    var rect = gomokuCanvas.getBoundingClientRect();
+    var x = (e.clientX - rect.left) * (gomokuCanvas.width / rect.width);
+    var y = (e.clientY - rect.top) * (gomokuCanvas.height / rect.height);
+    var c = Math.round((x - gomokuCell / 2) / gomokuCell);
+    var r = Math.round((y - gomokuCell / 2) / gomokuCell);
+    if (r < 0 || r >= gomokuSize || c < 0 || c >= gomokuSize || gomokuBoard[r][c]) return;
+    gomokuBoard[r][c] = gomokuCurrent;
+    drawGomoku();
+    if (checkGomokuWin(r, c)) {
+        document.getElementById('gameInfo').textContent = (gomokuCurrent === 1 ? '黑子' : '白子') + '获胜！';
+        gomokuEnded = true;
+        return;
+    }
+    gomokuCurrent = gomokuCurrent === 1 ? 2 : 1;
+    document.getElementById('gameInfo').textContent = (gomokuCurrent === 1 ? '黑子' : '白子') + '下棋';
+}
+function checkGomokuWin(r, c) {
+    var p = gomokuBoard[r][c];
+    var dirs = [[1, 0], [0, 1], [1, 1], [1, -1]];
+    for (var d = 0; d < dirs.length; d++) {
+        var cnt = 1;
+        for (var s = -1; s <= 1; s += 2) {
+            var nr = r + s * dirs[d][0], nc = c + s * dirs[d][1];
+            while (nr >= 0 && nr < gomokuSize && nc >= 0 && nc < gomokuSize && gomokuBoard[nr][nc] === p) {
+                cnt++; nr += s * dirs[d][0]; nc += s * dirs[d][1];
+            }
+        }
+        if (cnt >= 5) return true;
+    }
+    return false;
+}
+function resetGomoku() {
+    gomokuBoard = [];
+    for (var i = 0; i < gomokuSize; i++) gomokuBoard.push(new Array(gomokuSize).fill(0));
+    gomokuCurrent = 1; gomokuEnded = false;
+    drawGomoku();
+    document.getElementById('gameInfo').textContent = '黑子先下，五子连珠获胜';
+}
 </script>
 
 </body>
