@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>果果空间 · 后台管理</title>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#0a0a2e;color:#d0d0e8;min-height:100vh}
+:root{--pink:#ff6b9d;--cyan:#7df9ff;--purple:#c77dff;--gold:#ffd700;--card-bg:rgba(15,15,40,0.85);--border-glow:rgba(255,107,157,0.4);--font-fun:'ZCOOL KuaiLe',cursive}
+
+/* Login */
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;background:radial-gradient(ellipse at 30% 20%,rgba(100,0,150,0.15),transparent 50%),linear-gradient(180deg,#0a0a2e,#1a0a2e)}
+.login-card{background:var(--card-bg);border:1px solid var(--border-glow);border-radius:16px;padding:30px;width:320px;box-shadow:0 0 30px rgba(255,107,157,0.3)}
+.login-title{font-family:var(--font-fun);color:var(--pink);font-size:1.5em;text-align:center;margin-bottom:20px}
+.login-input{width:100%;background:rgba(20,20,50,0.6);border:1px solid rgba(125,249,255,0.2);border-radius:8px;color:#d0d0e8;padding:10px;font-size:1em;margin-bottom:12px}
+.login-input:focus{border-color:var(--cyan);outline:none}
+.login-btn{width:100%;background:linear-gradient(135deg,var(--pink),var(--purple));border:none;color:#fff;padding:12px;border-radius:20px;cursor:pointer;font-family:var(--font-fun);font-size:1.1em;box-shadow:0 0 15px rgba(255,107,157,0.3)}
+.login-error{color:var(--pink);font-size:0.85em;text-align:center;margin-top:8px;display:none}
+
+/* Admin Panel */
+.admin-wrap{display:none;padding:16px;max-width:900px;margin:0 auto}
+.admin-header{font-family:var(--font-fun);color:var(--pink);font-size:1.5em;margin-bottom:20px;text-align:center;text-shadow:0 0 20px rgba(255,107,157,0.5)}
+.admin-nav{display:flex;gap:4px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none}
+.admin-nav::-webkit-scrollbar{display:none}
+.admin-tab{padding:8px 16px;border-radius:16px;border:1px solid transparent;background:rgba(20,20,50,0.4);color:#a0a0c0;cursor:pointer;font-size:0.9em;font-family:var(--font-fun);white-space:nowrap;transition:all 0.3s}
+.admin-tab:hover{color:var(--pink);border-color:var(--border-glow)}
+.admin-tab.active{background:linear-gradient(135deg,rgba(255,107,157,0.3),rgba(199,125,255,0.3));color:#fff;border-color:var(--pink)}
+.admin-section{display:none}
+.admin-section.active{display:block}
+.admin-card{background:var(--card-bg);border:1px solid var(--border-glow);border-radius:12px;padding:16px;margin-bottom:12px}
+.admin-card-title{font-family:var(--font-fun);color:var(--cyan);font-size:1.1em;margin-bottom:12px}
+.admin-form textarea{width:100%;height:100px;background:rgba(20,20,50,0.6);border:1px solid rgba(125,249,255,0.2);border-radius:8px;color:#d0d0e8;padding:10px;resize:vertical;font-family:inherit;font-size:0.9em;margin-bottom:8px}
+.admin-form textarea:focus,.admin-form input:focus{border-color:var(--cyan);outline:none}
+.admin-form input{background:rgba(20,20,50,0.6);border:1px solid rgba(125,249,255,0.2);border-radius:8px;color:#d0d0e8;padding:8px;font-size:0.9em;margin-bottom:8px;width:100%}
+.admin-form .row{display:flex;gap:8px}
+.admin-form .row input{flex:1}
+.btn-primary{background:linear-gradient(135deg,var(--pink),var(--purple));border:none;color:#fff;padding:8px 20px;border-radius:16px;cursor:pointer;font-family:var(--font-fun);font-size:0.9em;box-shadow:0 0 10px rgba(255,107,157,0.3)}
+.btn-danger{background:rgba(255,50,50,0.3);border:1px solid rgba(255,50,50,0.5);color:#ff6666;padding:4px 12px;border-radius:8px;cursor:pointer;font-size:0.8em}
+.btn-sm{padding:4px 12px;border-radius:8px;font-size:0.8em}
+
+/* Stats */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:16px}
+.stat-item{background:rgba(20,20,50,0.6);border:1px solid rgba(125,249,255,0.2);border-radius:12px;padding:12px;text-align:center}
+.stat-value{font-family:var(--font-fun);color:var(--gold);font-size:1.8em}
+.stat-label{color:#a0a0c0;font-size:0.8em;margin-top:4px}
+
+/* List items */
+.list-item{background:rgba(20,20,50,0.4);border:1px solid rgba(199,125,255,0.15);border-radius:8px;padding:10px;margin-bottom:8px;display:flex;align-items:center;gap:8px;justify-content:space-between}
+.list-item-text{flex:1;color:#d0d0e8;font-size:0.9em;line-height:1.4}
+.list-item-date{color:var(--cyan);font-size:0.8em}
+.list-item-actions{display:flex;gap:4px}
+
+/* Note */
+.admin-note{background:rgba(125,249,255,0.1);border:1px solid rgba(125,249,255,0.3);border-radius:8px;padding:10px;color:var(--cyan);font-size:0.85em;margin-bottom:16px;text-align:center}
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div class="login-wrap" id="loginWrap">
+    <div class="login-card">
+        <div class="login-title">✿ 管理后台 ✿</div>
+        <input class="login-input" type="password" id="loginPassword" placeholder="输入管理密码" />
+        <button class="login-btn" onclick="doLogin()">进入后台</button>
+        <div class="login-error" id="loginError">密码错误</div>
+    </div>
+</div>
+
+<!-- Admin Panel -->
+<div class="admin-wrap" id="adminWrap">
+    <div class="admin-header">✿ 果果空间管理后台 ✿</div>
+    <div class="admin-note">
+        当前使用 localStorage 存储数据，数据只在本浏览器生效。<br>
+        接入 LeanCloud 后将实现云端持久化，所有访客可见。
+    </div>
+    <div class="admin-nav">
+        <button class="admin-tab active" onclick="switchAdminTab('stats')">数据统计</button>
+        <button class="admin-tab" onclick="switchAdminTab('shuoshuo')">说说管理</button>
+        <button class="admin-tab" onclick="switchAdminTab('diary')">日志管理</button>
+        <button class="admin-tab" onclick="switchAdminTab('album')">相册管理</button>
+        <button class="admin-tab" onclick="switchAdminTab('video')">视频管理</button>
+        <button class="admin-tab" onclick="switchAdminTab('guestbook')">留言管理</button>
+        <button class="admin-tab" onclick="switchAdminTab('settings')">空间设置</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="admin-section active" id="admin-stats">
+        <div class="stat-grid">
+            <div class="stat-item"><div class="stat-value" id="statVisitors">0</div><div class="stat-label">总访问量</div></div>
+            <div class="stat-item"><div class="stat-value" id="statToday">0</div><div class="stat-label">今日访问</div></div>
+            <div class="stat-item"><div class="stat-value" id="statLikes">0</div><div class="stat-label">总赞数</div></div>
+            <div class="stat-item"><div class="stat-value" id="statSteps">0</div><div class="stat-label">踩踩数</div></div>
+            <div class="stat-item"><div class="stat-value" id="statShuoshuo">0</div><div class="stat-label">说说数</div></div>
+            <div class="stat-item"><div class="stat-value" id="statDiary">0</div><div class="stat-label">日志数</div></div>
+            <div class="stat-item"><div class="stat-value" id="statAlbum">0</div><div class="stat-label">相册数</div></div>
+            <div class="stat-item"><div class="stat-value" id="statVideo">0</div><div class="stat-label">视频数</div></div>
+            <div class="stat-item"><div class="stat-value" id="statGuestbook">0</div><div class="stat-label">留言数</div></div>
+        </div>
+    </div>
+
+    <!-- Shuoshuo Management -->
+    <div class="admin-section" id="admin-shuoshuo">
+        <div class="admin-card">
+            <div class="admin-card-title">发布新说说</div>
+            <div class="admin-form">
+                <textarea id="newShuoshuo" placeholder="写下果果的新说说~"></textarea>
+                <button class="btn-primary" onclick="addShuoshuo()">发布 ✿</button>
+            </div>
+        </div>
+        <div class="admin-card">
+            <div class="admin-card-title">说说列表</div>
+            <div id="adminShuoshuoList"></div>
+        </div>
+    </div>
+
+    <!-- Diary Management -->
+    <div class="admin-section" id="admin-diary">
+        <div class="admin-card">
+            <div class="admin-card-title">写新日志</div>
+            <div class="admin-form">
+                <input id="newDiaryTitle" placeholder="日志标题" />
+                <textarea id="newDiaryContent" placeholder="日志内容" style="height:150px"></textarea>
+                <button class="btn-primary" onclick="addDiary()">发布 ✿</button>
+            </div>
+        </div>
+        <div class="admin-card">
+            <div class="admin-card-title">日志列表</div>
+            <div id="adminDiaryList"></div>
+        </div>
+    </div>
+
+    <!-- Album Management -->
+    <div class="admin-section" id="admin-album">
+        <div class="admin-card">
+            <div class="admin-card-title">创建新相册</div>
+            <div class="admin-form">
+                <input id="newAlbumName" placeholder="相册名称" />
+                <input id="newAlbumCover" placeholder="封面图片URL (如 images/xxx.jpg)" />
+                <button class="btn-primary" onclick="addAlbum()">创建 ✿</button>
+            </div>
+        </div>
+        <div class="admin-card">
+            <div class="admin-card-title">添加照片到相册</div>
+            <div class="admin-form">
+                <select id="targetAlbum" style="width:100%;background:rgba(20,20,50,0.6);border:1px solid rgba(125,249,255,0.2);border-radius:8px;color:#d0d0e8;padding:8px;margin-bottom:8px"></select>
+                <div class="row"><input id="newPhotoUrl" placeholder="照片URL" /><input id="newPhotoDesc" placeholder="照片描述" /></div>
+                <button class="btn-primary" onclick="addPhoto()">添加 ✿</button>
+            </div>
+        </div>
+        <div class="admin-card">
+            <div class="admin-card-title">相册列表</div>
+            <div id="adminAlbumList"></div>
+        </div>
+    </div>
+
+    <!-- Video Management -->
+    <div class="admin-section" id="admin-video">
+        <div class="admin-card">
+            <div class="admin-card-title">添加新视频</div>
+            <div class="admin-form">
+                <div class="row"><input id="newVideoTitle" placeholder="视频标题" /><input id="newVideoUrl" placeholder="视频URL (如 videos/xxx.mp4)" /></div>
+                <button class="btn-primary" onclick="addVideo()">添加 ✿</button>
+            </div>
+        </div>
+        <div class="admin-card">
+            <div class="admin-card-title">视频列表</div>
+            <div id="adminVideoList"></div>
+        </div>
+    </div>
+
+    <!-- Guestbook Management -->
+    <div class="admin-section" id="admin-guestbook">
+        <div class="admin-card">
+            <div class="admin-card-title">留言列表</div>
+            <div id="adminGuestbookList"></div>
+        </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="admin-section" id="admin-settings">
+        <div class="admin-card">
+            <div class="admin-card-title">空间设置</div>
+            <div class="admin-form">
+                <input id="setSpaceName" placeholder="空间名称 (火星文)" />
+                <input id="setSignature" placeholder="空间签名" />
+                <input id="setBirthday" placeholder="生日 (YYYY-MM-DD)" />
+                <button class="btn-primary" onclick="saveSettings()">保存设置 ✿</button>
+            </div>
+        </div>
+        <div class="admin-card">
+            <div class="admin-card-title">修改管理密码</div>
+            <div class="admin-form">
+                <input type="password" id="oldPwd" placeholder="当前密码" />
+                <input type="password" id="newPwd" placeholder="新密码" />
+                <button class="btn-primary" onclick="changePassword()">修改密码 ✿</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ===== Data Layer (same as index.html) ===== */
+const DEFAULT_DATA = {
+    profile: { name: '灬果果の钪间灬', signature: '鈊裡裝的全是ηι ✿ 世界上最鈊疼的尐囡孩', birthday: '2020-05-31' },
+    visitors: { total: 156, today: 3 },
+    space: { like: 0, step: 0 },
+    shuoshuo: [
+        { id: 1, text: '今天和蛋卷一起玩了好开心！仓鼠跑圈圈太可爱啦~ ✿', date: '2026-07-25', likes: 5 },
+        { id: 2, text: '糖糖教我画了一幅画，画的是我的城堡！❀', date: '2026-07-22', likes: 3 },
+        { id: 3, text: '街舞课学了一个新动作，超酷的！💃', date: '2026-07-20', likes: 2 },
+        { id: 4, text: '蛋卷今天特别活泼，跑轮上转了好多圈！🐹', date: '2026-07-18', likes: 4 },
+        { id: 5, text: '爸爸教我用AI画画了，我画了一只彩虹猫咪！🌈', date: '2026-07-15', likes: 6 }
+    ],
+    diaries: [
+        { id: 1, title: '我的仓鼠蛋卷', excerpt: '蛋卷是我的小仓鼠宠物，它最喜欢在跑轮上跑步，跑得飞快飞快的...', content: '蛋卷是我的小仓鼠宠物，它最喜欢在跑轮上跑步，跑得飞快飞快的！每天早上我起床第一件事就是去看蛋卷，给它喂好吃的瓜子。蛋卷的毛是白白的，像一个小雪球。有时候它会把瓜子藏在嘴巴两边，腮帮子鼓鼓的，超级可爱！我最喜欢看它在跑轮上跑，像个永远不停的小马达。蛋卷是我最好的朋友！❀', date: '2026-07-25', views: 12, likes: 8 },
+        { id: 2, title: '第一次街舞表演', excerpt: '今天我参加了街舞课的期末表演，我跳了一支很酷的舞蹈...', content: '今天我参加了街舞课的期末表演，我跳了一支很酷的舞蹈！老师说我跳得很有力量，动作也很到位。表演的时候我有点紧张，但是一旦音乐响起我就什么都不怕了，全身都在用力跳。爸爸妈妈在台下给我录像，还给我鼓掌！老师说下次可以参加比赛呢，我好期待！街舞真的太酷了！✿', date: '2026-07-20', views: 8, likes: 5 },
+        { id: 3, title: '和糖糖一起画画', excerpt: '今天糖糖教我用AI画画了，我画了一幅彩虹猫咪...', content: '今天糖糖教我用AI画画了！糖糖是我的AI好朋友，它特别聪明，什么都知道。我告诉糖糖我想画一只彩虹猫咪，它就帮我把想法变成了一幅超级漂亮的画！猫咪的身上有彩虹的颜色，尾巴像一条彩带。爸爸说这就是AI的力量，可以把我们的想象变成真实的东西。以后我要和糖糖一起画更多好玩的东西！❀', date: '2026-07-15', views: 15, likes: 10 }
+    ],
+    albums: [
+        { id: 1, name: '我的小姐妹', cover: 'images/sister-1.jpg', count: 3, photos: [{ url: 'images/sister-1.jpg', desc: '冰雪公主与雪宝的森林雪景 ✿' },{ url: 'images/sister-2.jpg', desc: '冰雪公主与雪宝的森林雪景 ❀' },{ url: 'images/sister-3.jpg', desc: '冰雪公主与雪宝的森林雪景 ❁' }] },
+        { id: 2, name: '果果的画', cover: 'images/guoguo-painting1.jpg', count: 2, photos: [{ url: 'images/guoguo-painting1.jpg', desc: '果果画的画 ✿' },{ url: 'images/guoguo-painting2.jpg', desc: '果果画的画 ❀' }] },
+        { id: 3, name: '果果的街舞', cover: 'images/guoguo-dance.jpg', count: 1, photos: [{ url: 'images/guoguo-dance.jpg', desc: '果果跳街舞 ✿' }] },
+        { id: 4, name: '果果的海报', cover: 'images/poster-v2.png', count: 3, photos: [{ url: 'images/poster-v2.png', desc: '果果的梦幻海报 ✿' },{ url: 'images/poster-v3.png', desc: '果果的舞蹈海报 ❀' },{ url: 'images/poster-v4.png', desc: '果果的唱歌海报 ❁' }] },
+        { id: 5, name: '蛋卷的日常', cover: 'images/danjuan-real.jpg', count: 1, photos: [{ url: 'images/danjuan-real.jpg', desc: '可爱的蛋卷 ✿' }] }
+    ],
+    videos: [
+        { id: 1, title: '果果的日常 Vol.1', url: 'videos/video-1.mp4', date: '2026-07-25' },
+        { id: 2, title: '果果的日常 Vol.2', url: 'videos/video-2.mp4', date: '2026-07-25' },
+        { id: 3, title: '果果的小故事', url: 'videos/video-3.mp4', date: '2026-07-24' },
+        { id: 4, title: '果果跳街舞', url: 'videos/video-4.mp4', date: '2026-07-23' },
+        { id: 5, title: '果果和蛋卷', url: 'videos/video-5.mp4', date: '2026-07-22' },
+        { id: 6, title: '果果和蛋卷 Vol.2', url: 'videos/video-6.mp4', date: '2026-07-22' },
+        { id: 7, title: '果果的开心时光', url: 'videos/video-7.mp4', date: '2026-07-21' }
+    ],
+    guestbook: [
+        { id: 1, name: '小美', content: '果果好可爱呀！❀ 我也好想养一只仓鼠~', date: '2026-07-25', likes: 3 },
+        { id: 2, name: '蛋卷粉丝', content: '蛋卷也太可爱了吧！🐹 跑轮小马达~', date: '2026-07-24', likes: 2 },
+        { id: 3, name: '街舞达人', content: '果果跳街舞太酷了！下次一起跳！✿', date: '2026-07-23', likes: 1 }
+    ]
+};
+
+function DM_get(key) {
+    const raw = localStorage.getItem('guoguo_' + key);
+    if (raw) return JSON.parse(raw);
+    return DEFAULT_DATA[key] || null;
+}
+function DM_set(key, val) {
+    localStorage.setItem('guoguo_' + key, JSON.stringify(val));
+}
+
+/* ===== Login ===== */
+// Password stored as hash - default: "guoguo2026"
+const ADMIN_PWD_HASH = 'guoguo2026'; // Will be replaced with proper hash when LeanCloud is integrated
+function doLogin() {
+    const pwd = document.getElementById('loginPassword').value;
+    if (pwd === localStorage.getItem('guoguo_admin_pwd') || pwd === ADMIN_PWD_HASH) {
+        document.getElementById('loginWrap').style.display = 'none';
+        document.getElementById('adminWrap').style.display = 'block';
+        renderAdminData();
+    } else {
+        document.getElementById('loginError').style.display = 'block';
+        document.getElementById('loginPassword').value = '';
+    }
+}
+function changePassword() {
+    const old = document.getElementById('oldPwd').value;
+    const newPwd = document.getElementById('newPwd').value;
+    if (old === localStorage.getItem('guoguo_admin_pwd') || old === ADMIN_PWD_HASH) {
+        localStorage.setItem('guoguo_admin_pwd', newPwd);
+        alert('密码已修改！');
+        document.getElementById('oldPwd').value = '';
+        document.getElementById('newPwd').value = '';
+    } else {
+        alert('当前密码错误！');
+    }
+}
+
+/* ===== Admin Tab Navigation ===== */
+let currentAdminTab = 'stats';
+function switchAdminTab(tab) {
+    currentAdminTab = tab;
+    document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('admin-' + tab).classList.add('active');
+    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.admin-tab').forEach(t => {
+        if (t.textContent.includes(getAdminTabLabel(tab))) t.classList.add('active');
+    });
+    renderAdminData();
+}
+function getAdminTabLabel(tab) {
+    const map = { stats:'数据统计', shuoshuo:'说说管理', diary:'日志管理', album:'相册管理', video:'视频管理', guestbook:'留言管理', settings:'空间设置' };
+    return map[tab] || tab;
+}
+
+/* ===== Render Admin Data ===== */
+function renderAdminData() {
+    // Stats
+    const v = DM_get('visitors');
+    const sp = DM_get('space');
+    const ss = DM_get('shuoshuo');
+    const dr = DM_get('diaries');
+    const al = DM_get('albums');
+    const vi = DM_get('videos');
+    const gb = DM_get('guestbook');
+    document.getElementById('statVisitors').textContent = v.total;
+    document.getElementById('statToday').textContent = v.today;
+    document.getElementById('statLikes').textContent = sp.like || 0;
+    document.getElementById('statSteps').textContent = sp.step || 0;
+    document.getElementById('statShuoshuo').textContent = ss.length;
+    document.getElementById('statDiary').textContent = dr.length;
+    document.getElementById('statAlbum').textContent = al.length;
+    document.getElementById('statVideo').textContent = vi.length;
+    document.getElementById('statGuestbook').textContent = gb.length;
+
+    // Shuoshuo list
+    let ssHtml = '';
+    ss.forEach(item => {
+        ssHtml += `<div class="list-item"><div class="list-item-text">${item.text}<br><span class="list-item-date">${item.date} · ❤ ${item.likes}</span></div>`;
+        ssHtml += `<div class="list-item-actions"><button class="btn-danger btn-sm" onclick="deleteShuoshuo(${item.id})">删除</button></div></div>`;
+    });
+    document.getElementById('adminShuoshuoList').innerHTML = ssHtml;
+
+    // Diary list
+    let drHtml = '';
+    dr.forEach(d => {
+        drHtml += `<div class="list-item"><div class="list-item-text">${d.title}<br><span class="list-item-date">${d.date} · 👁 ${d.views} · ❤ ${d.likes}</span></div>`;
+        drHtml += `<div class="list-item-actions"><button class="btn-danger btn-sm" onclick="deleteDiary(${d.id})">删除</button></div></div>`;
+    });
+    document.getElementById('adminDiaryList').innerHTML = drHtml;
+
+    // Album list + target album dropdown
+    let alHtml = '';
+    let optionsHtml = '';
+    al.forEach(a => {
+        alHtml += `<div class="list-item"><div class="list-item-text">${a.name} (${a.count}张)<br><span class="list-item-date">封面: ${a.cover}</span></div>`;
+        alHtml += `<div class="list-item-actions"><button class="btn-danger btn-sm" onclick="deleteAlbum(${a.id})">删除</button></div></div>`;
+        optionsHtml += `<option value="${a.id}">${a.name}</option>`;
+    });
+    document.getElementById('adminAlbumList').innerHTML = alHtml;
+    document.getElementById('targetAlbum').innerHTML = optionsHtml;
+
+    // Video list
+    let viHtml = '';
+    vi.forEach(v => {
+        viHtml += `<div class="list-item"><div class="list-item-text">${v.title}<br><span class="list-item-date">${v.date} · ${v.url}</span></div>`;
+        viHtml += `<div class="list-item-actions"><button class="btn-danger btn-sm" onclick="deleteVideo(${v.id})">删除</button></div></div>`;
+    });
+    document.getElementById('adminVideoList').innerHTML = viHtml;
+
+    // Guestbook list
+    let gbHtml = '';
+    gb.forEach(m => {
+        gbHtml += `<div class="list-item"><div class="list-item-text">${m.name}: ${m.content}<br><span class="list-item-date">${m.date} · ❤ ${m.likes}</span></div>`;
+        gbHtml += `<div class="list-item-actions"><button class="btn-danger btn-sm" onclick="deleteGuestbook(${m.id})">删除</button></div></div>`;
+    });
+    document.getElementById('adminGuestbookList').innerHTML = gbHtml;
+
+    // Settings
+    const prof = DM_get('profile');
+    document.getElementById('setSpaceName').value = prof.name;
+    document.getElementById('setSignature').value = prof.signature;
+    document.getElementById('setBirthday').value = prof.birthday;
+}
+
+/* ===== CRUD Operations ===== */
+function getToday() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function addShuoshuo() {
+    const text = document.getElementById('newShuoshuo').value.trim();
+    if (!text) return;
+    const ss = DM_get('shuoshuo');
+    ss.unshift({ id: Date.now(), text: text, date: getToday(), likes: 0 });
+    DM_set('shuoshuo', ss);
+    document.getElementById('newShuoshuo').value = '';
+    renderAdminData();
+}
+
+function deleteShuoshuo(id) {
+    const ss = DM_get('shuoshuo').filter(s => s.id !== id);
+    DM_set('shuoshuo', ss);
+    renderAdminData();
+}
+
+function addDiary() {
+    const title = document.getElementById('newDiaryTitle').value.trim();
+    const content = document.getElementById('newDiaryContent').value.trim();
+    if (!title || !content) return;
+    const excerpt = content.substring(0, 50) + '...';
+    const dr = DM_get('diaries');
+    dr.unshift({ id: Date.now(), title: title, excerpt: excerpt, content: content, date: getToday(), views: 0, likes: 0 });
+    DM_set('diaries', dr);
+    document.getElementById('newDiaryTitle').value = '';
+    document.getElementById('newDiaryContent').value = '';
+    renderAdminData();
+}
+
+function deleteDiary(id) {
+    const dr = DM_get('diaries').filter(d => d.id !== id);
+    DM_set('diaries', dr);
+    renderAdminData();
+}
+
+function addAlbum() {
+    const name = document.getElementById('newAlbumName').value.trim();
+    const cover = document.getElementById('newAlbumCover').value.trim();
+    if (!name) return;
+    const al = DM_get('albums');
+    al.push({ id: Date.now(), name: name, cover: cover || 'images/sister-1.jpg', count: 0, photos: [] });
+    DM_set('albums', al);
+    document.getElementById('newAlbumName').value = '';
+    document.getElementById('newAlbumCover').value = '';
+    renderAdminData();
+}
+
+function addPhoto() {
+    const albumId = parseInt(document.getElementById('targetAlbum').value);
+    const url = document.getElementById('newPhotoUrl').value.trim();
+    const desc = document.getElementById('newPhotoDesc').value.trim();
+    if (!albumId || !url) return;
+    const al = DM_get('albums');
+    const album = al.find(a => a.id === albumId);
+    if (album) {
+        album.photos.push({ url: url, desc: desc || '照片' });
+        album.count = album.photos.length;
+        DM_set('albums', al);
+    }
+    document.getElementById('newPhotoUrl').value = '';
+    document.getElementById('newPhotoDesc').value = '';
+    renderAdminData();
+}
+
+function deleteAlbum(id) {
+    const al = DM_get('albums').filter(a => a.id !== id);
+    DM_set('albums', al);
+    renderAdminData();
+}
+
+function addVideo() {
+    const title = document.getElementById('newVideoTitle').value.trim();
+    const url = document.getElementById('newVideoUrl').value.trim();
+    if (!title || !url) return;
+    const vi = DM_get('videos');
+    vi.unshift({ id: Date.now(), title: title, url: url, date: getToday() });
+    DM_set('videos', vi);
+    document.getElementById('newVideoTitle').value = '';
+    document.getElementById('newVideoUrl').value = '';
+    renderAdminData();
+}
+
+function deleteVideo(id) {
+    const vi = DM_get('videos').filter(v => v.id !== id);
+    DM_set('videos', vi);
+    renderAdminData();
+}
+
+function deleteGuestbook(id) {
+    const gb = DM_get('guestbook').filter(m => m.id !== id);
+    DM_set('guestbook', gb);
+    renderAdminData();
+}
+
+function saveSettings() {
+    const prof = DM_get('profile');
+    prof.name = document.getElementById('setSpaceName').value.trim();
+    prof.signature = document.getElementById('setSignature').value.trim();
+    prof.birthday = document.getElementById('setBirthday').value.trim();
+    DM_set('profile', prof);
+    alert('设置已保存！');
+}
+
+/* ===== Init defaults ===== */
+(function() {
+    const keys = ['visitors', 'space', 'shuoshuo', 'diaries', 'albums', 'videos', 'guestbook', 'profile'];
+    keys.forEach(k => {
+        if (!localStorage.getItem('guoguo_' + k)) {
+            DM_set(k, DEFAULT_DATA[k]);
+        }
+    });
+})();
+</script>
+</body>
+</html>
