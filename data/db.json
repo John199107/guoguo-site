@@ -62,25 +62,21 @@
   ],
   "tasks": {
     "guoguo": {
-      "today": [
-        { "id": 101, "text": "读一本绘本给蛋卷听", "reward": "🌸 +5", "done": false },
-        { "id": 102, "text": "画一幅画送给糖糖", "reward": "🌸 +3", "done": false }
-      ],
       "week": [
-        { "id": 103, "text": "学会一个新街舞动作", "reward": "🌸 +10", "done": false },
-        { "id": 104, "text": "用AI创作一个故事", "reward": "🌸 +8", "done": false }
+        { "id": 101, "text": "读一本绘本给蛋卷听", "reward": "🌸 +5", "done": false, "publishTime": "2026-07-28", "deadline": "2026-07-28" },
+        { "id": 102, "text": "画一幅画送给糖糖", "reward": "🌸 +3", "done": false, "publishTime": "2026-07-28", "deadline": "2026-07-29" },
+        { "id": 103, "text": "学会一个新街舞动作", "reward": "🌸 +10", "done": false, "publishTime": "2026-07-28", "deadline": "2026-08-03" },
+        { "id": 104, "text": "用AI创作一个故事", "reward": "🌸 +8", "done": false, "publishTime": "2026-07-28", "deadline": "2026-08-03" }
       ]
     },
     "parent": {
-      "today": [
-        { "id": 1, "text": "陪果果读一本绘本", "reward": "❤ +5", "done": false },
-        { "id": 2, "text": "和果果一起观察蛋卷", "reward": "❤ +3", "done": false },
-        { "id": 3, "text": "记录果果今天的开心小事", "reward": "❤ +3", "done": false }
-      ],
       "week": [
-        { "id": 4, "text": "周末带果果去公园", "reward": "🌟 +10", "done": false },
-        { "id": 5, "text": "和果果一起完成一幅画", "reward": "🌟 +8", "done": false },
-        { "id": 6, "text": "教果果一个新的AI小技巧", "reward": "🌟 +10", "done": false }
+        { "id": 1, "text": "陪果果读一本绘本", "reward": "❤ +5", "done": false, "publishTime": "2026-07-28", "deadline": "2026-07-28" },
+        { "id": 2, "text": "和果果一起观察蛋卷", "reward": "❤ +3", "done": false, "publishTime": "2026-07-28", "deadline": "2026-07-28" },
+        { "id": 3, "text": "记录果果今天的开心小事", "reward": "❤ +3", "done": false, "publishTime": "2026-07-28", "deadline": "2026-07-29" },
+        { "id": 4, "text": "周末带果果去公园", "reward": "🌟 +10", "done": false, "publishTime": "2026-07-28", "deadline": "2026-08-03" },
+        { "id": 5, "text": "和果果一起完成一幅画", "reward": "🌟 +8", "done": false, "publishTime": "2026-07-28", "deadline": "2026-08-03" },
+        { "id": 6, "text": "教果果一个新的AI小技巧", "reward": "🌟 +10", "done": false, "publishTime": "2026-07-28", "deadline": "2026-08-03" }
       ]
     }
   },
