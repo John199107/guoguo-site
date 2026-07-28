@@ -833,53 +833,50 @@ function renderHome() {
 
     let html = '';
 
-    // 果果的任务 at top
+    // 果果的任务 at top — 首页只展示未完成的（进行中+已延迟）
     if (modules.guoguoTask && tasks && tasks.guoguo && tasks.guoguo.week) {
         const weekTasks = tasks.guoguo.week;
         const todayStr = getToday();
-        // Only show tasks that are active (publishTime <= today) or overdue or done
-        const visibleTasks = weekTasks.filter(t => t.done || getTaskStatus(t) === 'overdue' || (t.publishTime && t.publishTime <= todayStr) || (!t.publishTime));
-        const activeTasks = visibleTasks.filter(t => !t.done);
-        const doneTasks = visibleTasks.filter(t => t.done);
-        const overdueTasks = visibleTasks.filter(t => getTaskStatus(t) === 'overdue');
-        const total = visibleTasks.length;
-        const done = doneTasks.length;
-        const pct = total > 0 ? Math.round(done/total*100) : 0;
-        html += '<div class="card"><div class="card-title"><span class="icon">🌸</span> 果果の任务</div>';
-        if (overdueTasks.length > 0) {
-            html += '<div style="color:var(--pink);font-size:0.85em;margin-bottom:6px">⏰ 有' + overdueTasks.length + '个任务已延迟，需关注！</div>';
+        const unfinishedTasks = weekTasks.filter(t => !t.done && getTaskStatus(t) !== 'pending');
+        const overdueTasks = unfinishedTasks.filter(t => getTaskStatus(t) === 'overdue');
+        const activeTasks = unfinishedTasks.filter(t => getTaskStatus(t) === 'active');
+        if (unfinishedTasks.length > 0) {
+            const pct = weekTasks.length > 0 ? Math.round(weekTasks.filter(t=>t.done).length/weekTasks.length*100) : 0;
+            html += '<div class="card"><div class="card-title"><span class="icon">🌸</span> 果果の任务</div>';
+            if (overdueTasks.length > 0) {
+                html += '<div style="color:var(--pink);font-size:0.85em;margin-bottom:6px">⏰ 有' + overdueTasks.length + '个任务已延迟，需关注！</div>';
+            }
+            html += '<div class="task-stats">总完成率 '+pct+'%</div>';
+            html += '<div class="task-progress"><div class="task-progress-bar" style="width:'+pct+'%"></div></div>';
+            html += '<div style="margin-top:10px">';
+            overdueTasks.forEach(t => { html += renderTaskItem(t); });
+            activeTasks.forEach(t => { html += renderTaskItem(t); });
+            html += '</div>';
+            html += '<div class="card-more"><button onclick="switchTab(\'task\')">查看全部任务 ❯</button></div></div>';
         }
-        html += '<div class="task-stats">完成率 '+done+'/'+total+' ('+pct+'%)</div>';
-        html += '<div class="task-progress"><div class="task-progress-bar" style="width:'+pct+'%"></div></div>';
-        html += '<div style="margin-top:10px">';
-        activeTasks.forEach(t => { html += renderTaskItem(t); });
-        doneTasks.forEach(t => { html += renderTaskItem(t); });
-        html += '</div>';
-        html += '<div class="card-more"><button onclick="switchTab(\'task\')">查看全部任务 ❯</button></div></div>';
     }
 
-    // 粑粑麻麻的任务 at top
+    // 粑粑麻麻的任务 at top — 首页只展示未完成的（进行中+已延迟）
     if (modules.parentTask && tasks && tasks.parent && tasks.parent.week) {
         const weekTasks = tasks.parent.week;
         const todayStr = getToday();
-        const visibleTasks = weekTasks.filter(t => t.done || getTaskStatus(t) === 'overdue' || (t.publishTime && t.publishTime <= todayStr) || (!t.publishTime));
-        const activeTasks = visibleTasks.filter(t => !t.done);
-        const doneTasks = visibleTasks.filter(t => t.done);
-        const overdueTasks = visibleTasks.filter(t => getTaskStatus(t) === 'overdue');
-        const total = visibleTasks.length;
-        const done = doneTasks.length;
-        const pct = total > 0 ? Math.round(done/total*100) : 0;
-        html += '<div class="card"><div class="card-title"><span class="icon">❤</span> 粑粑麻麻の任务</div>';
-        if (overdueTasks.length > 0) {
-            html += '<div style="color:var(--pink);font-size:0.85em;margin-bottom:6px">⏰ 有' + overdueTasks.length + '个任务已延迟，需关注！</div>';
+        const unfinishedTasks = weekTasks.filter(t => !t.done && getTaskStatus(t) !== 'pending');
+        const overdueTasks = unfinishedTasks.filter(t => getTaskStatus(t) === 'overdue');
+        const activeTasks = unfinishedTasks.filter(t => getTaskStatus(t) === 'active');
+        if (unfinishedTasks.length > 0) {
+            const pct = weekTasks.length > 0 ? Math.round(weekTasks.filter(t=>t.done).length/weekTasks.length*100) : 0;
+            html += '<div class="card"><div class="card-title"><span class="icon">❤</span> 粑粑麻麻の任务</div>';
+            if (overdueTasks.length > 0) {
+                html += '<div style="color:var(--pink);font-size:0.85em;margin-bottom:6px">⏰ 有' + overdueTasks.length + '个任务已延迟，需关注！</div>';
+            }
+            html += '<div class="task-stats">总完成率 '+pct+'%</div>';
+            html += '<div class="task-progress"><div class="task-progress-bar" style="width:'+pct+'%"></div></div>';
+            html += '<div style="margin-top:10px">';
+            overdueTasks.forEach(t => { html += renderTaskItem(t); });
+            activeTasks.forEach(t => { html += renderTaskItem(t); });
+            html += '</div>';
+            html += '<div class="card-more"><button onclick="switchTab(\'task\')">查看全部任务 ❯</button></div></div>';
         }
-        html += '<div class="task-stats">完成率 '+done+'/'+total+' ('+pct+'%)</div>';
-        html += '<div class="task-progress"><div class="task-progress-bar" style="width:'+pct+'%"></div></div>';
-        html += '<div style="margin-top:10px">';
-        activeTasks.forEach(t => { html += renderTaskItem(t); });
-        doneTasks.forEach(t => { html += renderTaskItem(t); });
-        html += '</div>';
-        html += '<div class="card-more"><button onclick="switchTab(\'task\')">查看全部任务 ❯</button></div></div>';
     }
 
     // Photos
@@ -1022,20 +1019,12 @@ function renderTasks() {
     function renderGroup(type, label, icon) {
         if (!tasks[type] || !tasks[type].week) return;
         const weekTasks = tasks[type].week;
-        // Only show tasks that are active (publishTime <= today) or overdue or done
-        const visibleTasks = weekTasks.filter(t => {
-            const status = getTaskStatus(t);
-            return status !== 'pending';
-        });
-        if (visibleTasks.length === 0) {
-            html += `<div class="task-section"><div class="task-section-title">${icon} ${label}</div>`;
-            html += '<div style="color:#888;font-size:0.85em;text-align:center;padding:12px">暂无任务 ✿</div></div>';
-            return;
-        }
-        const overdueTasks = visibleTasks.filter(t => getTaskStatus(t) === 'overdue');
-        const activeTasks = visibleTasks.filter(t => getTaskStatus(t) === 'active');
-        const doneTasks = visibleTasks.filter(t => getTaskStatus(t) === 'done');
-        const total = visibleTasks.length;
+        // 全部任务页展示所有状态
+        const pendingTasks = weekTasks.filter(t => getTaskStatus(t) === 'pending');
+        const overdueTasks = weekTasks.filter(t => getTaskStatus(t) === 'overdue');
+        const activeTasks = weekTasks.filter(t => getTaskStatus(t) === 'active');
+        const doneTasks = weekTasks.filter(t => getTaskStatus(t) === 'done');
+        const total = weekTasks.length;
         const pct = total > 0 ? Math.round(doneTasks.length/total*100) : 0;
         html += `<div class="task-section"><div class="task-section-title">${icon} ${label}</div>`;
         html += `<div class="task-stats">完成率 ${doneTasks.length}/${total} (${pct}%)</div>`;
@@ -1061,6 +1050,12 @@ function renderTasks() {
                 otherActive.forEach(t => { html += renderTaskItem(t); });
                 html += '</div>';
             }
+        }
+        if (pendingTasks.length > 0) {
+            html += `<div style="color:#a0a0c0;font-size:0.85em;margin:8px 0 4px">📋 待开始（${pendingTasks.length}个）</div>`;
+            html += '<div style="margin-top:6px">';
+            pendingTasks.forEach(t => { html += renderTaskItem(t); });
+            html += '</div>';
         }
         if (doneTasks.length > 0) {
             html += `<div style="color:var(--gold);font-size:0.85em;margin:8px 0 4px">✅ 已完成（${doneTasks.length}个）</div>`;
