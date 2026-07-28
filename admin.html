@@ -95,7 +95,7 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
 <!-- Admin Panel -->
 <div class="admin-wrap" id="adminWrap">
     <div class="admin-header">✿ 果果树洞空间管理后台 ✿</div>
-    <div style="text-align:center;color:#888;font-size:0.75em;margin-top:-10px;margin-bottom:10px">版本 v6 · 任务时间管理 + 相册照片增删改查</div>
+    <div style="text-align:center;color:#888;font-size:0.75em;margin-top:-10px;margin-bottom:10px">版本 v7 · 上传大小限制 + 图片自动压缩</div>
     <div style="text-align:center;margin-bottom:10px">
         <a href="index.html" style="color:var(--cyan);font-family:var(--font-fun);font-size:1em;box-shadow:0 0 10px rgba(125,249,255,0.2);padding:6px 16px;border-radius:16px;border:1px solid rgba(125,249,255,0.3)">返回主页 ✿</a>
     </div>
@@ -173,7 +173,7 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
                 <div class="upload-area" id="albumCoverUpload" onclick="document.getElementById('albumCoverFile').click()">
                     <div class="upload-icon">📷</div>
                     <div>点击选择封面图片 或拖入</div>
-                    <div class="upload-hint">支持 JPG / PNG，最大 5MB</div>
+                    <div class="upload-hint">支持 JPG / PNG，最大 5MB（超过1MB自动压缩）</div>
                     <input type="file" id="albumCoverFile" accept="image/*" onchange="handleFileUpload(this, 'albumCover', 'images/')" />
                 </div>
                 <div class="upload-preview" id="albumCoverPreview">
@@ -191,7 +191,7 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
                 <div class="upload-area" id="photoUpload" onclick="document.getElementById('photoFile').click()">
                     <div class="upload-icon">🖼</div>
                     <div>点击选择照片 或拖入</div>
-                    <div class="upload-hint">支持 JPG / PNG，最大 5MB</div>
+                    <div class="upload-hint">支持 JPG / PNG，最大 5MB（超过1MB自动压缩）</div>
                     <input type="file" id="photoFile" accept="image/*" onchange="handleFileUpload(this, 'photo', 'images/')" />
                 </div>
                 <div class="upload-preview" id="photoPreview">
@@ -217,7 +217,7 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
                 <div class="upload-area" id="videoUpload" onclick="document.getElementById('videoFile').click()">
                     <div class="upload-icon">🎬</div>
                     <div>点击选择视频文件 或拖入</div>
-                    <div class="upload-hint">支持 MP4，最大 50MB（GitHub限制）</div>
+                    <div class="upload-hint">支持 MP4，最大 20MB（短视频≤1分钟推荐≤15MB）</div>
                     <input type="file" id="videoFile" accept="video/*" onchange="handleFileUpload(this, 'video', 'videos/')" />
                 </div>
                 <div class="upload-preview" id="videoPreview">
@@ -243,7 +243,7 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
                 <div class="upload-area" id="musicUpload" onclick="document.getElementById('musicFile').click()">
                     <div class="upload-icon">🎵</div>
                     <div>点击选择音乐文件 或拖入</div>
-                    <div class="upload-hint">支持 MP3，最大 50MB（GitHub限制）</div>
+                    <div class="upload-hint">支持 MP3，最大 8MB（一首歌通常3-5MB）</div>
                     <input type="file" id="musicFile" accept="audio/*" onchange="handleFileUpload(this, 'music', 'images/')" />
                 </div>
                 <div class="upload-preview" id="musicPreview">
@@ -344,6 +344,40 @@ const GH_API_URL = `https://api.github.com/repos/${GH_REPO}/contents/${GH_DATA_P
 
 function utf8ToBase64(str) { return btoa(unescape(encodeURIComponent(str))); }
 
+/* ===== Image Compression ===== */
+async function compressImage(file, maxWidth = 1200, quality = 0.7) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        const reader = new FileReader();
+        reader.onload = (e) => { img.src = e.target.result; };
+        reader.readAsDataURL(file);
+        img.onload = () => {
+            let w = img.width, h = img.height;
+            if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+            const canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            // Try quality 0.7, if still > 500KB, reduce to 0.5
+            let dataUrl = canvas.toDataURL('image/jpeg', quality);
+            let approxSize = Math.round((dataUrl.length - 'data:image/jpeg;base64,'.length) * 3 / 4);
+            if (approxSize > 500 * 1024 && quality > 0.5) {
+                dataUrl = canvas.toDataURL('image/jpeg', 0.5);
+                approxSize = Math.round((dataUrl.length - 'data:image/jpeg;base64,'.length) * 3 / 4);
+            }
+            // Convert dataURL back to File
+            const byteString = atob(dataUrl.split(',')[1]);
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+            const compressed = new File([ab], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' });
+            console.log(`✿ 图片压缩: ${file.size} → ${compressed.size} (${Math.round(compressed.size/file.size*100)}%)`);
+            resolve(compressed);
+        };
+        img.onerror = () => { resolve(file); }; // fallback: use original
+    });
+}
+
 /* ===== File Upload to GitHub ===== */
 function arrayBufferToBase64(buffer) {
     let binary = '';
@@ -354,6 +388,10 @@ function arrayBufferToBase64(buffer) {
     }
     return btoa(binary);
 }
+
+// Size limits: photo 5MB, video 20MB, music 8MB, albumCover 5MB
+const UPLOAD_SIZE_LIMITS = { photo: 5, albumCover: 5, video: 20, music: 8 };
+const UPLOAD_SIZE_LABELS = { photo: '5MB（超过1MB自动压缩）', albumCover: '5MB（超过1MB自动压缩）', video: '20MB（短视频推荐≤15MB）', music: '8MB（一首歌通常3-5MB）' };
 
 async function uploadFileToGitHub(file, targetDir) {
     const ext = file.name.split('.').pop().toLowerCase();
@@ -406,23 +444,49 @@ async function handleFileUpload(input, type, targetDir) {
     const file = input.files[0];
     if (!file) return;
 
-    // Size check (50MB max for GitHub)
-    const maxSize = 50 * 1024 * 1024;
+    // Size check based on type
+    const maxMB = UPLOAD_SIZE_LIMITS[type] || 50;
+    const maxSize = maxMB * 1024 * 1024;
+    const isImage = (type === 'photo' || type === 'albumCover');
+
     if (file.size > maxSize) {
-        alert(`文件太大 (${(file.size/1024/1024).toFixed(1)}MB)，最大支持 50MB`);
+        alert(`文件太大 (${(file.size/1024/1024).toFixed(1)}MB)，${type==='video'?'视频':'音乐'}最大支持 ${maxMB}MB\n\n建议：视频用手机录短视频(≤1分钟)、音乐选MP3格式`);
         input.value = '';
         return;
+    }
+
+    // Auto-compress images over 1MB
+    let uploadFile = file;
+    if (isImage && file.size > 1 * 1024 * 1024) {
+        const previewEl = document.getElementById(type + 'Preview');
+        const nameEl = document.getElementById(type + 'Name');
+        const statusEl = document.getElementById(type + 'Status');
+        if (nameEl) nameEl.textContent = file.name + ' (' + (file.size/1024/1024).toFixed(2) + 'MB)';
+        if (statusEl) statusEl.textContent = '压缩中...';
+        if (statusEl) statusEl.style.color = '#ffd700';
+        if (previewEl) previewEl.classList.add('active');
+        uploadFile = await compressImage(file);
+        if (statusEl) statusEl.textContent = '压缩完成 (' + (uploadFile.size/1024).toFixed(0) + 'KB)，上传中...';
+        if (statusEl) statusEl.style.color = 'var(--cyan)';
+    } else {
+        const previewEl = document.getElementById(type + 'Preview');
+        const nameEl = document.getElementById(type + 'Name');
+        const statusEl = document.getElementById(type + 'Status');
+        if (nameEl) nameEl.textContent = file.name + ' (' + (file.size/1024/1024).toFixed(2) + 'MB)';
+        if (statusEl) statusEl.textContent = '上传中...';
+        if (previewEl) previewEl.classList.add('active');
     }
 
     const previewEl = document.getElementById(type + 'Preview');
     const nameEl = document.getElementById(type + 'Name');
     const statusEl = document.getElementById(type + 'Status');
-    if (nameEl) nameEl.textContent = file.name + ' (' + (file.size/1024/1024).toFixed(2) + 'MB)';
+    if (nameEl) nameEl.textContent = uploadFile.name + ' (' + (uploadFile.size > 1024*1024 ? (uploadFile.size/1024/1024).toFixed(2)+'MB' : (uploadFile.size/1024).toFixed(0)+'KB') + ')';
     if (statusEl) statusEl.textContent = '上传中...';
+    if (statusEl) statusEl.style.color = 'var(--cyan)';
     if (previewEl) previewEl.classList.add('active');
 
     try {
-        const filePath = await uploadFileToGitHub(file, targetDir);
+        const filePath = await uploadFileToGitHub(uploadFile, targetDir);
         if (statusEl) statusEl.textContent = '✓ 上传成功';
         if (statusEl) statusEl.style.color = 'var(--cyan)';
         // Auto-fill corresponding URL field
@@ -438,7 +502,7 @@ async function handleFileUpload(input, type, targetDir) {
     } catch(e) {
         if (statusEl) statusEl.textContent = '✗ 上传失败';
         if (statusEl) statusEl.style.color = 'var(--pink)';
-        alert('上传失败：' + e.message + '\n\n文件超过 50MB？文件名含中文？网络问题？');
+        alert('上传失败：' + e.message + '\n\n可能原因：文件过大、网络问题');
     }
     input.value = '';
 }
