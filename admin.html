@@ -621,6 +621,7 @@ function DM_get(key) {
 }
 function DM_set(key, val) {
     localStorage.setItem('guoguo_' + key, JSON.stringify(val));
+    localStorage.setItem('guoguo_lastLocalModify', Date.now().toString());
     _scheduleSync();
 }
 function DM_increment(key, field, amount = 1) {
@@ -662,10 +663,22 @@ async function _loadFromGitHub() {
             if (!data.bgmList) {
                 data.bgmList = [{ id: 1, name: '有何不可 - 许嵩', url: 'images/guoguo-music.mp3' }];
             }
-            Object.keys(data).forEach(k => {
-                localStorage.setItem('guoguo_' + k, JSON.stringify(data[k]));
-            });
-            console.log('✿ GitHub data loaded (admin)');
+            // Smart merge: preserve recent local modifications (within 60s)
+            const lastLocalModify = parseInt(localStorage.getItem('guoguo_lastLocalModify') || '0');
+            const now = Date.now();
+            const isRecentlyModified = (now - lastLocalModify) < 60000;
+            if (!isRecentlyModified) {
+                Object.keys(data).forEach(k => {
+                    localStorage.setItem('guoguo_' + k, JSON.stringify(data[k]));
+                });
+            } else {
+                Object.keys(data).forEach(k => {
+                    if (!localStorage.getItem('guoguo_' + k)) {
+                        localStorage.setItem('guoguo_' + k, JSON.stringify(data[k]));
+                    }
+                });
+            }
+            console.log('✿ GitHub data loaded (admin, smart merge, localModify=' + (isRecentlyModified ? 'recent' : 'none'));
             return true;
         } else if (resp.status === 404) {
             await _syncToGitHub();
