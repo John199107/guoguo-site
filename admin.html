@@ -62,6 +62,19 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
 
 /* Note */
 .admin-note{background:rgba(125,249,255,0.1);border:1px solid rgba(125,249,255,0.3);border-radius:8px;padding:10px;color:var(--cyan);font-size:0.85em;margin-bottom:16px;text-align:center}
+
+/* File upload */
+.upload-area{border:2px dashed rgba(125,249,255,0.3);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all 0.3s;background:rgba(20,20,50,0.3);margin-bottom:8px}
+.upload-area:hover{border-color:var(--pink);background:rgba(20,20,50,0.5)}
+.upload-area.dragging{border-color:var(--gold);background:rgba(255,215,0,0.1)}
+.upload-area input[type=file]{display:none}
+.upload-icon{font-size:2em;color:var(--cyan);margin-bottom:6px}
+.upload-hint{color:#a0a0c0;font-size:0.8em}
+.upload-preview{margin-top:8px;padding:8px;background:rgba(20,20,50,0.5);border-radius:8px;font-size:0.85em;color:var(--cyan);display:none}
+.upload-preview.active{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.upload-progress{height:4px;background:#333;border-radius:2px;overflow:hidden;margin-top:6px;display:none}
+.upload-progress.active{display:block}
+.upload-progress-bar{height:100%;background:linear-gradient(90deg,var(--pink),var(--purple));width:0%;transition:width 0.3s}
 </style>
 </head>
 <body>
@@ -82,7 +95,7 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
 <!-- Admin Panel -->
 <div class="admin-wrap" id="adminWrap">
     <div class="admin-header">✿ 果果树洞空间管理后台 ✿</div>
-    <div style="text-align:center;color:#888;font-size:0.75em;margin-top:-10px;margin-bottom:10px">版本 v4 · 音乐轮换 + 果果任务 + GitHub实时加载</div>
+    <div style="text-align:center;color:#888;font-size:0.75em;margin-top:-10px;margin-bottom:10px">版本 v5 · 本地文件上传 + 任务完成奖励</div>
     <div style="text-align:center;margin-bottom:10px">
         <a href="index.html" style="color:var(--cyan);font-family:var(--font-fun);font-size:1em;box-shadow:0 0 10px rgba(125,249,255,0.2);padding:6px 16px;border-radius:16px;border:1px solid rgba(125,249,255,0.3)">返回主页 ✿</a>
     </div>
@@ -157,6 +170,16 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
             <div class="admin-card-title">创建新相册</div>
             <div class="admin-form">
                 <input id="newAlbumName" placeholder="相册名称" />
+                <div class="upload-area" id="albumCoverUpload" onclick="document.getElementById('albumCoverFile').click()">
+                    <div class="upload-icon">📷</div>
+                    <div>点击选择封面图片 或拖入</div>
+                    <div class="upload-hint">支持 JPG / PNG，最大 5MB</div>
+                    <input type="file" id="albumCoverFile" accept="image/*" onchange="handleFileUpload(this, 'albumCover', 'images/')" />
+                </div>
+                <div class="upload-preview" id="albumCoverPreview">
+                    <span id="albumCoverName"></span>
+                    <span id="albumCoverStatus"></span>
+                </div>
                 <input id="newAlbumCover" placeholder="封面图片URL (如 images/xxx.jpg)" />
                 <button class="btn-primary" onclick="addAlbum()">创建 ✿</button>
             </div>
@@ -165,7 +188,17 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
             <div class="admin-card-title">添加照片到相册</div>
             <div class="admin-form">
                 <select id="targetAlbum" style="width:100%;background:rgba(20,20,50,0.6);border:1px solid rgba(125,249,255,0.2);border-radius:8px;color:#d0d0e8;padding:8px;margin-bottom:8px"></select>
-                <div class="row"><input id="newPhotoUrl" placeholder="照片URL" /><input id="newPhotoDesc" placeholder="照片描述" /></div>
+                <div class="upload-area" id="photoUpload" onclick="document.getElementById('photoFile').click()">
+                    <div class="upload-icon">🖼</div>
+                    <div>点击选择照片 或拖入</div>
+                    <div class="upload-hint">支持 JPG / PNG，最大 5MB</div>
+                    <input type="file" id="photoFile" accept="image/*" onchange="handleFileUpload(this, 'photo', 'images/')" />
+                </div>
+                <div class="upload-preview" id="photoPreview">
+                    <span id="photoName"></span>
+                    <span id="photoStatus"></span>
+                </div>
+                <div class="row"><input id="newPhotoUrl" placeholder="照片URL (上传后自动填充)" /><input id="newPhotoDesc" placeholder="照片描述" /></div>
                 <button class="btn-primary" onclick="addPhoto()">添加 ✿</button>
             </div>
         </div>
@@ -180,7 +213,18 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
         <div class="admin-card">
             <div class="admin-card-title">添加新视频</div>
             <div class="admin-form">
-                <div class="row"><input id="newVideoTitle" placeholder="视频标题" /><input id="newVideoUrl" placeholder="视频URL (如 videos/xxx.mp4)" /></div>
+                <input id="newVideoTitle" placeholder="视频标题" />
+                <div class="upload-area" id="videoUpload" onclick="document.getElementById('videoFile').click()">
+                    <div class="upload-icon">🎬</div>
+                    <div>点击选择视频文件 或拖入</div>
+                    <div class="upload-hint">支持 MP4，最大 50MB（GitHub限制）</div>
+                    <input type="file" id="videoFile" accept="video/*" onchange="handleFileUpload(this, 'video', 'videos/')" />
+                </div>
+                <div class="upload-preview" id="videoPreview">
+                    <span id="videoName"></span>
+                    <span id="videoStatus"></span>
+                </div>
+                <input id="newVideoUrl" placeholder="视频URL (上传后自动填充)" />
                 <button class="btn-primary" onclick="addVideo()">添加 ✿</button>
             </div>
         </div>
@@ -196,7 +240,17 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
             <div class="admin-card-title">🎵 添加背景音乐</div>
             <div class="admin-form">
                 <input id="newMusicName" placeholder="歌曲名称 (如: 有何不可 - 许嵩)" />
-                <input id="newMusicUrl" placeholder="音乐URL (如: images/xxx.mp3)" />
+                <div class="upload-area" id="musicUpload" onclick="document.getElementById('musicFile').click()">
+                    <div class="upload-icon">🎵</div>
+                    <div>点击选择音乐文件 或拖入</div>
+                    <div class="upload-hint">支持 MP3，最大 50MB（GitHub限制）</div>
+                    <input type="file" id="musicFile" accept="audio/*" onchange="handleFileUpload(this, 'music', 'images/')" />
+                </div>
+                <div class="upload-preview" id="musicPreview">
+                    <span id="musicName"></span>
+                    <span id="musicStatus"></span>
+                </div>
+                <input id="newMusicUrl" placeholder="音乐URL (上传后自动填充)" />
                 <button class="btn-primary" onclick="addMusic()">添加 ✿</button>
             </div>
         </div>
@@ -307,6 +361,105 @@ const GH_RAW_URL = `https://raw.githubusercontent.com/${GH_REPO}/main/${GH_DATA_
 const GH_API_URL = `https://api.github.com/repos/${GH_REPO}/contents/${GH_DATA_PATH}`;
 
 function utf8ToBase64(str) { return btoa(unescape(encodeURIComponent(str))); }
+
+/* ===== File Upload to GitHub ===== */
+function arrayBufferToBase64(buffer) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+}
+
+async function uploadFileToGitHub(file, targetDir) {
+    const ext = file.name.split('.').pop().toLowerCase();
+    // Generate unique filename with timestamp
+    const baseName = file.name.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
+    const fileName = `${baseName}_${Date.now()}.${ext}`;
+    const filePath = `${targetDir}${fileName}`;
+
+    const arrayBuffer = await file.arrayBuffer();
+    const content = arrayBufferToBase64(arrayBuffer);
+
+    // Check if file exists, get SHA
+    let existingSha = null;
+    try {
+        const checkResp = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${filePath}`, {
+            headers: { 'Authorization': 'token ' + GH_TOKEN, 'Accept': 'application/vnd.github+json' }
+        });
+        if (checkResp.ok) {
+            const d = await checkResp.json();
+            existingSha = d.sha;
+        }
+    } catch(e) {}
+
+    const payload = {
+        message: `上传文件 ${fileName} - ${new Date().toLocaleString('zh-CN')}`,
+        content: content,
+        branch: 'main'
+    };
+    if (existingSha) payload.sha = existingSha;
+
+    const resp = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${filePath}`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': 'token ' + GH_TOKEN,
+            'Accept': 'application/vnd.github+json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    });
+
+    if (resp.ok) {
+        return filePath; // Returns relative path like "images/xxx.mp4"
+    } else {
+        const errText = await resp.text();
+        throw new Error(`GitHub API ${resp.status}: ${errText}`);
+    }
+}
+
+async function handleFileUpload(input, type, targetDir) {
+    const file = input.files[0];
+    if (!file) return;
+
+    // Size check (50MB max for GitHub)
+    const maxSize = 50 * 1024 * 1024;
+    if (file.size > maxSize) {
+        alert(`文件太大 (${(file.size/1024/1024).toFixed(1)}MB)，最大支持 50MB`);
+        input.value = '';
+        return;
+    }
+
+    const previewEl = document.getElementById(type + 'Preview');
+    const nameEl = document.getElementById(type + 'Name');
+    const statusEl = document.getElementById(type + 'Status');
+    if (nameEl) nameEl.textContent = file.name + ' (' + (file.size/1024/1024).toFixed(2) + 'MB)';
+    if (statusEl) statusEl.textContent = '上传中...';
+    if (previewEl) previewEl.classList.add('active');
+
+    try {
+        const filePath = await uploadFileToGitHub(file, targetDir);
+        if (statusEl) statusEl.textContent = '✓ 上传成功';
+        if (statusEl) statusEl.style.color = 'var(--cyan)';
+        // Auto-fill corresponding URL field
+        if (type === 'video') {
+            document.getElementById('newVideoUrl').value = filePath;
+        } else if (type === 'photo') {
+            document.getElementById('newPhotoUrl').value = filePath;
+        } else if (type === 'music') {
+            document.getElementById('newMusicUrl').value = filePath;
+        } else if (type === 'albumCover') {
+            document.getElementById('newAlbumCover').value = filePath;
+        }
+    } catch(e) {
+        if (statusEl) statusEl.textContent = '✗ 上传失败';
+        if (statusEl) statusEl.style.color = 'var(--pink)';
+        alert('上传失败：' + e.message + '\n\n文件超过 50MB？文件名含中文？网络问题？');
+    }
+    input.value = '';
+}
 
 /* ===== Data Layer (same as index.html) ===== */
 const DEFAULT_DATA = {
@@ -690,22 +843,28 @@ function addAlbum() {
     DM_set('albums', al);
     document.getElementById('newAlbumName').value = '';
     document.getElementById('newAlbumCover').value = '';
+    document.getElementById('albumCoverPreview').classList.remove('active');
     renderAdminData();
 }
 function addPhoto() {
     const albumId = parseInt(document.getElementById('targetAlbum').value);
     const url = document.getElementById('newPhotoUrl').value.trim();
     const desc = document.getElementById('newPhotoDesc').value.trim();
-    if (!albumId || !url) return;
+    if (!albumId || !url) { alert('请先上传照片 ✿'); return; }
     const al = DM_get('albums');
     const album = al.find(a => a.id === albumId);
     if (album) {
         album.photos.push({ url: url, desc: desc || '照片' });
         album.count = album.photos.length;
+        // If this is the first photo, use it as cover
+        if (!album.cover || album.cover === 'images/sister-1.jpg') {
+            album.cover = url;
+        }
         DM_set('albums', al);
     }
     document.getElementById('newPhotoUrl').value = '';
     document.getElementById('newPhotoDesc').value = '';
+    document.getElementById('photoPreview').classList.remove('active');
     renderAdminData();
 }
 function deleteAlbum(id) {
@@ -717,12 +876,13 @@ function deleteAlbum(id) {
 function addVideo() {
     const title = document.getElementById('newVideoTitle').value.trim();
     const url = document.getElementById('newVideoUrl').value.trim();
-    if (!title || !url) return;
+    if (!title || !url) { alert('请填标题并上传视频 ✿'); return; }
     const vi = DM_get('videos');
     vi.unshift({ id: Date.now(), title: title, url: url, date: getToday() });
     DM_set('videos', vi);
     document.getElementById('newVideoTitle').value = '';
     document.getElementById('newVideoUrl').value = '';
+    document.getElementById('videoPreview').classList.remove('active');
     renderAdminData();
 }
 function deleteVideo(id) {
@@ -762,11 +922,23 @@ function toggleTaskDone(type, period, id) {
     if (tasks[type] && tasks[type][period]) {
         const t = tasks[type][period].find(x => x.id === id);
         if (t) {
+            const wasDone = t.done;
             t.done = !t.done;
             DM_set('tasks', tasks);
             renderAdminData();
+            // Show reward notification
+            const reward = t.reward || '';
+            const msg = t.done ? '🌸 任务完成 ' + reward : '已取消完成';
+            flashAdminMsg(msg);
         }
     }
+}
+function flashAdminMsg(text) {
+    const el = document.createElement('div');
+    el.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;padding:12px 24px;border-radius:20px;font-family:var(--font-fun);box-shadow:0 0 20px rgba(255,107,157,0.5);z-index:10000;animation:flashIn 1.6s ease-out forwards';
+    el.textContent = text;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1700);
 }
 function renderAdminTaskItem(t, type, period) {
     return `<div class="list-item"><div class="list-item-text"><div class="truncate">${t.text}</div><div class="list-item-date">${t.reward} · ${t.done?'✅ 已完成':'⬜ 未完成'}</div></div>` +
@@ -775,12 +947,13 @@ function renderAdminTaskItem(t, type, period) {
 function addMusic() {
     const name = document.getElementById('newMusicName').value.trim();
     const url = document.getElementById('newMusicUrl').value.trim();
-    if (!name || !url) return;
+    if (!name || !url) { alert('请填歌名并上传音乐 ✿'); return; }
     const list = DM_get('bgmList') || [];
     list.push({ id: Date.now(), name: name, url: url });
     DM_set('bgmList', list);
     document.getElementById('newMusicName').value = '';
     document.getElementById('newMusicUrl').value = '';
+    document.getElementById('musicPreview').classList.remove('active');
     renderAdminData();
 }
 function deleteMusic(id) {
