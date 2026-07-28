@@ -209,8 +209,10 @@ a:hover{text-decoration:underline;color:#ff6b9d}
 /* ===== Home Section ===== */
 .home-feed{display:flex;flex-direction:column;gap:16px}
 .home-photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:12px}
-.home-photos img{width:100%;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--border-glow);cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;background:#141432}
+.home-photos img{width:100%;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--border-glow);cursor:pointer;transition:transform 0.2s,box-shadow 0.2s,filter 0.4s;background:#141432}
 .home-photos img:hover{transform:scale(1.05);box-shadow:0 0 15px rgba(255,107,157,0.4)}
+.img-placeholder{filter:blur(8px);transition:filter 0.5s}
+.img-placeholder.loaded{filter:blur(0)}
 .home-video-preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
 .home-video-preview video{width:100%;aspect-ratio:16/9;border-radius:8px;object-fit:cover;background:#000;cursor:pointer}
 
@@ -320,7 +322,7 @@ a:hover{text-decoration:underline;color:#ff6b9d}
 <div class="mobile-profile" id="mobileProfile" style="display:none;padding:12px;background:var(--card-bg);border-bottom:1px solid var(--border-glow)">
     <div style="display:flex;align-items:center;gap:12px">
         <div class="profile-avatar-wrap" style="width:70px;height:70px;margin:0">
-            <img class="profile-avatar" style="width:70px;height:70px" src="images/avatar-main-v3.jpg" alt="果果" loading="lazy" />
+            <img class="profile-avatar img-placeholder" style="width:70px;height:70px" src="https://cdn.jsdelivr.net/gh/John199107/guoguo-site@main/images/thumbs/avatar-main-v3.jpg" data-full="https://cdn.jsdelivr.net/gh/John199107/guoguo-site@main/images/avatar-main-v3.jpg" alt="果果" loading="lazy" onload="this.classList.add('loaded');if(this.dataset.full&&this.src!==this.dataset.full){this.src=this.dataset.full}" />
             <div class="yellow-diamond" style="width:24px;height:24px;top:-4px;right:-4px">
                 <svg viewBox="0 0 40 40" style="width:24px;height:24px">
                     <defs><linearGradient id="yzGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#fff6a8"/><stop offset="40%" style="stop-color:#ffd700"/><stop offset="100%" style="stop-color:#d4a000"/></linearGradient></defs>
@@ -345,7 +347,7 @@ a:hover{text-decoration:underline;color:#ff6b9d}
         <!-- Profile Card -->
         <div class="profile-card">
             <div class="profile-avatar-wrap">
-                <img class="profile-avatar" src="images/avatar-main-v3.jpg" alt="果果" loading="lazy" />
+                <img class="profile-avatar img-placeholder" src="https://cdn.jsdelivr.net/gh/John199107/guoguo-site@main/images/thumbs/avatar-main-v3.jpg" data-full="https://cdn.jsdelivr.net/gh/John199107/guoguo-site@main/images/avatar-main-v3.jpg" alt="果果" loading="lazy" onload="this.classList.add('loaded');if(this.dataset.full&&this.src!==this.dataset.full){this.src=this.dataset.full}" />
                 <div class="yellow-diamond">
                     <svg viewBox="0 0 40 40">
                         <defs><linearGradient id="yzGrad2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#fff6a8"/><stop offset="40%" style="stop-color:#ffd700"/><stop offset="100%" style="stop-color:#d4a000"/></linearGradient></defs>
@@ -500,6 +502,26 @@ const GH_DATA_PATH = 'data/db.json';
 const GH_RAW_URL = `https://raw.githubusercontent.com/${GH_REPO}/main/${GH_DATA_PATH}`;
 const GH_API_URL = `https://api.github.com/repos/${GH_REPO}/contents/${GH_DATA_PATH}`;
 
+/* ===== CDN Acceleration (jsDelivr has China nodes) ===== */
+const CDN_BASE = `https://cdn.jsdelivr.net/gh/${GH_REPO}@main`;
+function cdnUrl(path) {
+    // Convert relative path like "images/xxx.jpg" or "videos/xxx.mp4" to jsDelivr CDN URL
+    if (!path) return path;
+    if (path.startsWith('http://') || path.startsWith('https://')) return path;
+    return CDN_BASE + '/' + path;
+}
+function thumbUrl(path) {
+    // Use thumbnail for preview display (e.g. album covers, home page photos)
+    if (!path) return path;
+    if (path.startsWith('http://') || path.startsWith('https://')) return path;
+    const ext = path.split('.').pop().toLowerCase();
+    if (ext === 'jpg' || ext === 'jpeg' || ext === 'png' || ext === 'webp') {
+        const base = path.replace(/\.[^.]+$/, '');
+        return CDN_BASE + '/' + base.replace('images/', 'images/thumbs/') + '.jpg';
+    }
+    return cdnUrl(path);
+}
+
 function utf8ToBase64(str) {
     return btoa(unescape(encodeURIComponent(str)));
 }
@@ -537,10 +559,10 @@ const DEFAULT_DATA = {
         { id: 3, name: '果果的街舞', cover: 'images/guoguo-dance.jpg', count: 1, photos: [
             { url: 'images/guoguo-dance.jpg', desc: '果果跳街舞 ✿' }
         ]},
-        { id: 4, name: '果果的海报', cover: 'images/poster-v2.png', count: 3, photos: [
-            { url: 'images/poster-v2.png', desc: '果果的梦幻海报 ✿' },
-            { url: 'images/poster-v3.png', desc: '果果的舞蹈海报 ❀' },
-            { url: 'images/poster-v4.png', desc: '果果的唱歌海报 ❁' }
+        { id: 4, name: '果果的海报', cover: 'images/poster-v2.jpg', count: 3, photos: [
+            { url: 'images/poster-v2.jpg', desc: '果果的梦幻海报 ✿' },
+            { url: 'images/poster-v3.jpg', desc: '果果的舞蹈海报 ❀' },
+            { url: 'images/poster-v4.jpg', desc: '果果的唱歌海报 ❁' }
         ]},
         { id: 5, name: '蛋卷的日常', cover: 'images/danjuan-real.jpg', count: 1, photos: [
             { url: 'images/danjuan-real.jpg', desc: '可爱的蛋卷 ✿' }
@@ -630,7 +652,7 @@ class DataManager {
     }
     async loadFromGitHub() {
         try {
-            const resp = await fetch(GH_RAW_URL + '?t=' + Date.now());
+            const resp = await fetch(cdnUrl(GH_DATA_PATH) + '?t=' + Date.now());
             if (resp.ok) {
                 const data = await resp.json();
                 // Migrate old task structure (today → week with deadline)
@@ -887,7 +909,7 @@ function renderHome() {
         albums.forEach(album => {
             album.photos.slice(0, 2).forEach(photo => {
                 if (count < 6) {
-                    html += `<img src="${photo.url}" alt="${photo.desc}" loading="lazy" onclick="openPhotoViewer('${photo.url}','${photo.desc}')" />`;
+                    html += `<img class="img-placeholder" src="${thumbUrl(photo.url)}" data-full="${cdnUrl(photo.url)}" alt="${photo.desc}" loading="lazy" onclick="openPhotoViewer('${cdnUrl(photo.url)}','${photo.desc}')" onload="this.classList.add('loaded');if(this.dataset.full&&this.src!==this.dataset.full){this.src=this.dataset.full}" />`;
                     count++;
                 }
             });
@@ -925,7 +947,7 @@ function renderHome() {
         html += '<div class="album-grid" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr))">';
         albums.slice(0, 4).forEach(a => {
             html += `<div class="album-card" onclick="openAlbum(${a.id})">`;
-            html += `<img class="album-cover" src="${a.cover}" alt="${a.name}" loading="lazy" />`;
+            html += `<img class="album-cover img-placeholder" src="${thumbUrl(a.cover)}" data-full="${cdnUrl(a.cover)}" alt="${a.name}" loading="lazy" onload="this.classList.add('loaded');if(this.dataset.full&&this.src!==this.dataset.full){this.src=this.dataset.full}" />`;
             html += `<div class="album-info"><div class="album-name">❀ ${a.name}</div>`;
             html += `<div class="album-count">${a.count} 张照片</div></div></div>`;
         });
@@ -938,7 +960,7 @@ function renderHome() {
         html += '<div class="card"><div class="card-title"><span class="icon">🎬</span> 果果的视频</div>';
         html += '<div class="home-video-preview">';
         videos.slice(0, 3).forEach(v => {
-            html += `<video src="${v.url}" poster="${getVideoPoster(v.url)}" preload="none" controls onclick="pauseEvent(event);switchTab('video')" playsinline></video>`;
+            html += `<video data-src="${cdnUrl(v.url)}" poster="${getVideoPoster(v.url)}" preload="none" controls onclick="loadVideo(this);pauseEvent(event);switchTab('video')" playsinline></video>`;
         });
         html += '</div>';
         html += '<div class="card-more"><button onclick="switchTab(\'video\')">查看更多视频 ❯</button></div></div>';
@@ -1005,6 +1027,30 @@ function flashReward(text, x = 0) {
 function getVideoPoster(url) {
     // Use a tiny transparent pixel as placeholder; browser will use first frame if possible
     return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+}
+function loadVideo(el) {
+    // Lazy load: only set src when user actually interacts
+    if (!el.src && el.dataset.src) {
+        el.src = el.dataset.src;
+        delete el.dataset.src;
+    }
+}
+function setupVideoLazyLoad() {
+    // Use IntersectionObserver to preload video src when user scrolls near it
+    if (!('IntersectionObserver' in window)) return;
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const video = entry.target;
+                if (!video.src && video.dataset.src) {
+                    video.src = video.dataset.src;
+                    delete video.dataset.src;
+                }
+                observer.unobserve(video);
+            }
+        });
+    }, { rootMargin: '200px' }); // Load 200px before entering viewport
+    document.querySelectorAll('#videoGrid video[data-src]').forEach(v => observer.observe(v));
 }
 function pauseEvent(e) {
     e.stopPropagation();
@@ -1134,7 +1180,7 @@ function openAlbum(albumId) {
     currentAlbum = albums.find(a => a.id === albumId);
     currentPhotoIdx = 0;
     if (currentAlbum && currentAlbum.photos.length > 0) {
-        openPhotoViewer(currentAlbum.photos[0].url, currentAlbum.photos[0].desc);
+        openPhotoViewer(cdnUrl(currentAlbum.photos[0].url), currentAlbum.photos[0].desc);
     }
 }
 function openPhotoViewer(url, desc) {
@@ -1150,14 +1196,14 @@ function prevPhoto() {
     if (!currentAlbum) return;
     currentPhotoIdx = Math.max(0, currentPhotoIdx - 1);
     const photo = currentAlbum.photos[currentPhotoIdx];
-    document.getElementById('photoViewerImg').src = photo.url;
+    document.getElementById('photoViewerImg').src = cdnUrl(photo.url);
     document.getElementById('photoViewerDesc').textContent = photo.desc;
 }
 function nextPhoto() {
     if (!currentAlbum) return;
     currentPhotoIdx = Math.min(currentAlbum.photos.length - 1, currentPhotoIdx + 1);
     const photo = currentAlbum.photos[currentPhotoIdx];
-    document.getElementById('photoViewerImg').src = photo.url;
+    document.getElementById('photoViewerImg').src = cdnUrl(photo.url);
     document.getElementById('photoViewerDesc').textContent = photo.desc;
 }
 
@@ -1166,11 +1212,13 @@ function renderVideo() {
     const videos = DM.get('videos');
     let html = '';
     videos.forEach(v => {
-        html += `<div class="video-card"><video src="${v.url}" controls preload="none" playsinline onplay="pauseBgmForVideo()" onended="resumeBgmAfterVideo()" onpause="resumeBgmAfterVideo()"></video>`;
+        html += `<div class="video-card"><video data-src="${cdnUrl(v.url)}" controls preload="none" playsinline onplay="loadVideo(this);pauseBgmForVideo()" onended="resumeBgmAfterVideo()" onpause="resumeBgmAfterVideo()"></video>`;
         html += `<div class="video-info"><div class="video-title">🎬 ${v.title}</div>`;
         html += `<div class="video-date">✿ ${v.date}</div></div></div>`;
     });
     document.getElementById('videoGrid').innerHTML = html;
+    // IntersectionObserver: only load video when user scrolls near it
+    setupVideoLazyLoad();
 }
 let bgmPausedByVideo = false;
 function pauseBgmForVideo() {
