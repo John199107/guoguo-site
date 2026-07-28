@@ -119,6 +119,8 @@ a:hover{text-decoration:underline;color:#ff6b9d}
 .music-player{position:fixed;bottom:0;left:0;width:100%;z-index:200;background:rgba(10,10,46,0.95);backdrop-filter:blur(10px);border-top:1px solid var(--border-glow);display:flex;align-items:center;padding:6px 12px;gap:8px;font-size:0.85em}
 .music-btn{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1em;box-shadow:0 0 10px rgba(255,107,157,0.3);transition:transform 0.2s;flex-shrink:0}
 .music-btn:hover{transform:scale(1.15)}
+.music-prev,.music-next{width:28px;height:28px;border-radius:50%;background:rgba(199,125,255,0.3);border:1px solid rgba(199,125,255,0.5);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.75em;flex-shrink:0;transition:background 0.2s}
+.music-prev:hover,.music-next:hover{background:rgba(199,125,255,0.6)}
 .music-info{flex:1;color:#a0a0c0;overflow:hidden;white-space:nowrap;min-width:0}
 .music-info .song-name{color:var(--pink);animation:marquee 8s linear infinite;display:inline-block;padding-left:100%}
 @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
@@ -217,7 +219,7 @@ a:hover{text-decoration:underline;color:#ff6b9d}
 .task-section-title{font-family:var(--font-fun);color:var(--cyan);font-size:1em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .task-item{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(10,10,30,0.4);border-radius:8px;margin-bottom:8px;transition:all 0.2s}
 .task-item:hover{background:rgba(10,10,30,0.6)}
-.task-checkbox{width:20px;height:20px;border-radius:50%;border:2px solid var(--pink);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s}
+.task-checkbox{width:20px;height:20px;border-radius:50%;border:2px solid var(--pink);cursor:default;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s}
 .task-checkbox:hover{border-color:var(--cyan)}
 .task-checkbox.checked{background:var(--pink);border-color:var(--pink)}
 .task-checkbox.checked::after{content:'✓';color:#fff;font-size:12px}
@@ -283,9 +285,7 @@ a:hover{text-decoration:underline;color:#ff6b9d}
 </div>
 
 <!-- Audio -->
-<audio id="bgmAudio" loop preload="metadata">
-    <source src="images/guoguo-music.mp3" type="audio/mpeg" />
-</audio>
+<audio id="bgmAudio" preload="metadata"></audio>
 
 <!-- Navigation -->
 <nav class="nav-bar">
@@ -433,7 +433,7 @@ a:hover{text-decoration:underline;color:#ff6b9d}
 
         <!-- Task Section -->
         <div class="section" id="sec-task">
-            <div class="section-header">✿ 粑粑麻麻の任务 ✿</div>
+            <div class="section-header">✿ 果果と粑粑麻麻の任务 ✿</div>
             <div id="taskList"></div>
         </div>
 
@@ -466,9 +466,11 @@ a:hover{text-decoration:underline;color:#ff6b9d}
 
 <!-- Music Player -->
 <div class="music-player">
+    <button class="music-prev" onclick="prevSong()" title="上一曲">⏮</button>
     <button class="music-btn" id="musicToggle" onclick="toggleMusic()">▶</button>
+    <button class="music-next" onclick="nextSong()" title="下一曲">⏭</button>
     <div class="music-info">
-        <span class="song-name">有何不可 - 许嵩 ✿</span>
+        <span class="song-name" id="songName">加载中... ✿</span>
     </div>
     <div class="music-progress" onclick="seekMusic(event)">
         <div class="music-progress-bar" id="musicProgress"></div>
@@ -549,17 +551,32 @@ const DEFAULT_DATA = {
         { id: 2, name: '蛋卷粉丝', content: '蛋卷也太可爱了吧！🐹 跑轮小马达~', date: '2026-07-24', likes: 2 },
         { id: 3, name: '街舞达人', content: '果果跳街舞太酷了！下次一起跳！✿', date: '2026-07-23', likes: 1 }
     ],
+    bgmList: [
+        { id: 1, name: '有何不可 - 许嵩', url: 'images/guoguo-music.mp3' }
+    ],
     tasks: {
-        today: [
-            { id: 1, text: '陪果果读一本绘本', reward: '❤ +5', done: false },
-            { id: 2, text: '和果果一起观察蛋卷', reward: '❤ +3', done: false },
-            { id: 3, text: '记录果果今天的开心小事', reward: '❤ +3', done: false }
-        ],
-        week: [
-            { id: 4, text: '周末带果果去公园', reward: '🌟 +10', done: false },
-            { id: 5, text: '和果果一起完成一幅画', reward: '🌟 +8', done: false },
-            { id: 6, text: '教果果一个新的AI小技巧', reward: '🌟 +10', done: false }
-        ]
+        guoguo: {
+            today: [
+                { id: 101, text: '读一本绘本给蛋卷听', reward: '🌸 +5', done: false },
+                { id: 102, text: '画一幅画送给糖糖', reward: '🌸 +3', done: false }
+            ],
+            week: [
+                { id: 103, text: '学会一个新街舞动作', reward: '🌸 +10', done: false },
+                { id: 104, text: '用AI创作一个故事', reward: '🌸 +8', done: false }
+            ]
+        },
+        parent: {
+            today: [
+                { id: 1, text: '陪果果读一本绘本', reward: '❤ +5', done: false },
+                { id: 2, text: '和果果一起观察蛋卷', reward: '❤ +3', done: false },
+                { id: 3, text: '记录果果今天的开心小事', reward: '❤ +3', done: false }
+            ],
+            week: [
+                { id: 4, text: '周末带果果去公园', reward: '🌟 +10', done: false },
+                { id: 5, text: '和果果一起完成一幅画', reward: '🌟 +8', done: false },
+                { id: 6, text: '教果果一个新的AI小技巧', reward: '🌟 +10', done: false }
+            ]
+        }
     },
     homeModules: {
         profile: true,
@@ -568,7 +585,8 @@ const DEFAULT_DATA = {
         diary: true,
         album: true,
         video: true,
-        task: true,
+        guoguoTask: true,
+        parentTask: true,
         guestbook: false,
         visitor: true,
         likeStep: true,
@@ -607,6 +625,17 @@ class DataManager {
             const resp = await fetch(GH_RAW_URL + '?t=' + Date.now());
             if (resp.ok) {
                 const data = await resp.json();
+                // Migrate old task structure
+                if (data.tasks && data.tasks.today && !data.tasks.guoguo) {
+                    data.tasks = {
+                        guoguo: { today: [], week: [] },
+                        parent: { today: data.tasks.today, week: data.tasks.week }
+                    };
+                }
+                // Ensure bgmList exists
+                if (!data.bgmList) {
+                    data.bgmList = [{ id: 1, name: '有何不可 - 许嵩', url: 'images/guoguo-music.mp3' }];
+                }
                 Object.keys(data).forEach(k => {
                     localStorage.setItem('guoguo_' + k, JSON.stringify(data[k]));
                 });
@@ -634,7 +663,7 @@ class DataManager {
     }
     async _syncToGitHub() {
         const allData = {};
-        const keys = ['profile', 'visitors', 'space', 'shuoshuo', 'diaries', 'albums', 'videos', 'guestbook', 'tasks', 'homeModules'];
+        const keys = ['profile', 'visitors', 'space', 'bgmList', 'shuoshuo', 'diaries', 'albums', 'videos', 'guestbook', 'tasks', 'homeModules'];
         keys.forEach(k => { allData[k] = this.get(k); });
         const content = utf8ToBase64(JSON.stringify(allData));
         await this._getSha();
@@ -682,6 +711,7 @@ class DataManager {
         if (typeof renderHome === 'function') renderHome();
         if (typeof renderTasks === 'function') renderTasks();
         if (typeof renderRecentVisitors === 'function') renderRecentVisitors();
+        if (typeof loadBgmList === 'function') loadBgmList();
     }
 }
 const DM = new DataManager();
@@ -779,6 +809,30 @@ function renderHome() {
 
     let html = '';
 
+    // 果果的任务 at top
+    if (modules.guoguoTask && tasks && tasks.guoguo) {
+        html += '<div class="card"><div class="card-title"><span class="icon">🌸</span> 果果の任务</div>';
+        html += '<div class="task-section"><div class="task-section-title">📅 今日任务</div>';
+        tasks.guoguo.today.slice(0, 3).forEach(t => { html += renderTaskItem(t); });
+        html += '</div>';
+        html += '<div class="task-section"><div class="task-section-title">📆 本周任务</div>';
+        tasks.guoguo.week.slice(0, 2).forEach(t => { html += renderTaskItem(t); });
+        html += '</div>';
+        html += '<div class="card-more"><button onclick="switchTab(\'task\')">查看全部任务 ❯</button></div></div>';
+    }
+
+    // 粑粑麻麻的任务 at top
+    if (modules.parentTask && tasks && tasks.parent) {
+        html += '<div class="card"><div class="card-title"><span class="icon">❤</span> 粑粑麻麻の任务</div>';
+        html += '<div class="task-section"><div class="task-section-title">📅 今日任务</div>';
+        tasks.parent.today.slice(0, 3).forEach(t => { html += renderTaskItem(t); });
+        html += '</div>';
+        html += '<div class="task-section"><div class="task-section-title">📆 本周任务</div>';
+        tasks.parent.week.slice(0, 2).forEach(t => { html += renderTaskItem(t); });
+        html += '</div>';
+        html += '<div class="card-more"><button onclick="switchTab(\'task\')">查看全部任务 ❯</button></div></div>';
+    }
+
     // Photos
     if (modules.photos) {
         html += '<div class="card"><div class="card-title"><span class="icon">📷</span> 果果的照片</div>';
@@ -844,22 +898,6 @@ function renderHome() {
         html += '<div class="card-more"><button onclick="switchTab(\'video\')">查看更多视频 ❯</button></div></div>';
     }
 
-    // Tasks
-    if (modules.task && tasks) {
-        html += '<div class="card"><div class="card-title"><span class="icon">📝</span> 粑粑麻麻的任务</div>';
-        html += '<div class="task-section"><div class="task-section-title">📅 今日任务</div>';
-        tasks.today.slice(0, 3).forEach(t => {
-            html += renderTaskItem(t);
-        });
-        html += '</div>';
-        html += '<div class="task-section"><div class="task-section-title">📆 本周任务</div>';
-        tasks.week.slice(0, 2).forEach(t => {
-            html += renderTaskItem(t);
-        });
-        html += '</div>';
-        html += '<div class="card-more"><button onclick="switchTab(\'task\')">查看全部任务 ❯</button></div></div>';
-    }
-
     // Guestbook preview
     if (modules.guestbook) {
         const msgs = DM.get('guestbook');
@@ -875,7 +913,7 @@ function renderHome() {
     document.getElementById('homeFeed').innerHTML = html;
 }
 function renderTaskItem(t) {
-    return `<div class="task-item"><div class="task-checkbox ${t.done?'checked':''}" onclick="toggleTask(${t.id},event)"></div>` +
+    return `<div class="task-item"><div class="task-checkbox ${t.done?'checked':''}"></div>` +
            `<div class="task-text ${t.done?'done':''}">${t.text}</div>` +
            `<div class="task-reward">${t.reward}</div></div>`;
 }
@@ -892,37 +930,28 @@ function pauseEvent(e) {
 function renderTasks() {
     const tasks = DM.get('tasks');
     let html = '';
-    html += '<div class="task-section"><div class="task-section-title">📅 今日任务</div>';
-    tasks.today.forEach(t => { html += renderTaskItem(t); });
-    html += '</div>';
-    html += '<div class="task-section"><div class="task-section-title">📆 本周任务</div>';
-    tasks.week.forEach(t => { html += renderTaskItem(t); });
-    html += '</div>';
+    if (tasks.guoguo) {
+        html += '<div class="task-section"><div class="task-section-title">🌸 果果の今日任务</div>';
+        tasks.guoguo.today.forEach(t => { html += renderTaskItem(t); });
+        html += '</div>';
+        html += '<div class="task-section"><div class="task-section-title">🌸 果果の本周任务</div>';
+        tasks.guoguo.week.forEach(t => { html += renderTaskItem(t); });
+        html += '</div>';
+    }
+    if (tasks.parent) {
+        html += '<div class="task-section"><div class="task-section-title">❤ 粑粑麻麻の今日任务</div>';
+        tasks.parent.today.forEach(t => { html += renderTaskItem(t); });
+        html += '</div>';
+        html += '<div class="task-section"><div class="task-section-title">❤ 粑粑麻麻の本周任务</div>';
+        tasks.parent.week.forEach(t => { html += renderTaskItem(t); });
+        html += '</div>';
+    }
     html += '<div style="background:rgba(125,249,255,0.1);border:1px solid rgba(125,249,255,0.3);border-radius:8px;padding:12px;color:var(--cyan);font-size:0.85em">';
-    html += '✿ 完成任务可以获得爱心，让果果的花藤长得更高哦 ~';
+    html += '✿ 任务由粑粑麻麻在后台管理，完成任务可以让花藤长得更高哦 ~';
     html += '</div>';
     document.getElementById('taskList').innerHTML = html;
 }
-function toggleTask(id, e) {
-    e.stopPropagation();
-    const tasks = DM.get('tasks');
-    ['today','week'].forEach(k => {
-        const t = tasks[k].find(x => x.id === id);
-        if (t) {
-            t.done = !t.done;
-            if (t.done) {
-                const sp = DM.get('space');
-                sp.like = (sp.like || 0) + 1;
-                DM.set('space', sp);
-                updateLikeStepDisplay();
-                updateFlower();
-            }
-        }
-    });
-    DM.set('tasks', tasks);
-    renderTasks();
-    renderHome();
-}
+/* ===== Tasks (read-only on front page, admin manages) ===== */
 
 /* ===== Shuoshuo ===== */
 function renderShuoshuo() {
@@ -1081,6 +1110,50 @@ function likeGuestbook(id) {
 /* ===== Music Player ===== */
 const bgm = document.getElementById('bgmAudio');
 let musicPlaying = false;
+let bgmList = [{ id: 1, name: '有何不可 - 许嵩', url: 'images/guoguo-music.mp3' }];
+let currentSongIdx = 0;
+
+function loadBgmList() {
+    const list = DM.get('bgmList');
+    if (list && list.length > 0) {
+        bgmList = list;
+    }
+    if (currentSongIdx >= bgmList.length) currentSongIdx = 0;
+    applyCurrentSong(false);
+}
+
+function applyCurrentSong(autoPlay) {
+    const song = bgmList[currentSongIdx];
+    if (!song) return;
+    bgm.src = song.url;
+    bgm.loop = bgmList.length <= 1;
+    const nameEl = document.getElementById('songName');
+    if (nameEl) nameEl.textContent = song.name + ' ✿';
+    if (autoPlay && musicPlaying) {
+        bgm.play().then(() => {
+            document.getElementById('musicToggle').textContent = '⏸';
+        }).catch(() => {});
+    }
+}
+
+function nextSong() {
+    if (bgmList.length <= 1) return;
+    currentSongIdx = (currentSongIdx + 1) % bgmList.length;
+    applyCurrentSong(musicPlaying);
+}
+
+function prevSong() {
+    if (bgmList.length <= 1) return;
+    currentSongIdx = (currentSongIdx - 1 + bgmList.length) % bgmList.length;
+    applyCurrentSong(musicPlaying);
+}
+
+bgm.addEventListener('ended', () => {
+    if (bgmList.length > 1 && !bgm.loop) {
+        nextSong();
+    }
+});
+
 function toggleMusic() {
     if (musicPlaying) {
         bgm.pause();
@@ -1306,7 +1379,7 @@ document.addEventListener('keydown', function(e) {
 
 /* ===== Init ===== */
 (function() {
-    const keys = ['visitors', 'space', 'shuoshuo', 'diaries', 'albums', 'videos', 'guestbook', 'tasks', 'homeModules'];
+    const keys = ['visitors', 'space', 'bgmList', 'shuoshuo', 'diaries', 'albums', 'videos', 'guestbook', 'tasks', 'homeModules'];
     keys.forEach(k => {
         if (!localStorage.getItem('guoguo_' + k)) {
             DM.set(k, DEFAULT_DATA[k]);
@@ -1318,6 +1391,7 @@ document.addEventListener('keydown', function(e) {
     updateFlower();
     renderHome();
     renderRecentVisitors();
+    loadBgmList();
 
     // Pre-fill guestbook name with visitor nickname
     const savedVisitorName = localStorage.getItem('guoguo_visitor_name');
