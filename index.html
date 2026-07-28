@@ -567,25 +567,21 @@ const DEFAULT_DATA = {
     ],
     tasks: {
         guoguo: {
-            today: [
-                { id: 101, text: '读一本绘本给蛋卷听', reward: '🌸 +5', done: false },
-                { id: 102, text: '画一幅画送给糖糖', reward: '🌸 +3', done: false }
-            ],
             week: [
-                { id: 103, text: '学会一个新街舞动作', reward: '🌸 +10', done: false },
-                { id: 104, text: '用AI创作一个故事', reward: '🌸 +8', done: false }
+                { id: 101, text: '读一本绘本给蛋卷听', reward: '🌸 +5', done: false, publishTime: '2026-07-28', deadline: '2026-07-28' },
+                { id: 102, text: '画一幅画送给糖糖', reward: '🌸 +3', done: false, publishTime: '2026-07-28', deadline: '2026-07-29' },
+                { id: 103, text: '学会一个新街舞动作', reward: '🌸 +10', done: false, publishTime: '2026-07-28', deadline: '2026-08-03' },
+                { id: 104, text: '用AI创作一个故事', reward: '🌸 +8', done: false, publishTime: '2026-07-28', deadline: '2026-08-03' }
             ]
         },
         parent: {
-            today: [
-                { id: 1, text: '陪果果读一本绘本', reward: '❤ +5', done: false },
-                { id: 2, text: '和果果一起观察蛋卷', reward: '❤ +3', done: false },
-                { id: 3, text: '记录果果今天的开心小事', reward: '❤ +3', done: false }
-            ],
             week: [
-                { id: 4, text: '周末带果果去公园', reward: '🌟 +10', done: false },
-                { id: 5, text: '和果果一起完成一幅画', reward: '🌟 +8', done: false },
-                { id: 6, text: '教果果一个新的AI小技巧', reward: '🌟 +10', done: false }
+                { id: 1, text: '陪果果读一本绘本', reward: '❤ +5', done: false, publishTime: '2026-07-28', deadline: '2026-07-28' },
+                { id: 2, text: '和果果一起观察蛋卷', reward: '❤ +3', done: false, publishTime: '2026-07-28', deadline: '2026-07-28' },
+                { id: 3, text: '记录果果今天的开心小事', reward: '❤ +3', done: false, publishTime: '2026-07-28', deadline: '2026-07-29' },
+                { id: 4, text: '周末带果果去公园', reward: '🌟 +10', done: false, publishTime: '2026-07-28', deadline: '2026-08-03' },
+                { id: 5, text: '和果果一起完成一幅画', reward: '🌟 +8', done: false, publishTime: '2026-07-28', deadline: '2026-08-03' },
+                { id: 6, text: '教果果一个新的AI小技巧', reward: '🌟 +10', done: false, publishTime: '2026-07-28', deadline: '2026-08-03' }
             ]
         }
     },
@@ -636,11 +632,27 @@ class DataManager {
             const resp = await fetch(GH_RAW_URL + '?t=' + Date.now());
             if (resp.ok) {
                 const data = await resp.json();
-                // Migrate old task structure
+                // Migrate old task structure (today → week with deadline)
+                const todayStr = new Date().toISOString().slice(0,10);
+                if (data.tasks && data.tasks.guoguo && data.tasks.guoguo.today) {
+                    const oldToday = data.tasks.guoguo.today || [];
+                    const oldWeek = data.tasks.guoguo.week || [];
+                    oldToday.forEach(t => { t.publishTime = todayStr; t.deadline = todayStr; });
+                    oldWeek.forEach(t => { if (!t.deadline) t.deadline = todayStr; if (!t.publishTime) t.publishTime = todayStr; });
+                    data.tasks.guoguo = { week: [...oldToday, ...oldWeek] };
+                }
+                if (data.tasks && data.tasks.parent && data.tasks.parent.today) {
+                    const oldToday = data.tasks.parent.today || [];
+                    const oldWeek = data.tasks.parent.week || [];
+                    oldToday.forEach(t => { t.publishTime = todayStr; t.deadline = todayStr; });
+                    oldWeek.forEach(t => { if (!t.deadline) t.deadline = todayStr; if (!t.publishTime) t.publishTime = todayStr; });
+                    data.tasks.parent = { week: [...oldToday, ...oldWeek] };
+                }
+                // Also handle the very old structure (tasks.today without guoguo/parent)
                 if (data.tasks && data.tasks.today && !data.tasks.guoguo) {
                     data.tasks = {
-                        guoguo: { today: [], week: [] },
-                        parent: { today: data.tasks.today, week: data.tasks.week }
+                        guoguo: { week: [] },
+                        parent: { week: data.tasks.today.map(t => { t.publishTime = todayStr; t.deadline = todayStr; return t; }).concat(data.tasks.week || []) }
                     };
                 }
                 // Ensure bgmList exists
@@ -821,11 +833,14 @@ function renderHome() {
     let html = '';
 
     // 果果的任务 at top
-    if (modules.guoguoTask && tasks && tasks.guoguo) {
-        const todayTotal = tasks.guoguo.today.length;
-        const todayDone = tasks.guoguo.today.filter(t=>t.done).length;
-        const weekTotal = tasks.guoguo.week.length;
-        const weekDone = tasks.guoguo.week.filter(t=>t.done).length;
+    if (modules.guoguoTask && tasks && tasks.guoguo && tasks.guoguo.week) {
+        const weekTasks = tasks.guoguo.week;
+        const todayTasks = weekTasks.filter(t => t.deadline === getToday());
+        const otherTasks = weekTasks.filter(t => t.deadline !== getToday());
+        const todayTotal = todayTasks.length;
+        const todayDone = todayTasks.filter(t=>t.done).length;
+        const weekTotal = weekTasks.length;
+        const weekDone = weekTasks.filter(t=>t.done).length;
         const todayPct = todayTotal > 0 ? Math.round(todayDone/todayTotal*100) : 0;
         const weekPct = weekTotal > 0 ? Math.round(weekDone/weekTotal*100) : 0;
         html += '<div class="card"><div class="card-title"><span class="icon">🌸</span> 果果の任务</div>';
@@ -833,25 +848,28 @@ function renderHome() {
             html += '<div class="task-section"><div class="task-stats">今日已完成 '+todayDone+'/'+todayTotal+' ('+todayPct+'%)</div>';
             html += '<div class="task-progress"><div class="task-progress-bar" style="width:'+todayPct+'%"></div></div>';
             html += '<div style="margin-top:10px">';
-            tasks.guoguo.today.forEach(t => { html += renderTaskItem(t); });
+            todayTasks.forEach(t => { html += renderTaskItem(t); });
             html += '</div></div>';
         }
-        if (weekTotal > 0) {
+        if (otherTasks.length > 0) {
             html += '<div class="task-section"><div class="task-stats">本周已完成 '+weekDone+'/'+weekTotal+' ('+weekPct+'%)</div>';
             html += '<div class="task-progress"><div class="task-progress-bar" style="width:'+weekPct+'%"></div></div>';
             html += '<div style="margin-top:10px">';
-            tasks.guoguo.week.forEach(t => { html += renderTaskItem(t); });
+            otherTasks.forEach(t => { html += renderTaskItem(t); });
             html += '</div></div>';
         }
         html += '<div class="card-more"><button onclick="switchTab(\'task\')">查看全部任务 ❯</button></div></div>';
     }
 
     // 粑粑麻麻的任务 at top
-    if (modules.parentTask && tasks && tasks.parent) {
-        const todayTotal = tasks.parent.today.length;
-        const todayDone = tasks.parent.today.filter(t=>t.done).length;
-        const weekTotal = tasks.parent.week.length;
-        const weekDone = tasks.parent.week.filter(t=>t.done).length;
+    if (modules.parentTask && tasks && tasks.parent && tasks.parent.week) {
+        const weekTasks = tasks.parent.week;
+        const todayTasks = weekTasks.filter(t => t.deadline === getToday());
+        const otherTasks = weekTasks.filter(t => t.deadline !== getToday());
+        const todayTotal = todayTasks.length;
+        const todayDone = todayTasks.filter(t=>t.done).length;
+        const weekTotal = weekTasks.length;
+        const weekDone = weekTasks.filter(t=>t.done).length;
         const todayPct = todayTotal > 0 ? Math.round(todayDone/todayTotal*100) : 0;
         const weekPct = weekTotal > 0 ? Math.round(weekDone/weekTotal*100) : 0;
         html += '<div class="card"><div class="card-title"><span class="icon">❤</span> 粑粑麻麻の任务</div>';
@@ -859,14 +877,14 @@ function renderHome() {
             html += '<div class="task-section"><div class="task-stats">今日已完成 '+todayDone+'/'+todayTotal+' ('+todayPct+'%)</div>';
             html += '<div class="task-progress"><div class="task-progress-bar" style="width:'+todayPct+'%"></div></div>';
             html += '<div style="margin-top:10px">';
-            tasks.parent.today.forEach(t => { html += renderTaskItem(t); });
+            todayTasks.forEach(t => { html += renderTaskItem(t); });
             html += '</div></div>';
         }
-        if (weekTotal > 0) {
+        if (otherTasks.length > 0) {
             html += '<div class="task-section"><div class="task-stats">本周已完成 '+weekDone+'/'+weekTotal+' ('+weekPct+'%)</div>';
             html += '<div class="task-progress"><div class="task-progress-bar" style="width:'+weekPct+'%"></div></div>';
             html += '<div style="margin-top:10px">';
-            tasks.parent.week.forEach(t => { html += renderTaskItem(t); });
+            otherTasks.forEach(t => { html += renderTaskItem(t); });
             html += '</div></div>';
         }
         html += '<div class="card-more"><button onclick="switchTab(\'task\')">查看全部任务 ❯</button></div></div>';
@@ -952,9 +970,15 @@ function renderHome() {
     document.getElementById('homeFeed').innerHTML = html;
 }
 function renderTaskItem(t) {
+    const todayStr = getToday();
+    const deadlineInfo = t.deadline ? (t.deadline === todayStr ? '<span style="color:var(--pink);font-size:0.75em">今日</span>' : '<span style="color:#a0a0c0;font-size:0.75em">截止'+t.deadline+'</span>') : '';
     return `<div class="task-item ${t.done?'completed':''}"><div class="task-checkbox"></div>` +
-           `<div class="task-text">${t.text}</div>` +
+           `<div class="task-text">${t.text} ${deadlineInfo}</div>` +
            `<div class="task-reward">${t.reward}</div></div>`;
+}
+function getToday() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 function flashReward(text, x = 0) {
     const el = document.createElement('div');
@@ -977,28 +1001,41 @@ function pauseEvent(e) {
 /* ===== Tasks ===== */
 function renderTasks() {
     const tasks = DM.get('tasks');
+    const todayStr = getToday();
     let html = '';
-    function renderGroup(type, label, icon, period, list) {
-        const total = list.length;
-        const done = list.filter(t => t.done).length;
-        const pct = total > 0 ? Math.round(done / total * 100) : 0;
-        html += `<div class="task-section"><div class="task-section-title">${icon} ${label}</div>`;
-        html += `<div class="task-stats">${period==='today'?'今日':'本周'}已完成 ${done}/${total} (${pct}%)</div>`;
-        html += `<div class="task-progress"><div class="task-progress-bar" style="width:${pct}%"></div></div>`;
-        html += `<div style="margin-top:10px">`;
-        list.forEach(t => { html += renderTaskItem(t); });
-        html += `</div></div>`;
+    function renderGroup(type, label, icon) {
+        if (!tasks[type] || !tasks[type].week) return;
+        const weekTasks = tasks[type].week;
+        const todayTasks = weekTasks.filter(t => t.deadline === todayStr);
+        const otherTasks = weekTasks.filter(t => t.deadline !== todayStr);
+
+        if (todayTasks.length > 0) {
+            const total = todayTasks.length;
+            const done = todayTasks.filter(t => t.done).length;
+            const pct = total > 0 ? Math.round(done / total * 100) : 0;
+            html += `<div class="task-section"><div class="task-section-title">${icon} ${label} · 今日任务</div>`;
+            html += `<div class="task-stats">今日已完成 ${done}/${total} (${pct}%)</div>`;
+            html += `<div class="task-progress"><div class="task-progress-bar" style="width:${pct}%"></div></div>`;
+            html += `<div style="margin-top:10px">`;
+            todayTasks.forEach(t => { html += renderTaskItem(t); });
+            html += `</div></div>`;
+        }
+        if (otherTasks.length > 0) {
+            const total = weekTasks.length;
+            const done = weekTasks.filter(t => t.done).length;
+            const pct = total > 0 ? Math.round(done / total * 100) : 0;
+            html += `<div class="task-section"><div class="task-section-title">${icon} ${label} · 本周任务</div>`;
+            html += `<div class="task-stats">本周已完成 ${done}/${total} (${pct}%)</div>`;
+            html += `<div class="task-progress"><div class="task-progress-bar" style="width:${pct}%"></div></div>`;
+            html += `<div style="margin-top:10px">`;
+            otherTasks.forEach(t => { html += renderTaskItem(t); });
+            html += `</div></div>`;
+        }
     }
-    if (tasks.guoguo) {
-        renderGroup('guoguo', '果果の今日任务', '🌸', 'today', tasks.guoguo.today);
-        renderGroup('guoguo', '果果の本周任务', '🌸', 'week', tasks.guoguo.week);
-    }
-    if (tasks.parent) {
-        renderGroup('parent', '粑粑麻麻の今日任务', '❤', 'today', tasks.parent.today);
-        renderGroup('parent', '粑粑麻麻の本周任务', '❤', 'week', tasks.parent.week);
-    }
+    renderGroup('guoguo', '果果の任务', '🌸');
+    renderGroup('parent', '粑粑麻麻の任务', '❤');
     html += '<div style="background:rgba(125,249,255,0.1);border:1px solid rgba(125,249,255,0.3);border-radius:8px;padding:12px;color:var(--cyan);font-size:0.85em">';
-    html += '✿ 任务由粑粑麻麻在后台管理，完成任务可以让花藤长得更高哦 ~';
+    html += '✿ 任务由粑粑麻麻在后台管理，完成任务可以让花藤长得更高哦 ~<br>今日任务 = 截止日期为今天的本周任务';
     html += '</div>';
     document.getElementById('taskList').innerHTML = html;
 }
