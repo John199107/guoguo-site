@@ -34,10 +34,10 @@
     { "id": 3, "name": "果果的街舞", "cover": "images/guoguo-dance.jpg", "count": 1, "photos": [
       { "url": "images/guoguo-dance.jpg", "desc": "果果跳街舞 ✿" }
     ]},
-    { "id": 4, "name": "果果的海报", "cover": "images/poster-v2.png", "count": 3, "photos": [
-      { "url": "images/poster-v2.png", "desc": "果果的梦幻海报 ✿" },
-      { "url": "images/poster-v3.png", "desc": "果果的舞蹈海报 ❀" },
-      { "url": "images/poster-v4.png", "desc": "果果的唱歌海报 ❁" }
+    { "id": 4, "name": "果果的海报", "cover": "images/poster-v2.jpg", "count": 3, "photos": [
+      { "url": "images/poster-v2.jpg", "desc": "果果的梦幻海报 ✿" },
+      { "url": "images/poster-v3.jpg", "desc": "果果的舞蹈海报 ❀" },
+      { "url": "images/poster-v4.jpg", "desc": "果果的唱歌海报 ❁" }
     ]},
     { "id": 5, "name": "蛋卷的日常", "cover": "images/danjuan-real.jpg", "count": 1, "photos": [
       { "url": "images/danjuan-real.jpg", "desc": "可爱的蛋卷 ✿" }
