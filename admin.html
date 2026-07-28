@@ -859,7 +859,7 @@ function renderAdminData() {
     let viHtml = '';
     vi.forEach(v => {
         viHtml += `<div class="list-item"><div class="list-item-text"><div class="truncate">${v.title}</div><div class="list-item-date">${v.date} · ${v.url}</div></div>`;
-        viHtml += `<div class="list-item-actions"><button class="btn-danger btn-sm" onclick="deleteVideo(${v.id})">删除</button></div></div>`;
+        viHtml += `<div class="list-item-actions"><button class="btn-sm" style="background:rgba(125,249,255,0.2);border:1px solid rgba(125,249,255,0.4);color:var(--cyan);border-radius:8px;cursor:pointer;font-size:0.75em" onclick="renameVideo(${v.id})">改名</button><button class="btn-danger btn-sm" style="font-size:0.75em" onclick="deleteVideo(${v.id})">删除</button></div></div>`;
     });
     document.getElementById('adminVideoList').innerHTML = viHtml;
 
@@ -1086,6 +1086,18 @@ function deleteVideo(id) {
     const vi = DM_get('videos').filter(v => v.id !== id);
     DM_set('videos', vi);
     renderAdminData();
+}
+function renameVideo(id) {
+    const vi = DM_get('videos');
+    const v = vi.find(x => x.id === id);
+    if (!v) return;
+    const newTitle = prompt('修改视频名称 ✿', v.title);
+    if (newTitle && newTitle.trim()) {
+        v.title = newTitle.trim();
+        DM_set('videos', vi);
+        renderAdminData();
+        flashAdminMsg('✿ 视频名称已更新 ✿');
+    }
 }
 
 function addTask() {
