@@ -65,15 +65,21 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
         <input class="login-input" type="password" id="loginPassword" placeholder="输入管理密码" />
         <button class="login-btn" onclick="doLogin()">进入后台</button>
         <div class="login-error" id="loginError">密码错误</div>
+        <div style="text-align:center;margin-top:12px">
+            <a href="index.html" style="color:#a0a0c0;font-size:0.85em">返回主页 ✿</a>
+        </div>
     </div>
 </div>
 
 <!-- Admin Panel -->
 <div class="admin-wrap" id="adminWrap">
     <div class="admin-header">✿ 果果空间管理后台 ✿</div>
+    <div style="text-align:center;margin-bottom:10px">
+        <a href="index.html" style="color:var(--cyan);font-family:var(--font-fun);font-size:1em;box-shadow:0 0 10px rgba(125,249,255,0.2);padding:6px 16px;border-radius:16px;border:1px solid rgba(125,249,255,0.3)">返回主页 ✿</a>
+    </div>
     <div class="admin-note">
         当前使用 localStorage 存储数据，数据只在本浏览器生效。<br>
-        接入 LeanCloud 后将实现云端持久化，所有访客可见。
+        接入 Firebase 后将实现云端持久化，所有访客可见。
     </div>
     <div class="admin-nav">
         <button class="admin-tab active" onclick="switchAdminTab('stats')">数据统计</button>
