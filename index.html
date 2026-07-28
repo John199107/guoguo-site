@@ -226,6 +226,17 @@ a:hover{text-decoration:underline;color:#ff6b9d}
 .task-text{flex:1;font-size:0.9em;line-height:1.4}
 .task-text.done{text-decoration:line-through;color:#888}
 .task-reward{color:var(--gold);font-size:0.8em;white-space:nowrap}
+.task-progress{height:6px;background:rgba(10,10,30,0.4);border-radius:3px;overflow:hidden;margin-top:6px}
+.task-progress-bar{height:100%;background:linear-gradient(90deg,var(--pink),var(--purple));width:0%;transition:width 0.8s}
+.task-stats{font-size:0.75em;color:var(--cyan);text-align:right;margin-top:4px}
+.task-item.completed{opacity:0.7;background:rgba(125,249,255,0.08);border:1px solid rgba(125,249,255,0.2)}
+.task-item.completed .task-checkbox{background:var(--cyan);border-color:var(--cyan)}
+.task-item.completed .task-checkbox::after{content:'✓';color:#fff;font-size:14px;font-weight:bold}
+.task-item.completed .task-text{text-decoration:line-through;color:#888}
+
+/* Reward floating text */
+.reward-float{position:fixed;z-index:9999;pointer-events:none;font-family:var(--font-fun);color:var(--gold);font-size:1.5em;text-shadow:0 0 10px rgba(255,215,0,0.8);animation:floatUp 1.5s ease-out forwards}
+@keyframes floatUp{0%{transform:translateY(0) scale(0.5);opacity:0}20%{transform:translateY(-20px) scale(1.2);opacity:1}100%{transform:translateY(-150px) scale(0.8);opacity:0}}
 
 /* ===== 闪字 Effect ===== */
 .flash-text{animation:flashColors 0.8s infinite}
@@ -274,7 +285,7 @@ a:hover{text-decoration:underline;color:#ff6b9d}
     <div class="welcome-stars" id="welcomeStars"></div>
     <div class="welcome-title flash-text">灬果果の树洞空间灬</div>
     <div class="welcome-sub">✿ 歡迎來到果果の小树洞 ✿</div>
-    <button class="welcome-btn" id="welcomeBtn" onclick="enterSpace(event)">点击进入果果的空间 ♡</button>
+    <button class="welcome-btn" id="welcomeBtn" onclick="enterSpace(event)">踩踩果果的空间 ♡</button>
     <div class="welcome-name-box">
         <label for="visitorNameInput">✿ 给自己取个昵称吧 ✿</label>
         <input type="text" id="visitorNameInput" class="welcome-name-input" placeholder="输入昵称，不填会随机一个哦" maxlength="12" onclick="event.stopPropagation()" />
@@ -441,9 +452,9 @@ a:hover{text-decoration:underline;color:#ff6b9d}
         <div class="section" id="sec-guestbook">
             <div class="section-header">✿ 留言板 ✿</div>
             <div class="guestbook-form">
+                <div class="guestbook-as" id="guestbookAs">✿ 你将以 <span id="guestbookNamePreview">果果粉</span> の身份留言 ✿</div>
                 <textarea id="guestbookContent" placeholder="给果果留句话吧~ ✿"></textarea>
                 <div class="form-row">
-                    <input id="guestbookName" placeholder="你的昵称" />
                     <button onclick="submitGuestbook()">留言 ✿</button>
                 </div>
             </div>
@@ -811,25 +822,53 @@ function renderHome() {
 
     // 果果的任务 at top
     if (modules.guoguoTask && tasks && tasks.guoguo) {
+        const todayTotal = tasks.guoguo.today.length;
+        const todayDone = tasks.guoguo.today.filter(t=>t.done).length;
+        const weekTotal = tasks.guoguo.week.length;
+        const weekDone = tasks.guoguo.week.filter(t=>t.done).length;
+        const todayPct = todayTotal > 0 ? Math.round(todayDone/todayTotal*100) : 0;
+        const weekPct = weekTotal > 0 ? Math.round(weekDone/weekTotal*100) : 0;
         html += '<div class="card"><div class="card-title"><span class="icon">🌸</span> 果果の任务</div>';
-        html += '<div class="task-section"><div class="task-section-title">📅 今日任务</div>';
-        tasks.guoguo.today.slice(0, 3).forEach(t => { html += renderTaskItem(t); });
-        html += '</div>';
-        html += '<div class="task-section"><div class="task-section-title">📆 本周任务</div>';
-        tasks.guoguo.week.slice(0, 2).forEach(t => { html += renderTaskItem(t); });
-        html += '</div>';
+        if (todayTotal > 0) {
+            html += '<div class="task-section"><div class="task-stats">今日已完成 '+todayDone+'/'+todayTotal+' ('+todayPct+'%)</div>';
+            html += '<div class="task-progress"><div class="task-progress-bar" style="width:'+todayPct+'%"></div></div>';
+            html += '<div style="margin-top:10px">';
+            tasks.guoguo.today.forEach(t => { html += renderTaskItem(t); });
+            html += '</div></div>';
+        }
+        if (weekTotal > 0) {
+            html += '<div class="task-section"><div class="task-stats">本周已完成 '+weekDone+'/'+weekTotal+' ('+weekPct+'%)</div>';
+            html += '<div class="task-progress"><div class="task-progress-bar" style="width:'+weekPct+'%"></div></div>';
+            html += '<div style="margin-top:10px">';
+            tasks.guoguo.week.forEach(t => { html += renderTaskItem(t); });
+            html += '</div></div>';
+        }
         html += '<div class="card-more"><button onclick="switchTab(\'task\')">查看全部任务 ❯</button></div></div>';
     }
 
     // 粑粑麻麻的任务 at top
     if (modules.parentTask && tasks && tasks.parent) {
+        const todayTotal = tasks.parent.today.length;
+        const todayDone = tasks.parent.today.filter(t=>t.done).length;
+        const weekTotal = tasks.parent.week.length;
+        const weekDone = tasks.parent.week.filter(t=>t.done).length;
+        const todayPct = todayTotal > 0 ? Math.round(todayDone/todayTotal*100) : 0;
+        const weekPct = weekTotal > 0 ? Math.round(weekDone/weekTotal*100) : 0;
         html += '<div class="card"><div class="card-title"><span class="icon">❤</span> 粑粑麻麻の任务</div>';
-        html += '<div class="task-section"><div class="task-section-title">📅 今日任务</div>';
-        tasks.parent.today.slice(0, 3).forEach(t => { html += renderTaskItem(t); });
-        html += '</div>';
-        html += '<div class="task-section"><div class="task-section-title">📆 本周任务</div>';
-        tasks.parent.week.slice(0, 2).forEach(t => { html += renderTaskItem(t); });
-        html += '</div>';
+        if (todayTotal > 0) {
+            html += '<div class="task-section"><div class="task-stats">今日已完成 '+todayDone+'/'+todayTotal+' ('+todayPct+'%)</div>';
+            html += '<div class="task-progress"><div class="task-progress-bar" style="width:'+todayPct+'%"></div></div>';
+            html += '<div style="margin-top:10px">';
+            tasks.parent.today.forEach(t => { html += renderTaskItem(t); });
+            html += '</div></div>';
+        }
+        if (weekTotal > 0) {
+            html += '<div class="task-section"><div class="task-stats">本周已完成 '+weekDone+'/'+weekTotal+' ('+weekPct+'%)</div>';
+            html += '<div class="task-progress"><div class="task-progress-bar" style="width:'+weekPct+'%"></div></div>';
+            html += '<div style="margin-top:10px">';
+            tasks.parent.week.forEach(t => { html += renderTaskItem(t); });
+            html += '</div></div>';
+        }
         html += '<div class="card-more"><button onclick="switchTab(\'task\')">查看全部任务 ❯</button></div></div>';
     }
 
@@ -913,9 +952,18 @@ function renderHome() {
     document.getElementById('homeFeed').innerHTML = html;
 }
 function renderTaskItem(t) {
-    return `<div class="task-item"><div class="task-checkbox ${t.done?'checked':''}"></div>` +
-           `<div class="task-text ${t.done?'done':''}">${t.text}</div>` +
+    return `<div class="task-item ${t.done?'completed':''}"><div class="task-checkbox"></div>` +
+           `<div class="task-text">${t.text}</div>` +
            `<div class="task-reward">${t.reward}</div></div>`;
+}
+function flashReward(text, x = 0) {
+    const el = document.createElement('div');
+    el.className = 'reward-float';
+    el.textContent = text;
+    el.style.left = (50 + x) + '%';
+    el.style.top = '50%';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1600);
 }
 function getVideoPoster(url) {
     // Use a tiny transparent pixel as placeholder; browser will use first frame if possible
@@ -930,21 +978,24 @@ function pauseEvent(e) {
 function renderTasks() {
     const tasks = DM.get('tasks');
     let html = '';
+    function renderGroup(type, label, icon, period, list) {
+        const total = list.length;
+        const done = list.filter(t => t.done).length;
+        const pct = total > 0 ? Math.round(done / total * 100) : 0;
+        html += `<div class="task-section"><div class="task-section-title">${icon} ${label}</div>`;
+        html += `<div class="task-stats">${period==='today'?'今日':'本周'}已完成 ${done}/${total} (${pct}%)</div>`;
+        html += `<div class="task-progress"><div class="task-progress-bar" style="width:${pct}%"></div></div>`;
+        html += `<div style="margin-top:10px">`;
+        list.forEach(t => { html += renderTaskItem(t); });
+        html += `</div></div>`;
+    }
     if (tasks.guoguo) {
-        html += '<div class="task-section"><div class="task-section-title">🌸 果果の今日任务</div>';
-        tasks.guoguo.today.forEach(t => { html += renderTaskItem(t); });
-        html += '</div>';
-        html += '<div class="task-section"><div class="task-section-title">🌸 果果の本周任务</div>';
-        tasks.guoguo.week.forEach(t => { html += renderTaskItem(t); });
-        html += '</div>';
+        renderGroup('guoguo', '果果の今日任务', '🌸', 'today', tasks.guoguo.today);
+        renderGroup('guoguo', '果果の本周任务', '🌸', 'week', tasks.guoguo.week);
     }
     if (tasks.parent) {
-        html += '<div class="task-section"><div class="task-section-title">❤ 粑粑麻麻の今日任务</div>';
-        tasks.parent.today.forEach(t => { html += renderTaskItem(t); });
-        html += '</div>';
-        html += '<div class="task-section"><div class="task-section-title">❤ 粑粑麻麻の本周任务</div>';
-        tasks.parent.week.forEach(t => { html += renderTaskItem(t); });
-        html += '</div>';
+        renderGroup('parent', '粑粑麻麻の今日任务', '❤', 'today', tasks.parent.today);
+        renderGroup('parent', '粑粑麻麻の本周任务', '❤', 'week', tasks.parent.week);
     }
     html += '<div style="background:rgba(125,249,255,0.1);border:1px solid rgba(125,249,255,0.3);border-radius:8px;padding:12px;color:var(--cyan);font-size:0.85em">';
     html += '✿ 任务由粑粑麻麻在后台管理，完成任务可以让花藤长得更高哦 ~';
@@ -1084,7 +1135,7 @@ function renderGuestbook() {
     document.getElementById('guestbookList').innerHTML = html;
 }
 function submitGuestbook() {
-    const name = document.getElementById('guestbookName').value.trim() || localStorage.getItem('guoguo_visitor_name') || '匿名访客';
+    const name = localStorage.getItem('guoguo_visitor_name') || getVisitorName();
     const content = document.getElementById('guestbookContent').value.trim();
     if (!content) return;
     const msgs = DM.get('guestbook');
@@ -1092,9 +1143,9 @@ function submitGuestbook() {
     const dateStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
     msgs.unshift({ id: Date.now(), name: name, content: content, date: dateStr, likes: 0 });
     DM.set('guestbook', msgs);
-    document.getElementById('guestbookName').value = '';
     document.getElementById('guestbookContent').value = '';
     renderGuestbook();
+    flashReward('留言成功 ✿', 0);
 }
 function likeGuestbook(id) {
     const msgs = DM.get('guestbook');
@@ -1393,12 +1444,10 @@ document.addEventListener('keydown', function(e) {
     renderRecentVisitors();
     loadBgmList();
 
-    // Pre-fill guestbook name with visitor nickname
-    const savedVisitorName = localStorage.getItem('guoguo_visitor_name');
-    if (savedVisitorName) {
-        const gbName = document.getElementById('guestbookName');
-        if (gbName && !gbName.value) gbName.value = savedVisitorName;
-    }
+    // Pre-fill guestbook preview name with visitor nickname
+    const savedVisitorName = localStorage.getItem('guoguo_visitor_name') || getVisitorName();
+    const previewEl = document.getElementById('guestbookNamePreview');
+    if (previewEl) previewEl.textContent = savedVisitorName;
 
     DM.loadFromGitHub();
 })();
