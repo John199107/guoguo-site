@@ -2,14 +2,14 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>灬果果の钪间灬 ✿</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>灬果果の树洞空间灬 ✿</title>
 <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
 <style>
 /* ===== Reset ===== */
-*{margin:0;padding:0;box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth}
-body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#0a0a2e;color:#d0d0e8;min-height:100vh;overflow-x:hidden}
+body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#0a0a2e;color:#d0d0e8;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 a{color:#7df9ff;text-decoration:none}
 a:hover{text-decoration:underline;color:#ff6b9d}
 
@@ -29,27 +29,30 @@ a:hover{text-decoration:underline;color:#ff6b9d}
 #trailCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:9998;pointer-events:none}
 
 /* ===== Welcome Overlay ===== */
-.welcome-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:10000;background:radial-gradient(circle,#0a0a2e,#050520);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.8s,visibility 0.8s}
+.welcome-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:10000;background:radial-gradient(circle,#0a0a2e,#050520);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.8s,visibility 0.8s;padding:20px}
 .welcome-overlay.hidden{opacity:0;visibility:hidden}
 .welcome-stars{position:absolute;width:100%;height:100%;overflow:hidden;pointer-events:none}
 .welcome-star{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;animation:twinkle 2s infinite alternate}
 @keyframes twinkle{0%{opacity:0.3;transform:scale(1)}100%{opacity:1;transform:scale(1.5)}}
-.welcome-title{font-family:var(--font-fun);font-size:2.8em;color:var(--pink);text-shadow:0 0 20px rgba(255,107,157,0.6),0 0 40px rgba(255,107,157,0.3);animation:glowText 2s infinite alternate;margin-bottom:10px}
+.welcome-title{font-family:var(--font-fun);font-size:clamp(1.8em,8vw,2.8em);color:var(--pink);text-shadow:0 0 20px rgba(255,107,157,0.6),0 0 40px rgba(255,107,157,0.3);animation:glowText 2s infinite alternate;margin-bottom:10px;text-align:center}
 @keyframes glowText{0%{text-shadow:0 0 20px rgba(255,107,157,0.6),0 0 40px rgba(255,107,157,0.3)}100%{text-shadow:0 0 30px rgba(125,249,255,0.6),0 0 50px rgba(125,249,255,0.3)}}
-.welcome-sub{color:var(--cyan);font-size:1.1em;margin-bottom:30px;letter-spacing:2px}
-.welcome-btn{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;border:none;padding:16px 40px;font-size:1.2em;border-radius:30px;cursor:pointer;font-family:var(--font-fun);box-shadow:0 0 30px rgba(255,107,157,0.5);transition:transform 0.2s,box-shadow 0.2s}
+.welcome-sub{color:var(--cyan);font-size:clamp(0.9em,4vw,1.1em);margin-bottom:30px;letter-spacing:2px;text-align:center}
+.welcome-btn{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;border:none;padding:16px 40px;font-size:clamp(1em,4vw,1.2em);border-radius:30px;cursor:pointer;font-family:var(--font-fun);box-shadow:0 0 30px rgba(255,107,157,0.5);transition:transform 0.2s,box-shadow 0.2s;max-width:90vw}
 .welcome-btn:hover{transform:scale(1.08);box-shadow:0 0 50px rgba(255,107,157,0.8)}
+.welcome-hint{color:#a0a0c0;font-size:0.85em;margin-top:12px;letter-spacing:1px;text-align:center}
 .welcome-visitor{color:var(--cyan);font-size:0.9em;margin-top:20px}
 
 /* ===== Navigation ===== */
-.nav-bar{position:sticky;top:0;z-index:100;background:rgba(10,10,46,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border-glow);display:flex;align-items:center;padding:8px 12px;gap:4px}
-.nav-brand{font-family:var(--font-fun);color:var(--pink);font-size:1.3em;margin-right:16px;white-space:nowrap;cursor:pointer}
+.nav-bar{position:sticky;top:0;z-index:100;background:rgba(10,10,46,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border-glow);display:flex;align-items:center;padding:8px 12px;gap:8px;flex-wrap:wrap}
+.nav-brand{font-family:var(--font-fun);color:var(--pink);font-size:1.1em;margin-right:auto;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:4px}
 .nav-brand .diamond{color:var(--gold);font-size:0.7em}
-.nav-tabs{display:flex;gap:4px;flex:1;overflow-x:auto;scrollbar-width:none}
+.nav-tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
 .nav-tabs::-webkit-scrollbar{display:none}
-.nav-tab{padding:8px 18px;border-radius:20px;border:1px solid transparent;background:transparent;color:#a0a0c0;cursor:pointer;font-size:0.95em;white-space:nowrap;transition:all 0.3s;font-family:var(--font-fun)}
+.nav-tab{padding:6px 14px;border-radius:20px;border:1px solid transparent;background:transparent;color:#a0a0c0;cursor:pointer;font-size:0.9em;white-space:nowrap;transition:all 0.3s;font-family:var(--font-fun)}
 .nav-tab:hover{color:var(--pink);border-color:var(--border-glow)}
 .nav-tab.active{background:linear-gradient(135deg,rgba(255,107,157,0.3),rgba(199,125,255,0.3));color:#fff;border-color:var(--pink);box-shadow:0 0 15px rgba(255,107,157,0.3)}
+.nav-admin{color:#a0a0c0;font-size:0.75em;padding:6px 10px;border-radius:12px;border:1px solid rgba(125,249,255,0.2);background:rgba(20,20,40,0.5);white-space:nowrap;transition:all 0.3s}
+.nav-admin:hover{color:var(--cyan);border-color:var(--cyan)}
 
 /* ===== Main Layout ===== */
 .main-wrap{position:relative;z-index:2;display:flex;max-width:1100px;margin:0 auto;padding:16px;gap:16px}
@@ -60,8 +63,9 @@ a:hover{text-decoration:underline;color:#ff6b9d}
 .profile-card{background:var(--card-bg);border:1px solid var(--border-glow);border-radius:16px;padding:20px;text-align:center;box-shadow:0 0 20px rgba(255,107,157,0.2)}
 .profile-avatar-wrap{position:relative;width:100px;height:100px;margin:0 auto 12px}
 .profile-avatar{width:100px;height:100px;border-radius:50%;border:3px solid var(--gold);box-shadow:0 0 15px rgba(255,215,0,0.4);object-fit:cover}
-.yellow-diamond{position:absolute;top:-8px;right:-8px;width:22px;height:22px;display:flex;align-items:center;justify-content:center}
-.yellow-diamond svg{width:20px;height:20px}
+.yellow-diamond{position:absolute;top:-6px;right:-6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 5px rgba(255,215,0,0.8));animation:diamondGlow 2s infinite alternate}
+.yellow-diamond svg{width:26px;height:26px}
+@keyframes diamondGlow{0%{filter:drop-shadow(0 0 3px rgba(255,215,0,0.6))}100%{filter:drop-shadow(0 0 8px rgba(255,215,0,1))}}
 .profile-name{font-family:var(--font-fun);color:var(--pink);font-size:1.4em;margin-bottom:4px}
 .profile-real-name{color:var(--cyan);font-size:0.85em;margin-bottom:8px}
 .profile-sig{color:var(--purple);font-size:0.9em;line-height:1.5;padding:8px;background:rgba(199,125,255,0.1);border-radius:8px;margin-bottom:12px}
@@ -108,25 +112,28 @@ a:hover{text-decoration:underline;color:#ff6b9d}
 
 /* ===== Music Player ===== */
 .music-player{position:fixed;bottom:0;left:0;width:100%;z-index:200;background:rgba(10,10,46,0.95);backdrop-filter:blur(10px);border-top:1px solid var(--border-glow);display:flex;align-items:center;padding:6px 12px;gap:8px;font-size:0.85em}
-.music-btn{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1em;box-shadow:0 0 10px rgba(255,107,157,0.3);transition:transform 0.2s}
+.music-btn{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1em;box-shadow:0 0 10px rgba(255,107,157,0.3);transition:transform 0.2s;flex-shrink:0}
 .music-btn:hover{transform:scale(1.15)}
-.music-info{flex:1;color:#a0a0c0;overflow:hidden;white-space:nowrap}
-.music-info .song-name{color:var(--pink);animation:marquee 8s linear infinite;display:inline-block}
-@keyframes marquee{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
-.music-progress{width:100px;height:4px;background:#333;border-radius:2px;overflow:hidden;cursor:pointer}
+.music-info{flex:1;color:#a0a0c0;overflow:hidden;white-space:nowrap;min-width:0}
+.music-info .song-name{color:var(--pink);animation:marquee 8s linear infinite;display:inline-block;padding-left:100%}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
+.music-progress{width:100px;height:4px;background:#333;border-radius:2px;overflow:hidden;cursor:pointer;flex-shrink:0}
 .music-progress-bar{height:100%;background:linear-gradient(90deg,var(--pink),var(--purple));width:0%;transition:width 0.3s}
-.music-time{color:#a0a0c0;font-size:0.75em;min-width:40px}
+.music-time{color:#a0a0c0;font-size:0.75em;min-width:40px;flex-shrink:0}
 
 /* ===== Content Card ===== */
 .card{background:var(--card-bg);border:1px solid var(--border-glow);border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 0 20px rgba(255,107,157,0.15);transition:box-shadow 0.3s}
 .card:hover{box-shadow:0 0 30px rgba(255,107,157,0.3)}
 .card-title{font-family:var(--font-fun);color:var(--pink);font-size:1.3em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .card-title .icon{font-size:1.2em}
+.card-more{text-align:right;margin-top:12px}
+.card-more a,.card-more button{color:var(--cyan);font-size:0.85em;background:none;border:none;cursor:pointer;font-family:inherit}
+.card-more a:hover,.card-more button:hover{color:var(--pink)}
 
 /* ===== Section Headers ===== */
-.section{display:none;padding-bottom:60px}
+.section{display:none;padding-bottom:80px}
 .section.active{display:block}
-.section-header{font-family:var(--font-fun);color:var(--pink);font-size:1.8em;margin-bottom:20px;text-align:center;text-shadow:0 0 20px rgba(255,107,157,0.5);animation:glowText 3s infinite alternate}
+.section-header{font-family:var(--font-fun);color:var(--pink);font-size:clamp(1.4em,6vw,1.8em);margin-bottom:20px;text-align:center;text-shadow:0 0 20px rgba(255,107,157,0.5);animation:glowText 3s infinite alternate}
 
 /* ===== 说说 ===== */
 .shuoshuo-item{background:rgba(20,20,50,0.6);border:1px solid rgba(199,125,255,0.2);border-radius:12px;padding:14px;margin-bottom:12px;transition:border-color 0.3s}
@@ -144,14 +151,14 @@ a:hover{text-decoration:underline;color:#ff6b9d}
 .diary-item:hover{border-color:var(--cyan);box-shadow:0 0 15px rgba(125,249,255,0.2)}
 .diary-title{font-family:var(--font-fun);color:var(--cyan);font-size:1.1em;margin-bottom:6px}
 .diary-excerpt{color:#b0b0c0;font-size:0.9em;line-height:1.5;margin-bottom:8px}
-.diary-meta{display:flex;gap:12px;font-size:0.8em;color:#a0a0c0}
+.diary-meta{display:flex;gap:12px;font-size:0.8em;color:#a0a0c0;flex-wrap:wrap}
 .diary-meta .views{color:var(--gold)}
 .diary-full{display:none;color:#d0d0e8;line-height:1.8;font-size:0.95em;padding:12px 0;border-top:1px solid rgba(125,249,255,0.15);margin-top:8px}
 .diary-item.expanded .diary-full{display:block}
 .diary-item.expanded .diary-excerpt{display:none}
 
 /* ===== 相册 ===== */
-.album-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.album-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
 .album-card{background:rgba(20,20,50,0.6);border:1px solid rgba(199,125,255,0.2);border-radius:12px;overflow:hidden;cursor:pointer;transition:all 0.3s}
 .album-card:hover{border-color:var(--purple);box-shadow:0 0 20px rgba(199,125,255,0.3);transform:translateY(-3px)}
 .album-cover{width:100%;height:150px;object-fit:cover;border-bottom:2px solid rgba(199,125,255,0.2)}
@@ -181,8 +188,8 @@ a:hover{text-decoration:underline;color:#ff6b9d}
 .guestbook-form{background:var(--card-bg);border:1px solid var(--border-glow);border-radius:16px;padding:16px;margin-bottom:16px}
 .guestbook-form textarea{width:100%;height:80px;background:rgba(20,20,50,0.6);border:1px solid rgba(125,249,255,0.2);border-radius:8px;color:#d0d0e8;padding:10px;font-size:0.9em;resize:vertical;font-family:inherit}
 .guestbook-form textarea:focus{border-color:var(--cyan);outline:none}
-.guestbook-form .form-row{display:flex;gap:8px;margin-top:8px}
-.guestbook-form input{flex:1;background:rgba(20,20,50,0.6);border:1px solid rgba(125,249,255,0.2);border-radius:8px;color:#d0d0e8;padding:8px;font-size:0.9em}
+.guestbook-form .form-row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.guestbook-form input{flex:1;background:rgba(20,20,50,0.6);border:1px solid rgba(125,249,255,0.2);border-radius:8px;color:#d0d0e8;padding:8px;font-size:0.9em;min-width:120px}
 .guestbook-form input:focus{border-color:var(--cyan);outline:none}
 .guestbook-form button{background:linear-gradient(135deg,var(--pink),var(--purple));border:none;color:#fff;padding:8px 24px;border-radius:20px;cursor:pointer;font-family:var(--font-fun);font-size:0.9em;box-shadow:0 0 10px rgba(255,107,157,0.3)}
 .guestbook-msg{background:rgba(20,20,50,0.6);border:1px solid rgba(199,125,255,0.15);border-radius:12px;padding:14px;margin-bottom:10px}
@@ -194,38 +201,50 @@ a:hover{text-decoration:underline;color:#ff6b9d}
 
 /* ===== Home Section ===== */
 .home-feed{display:flex;flex-direction:column;gap:16px}
-.home-photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:12px}
-.home-photos img{width:100%;height:140px;object-fit:cover;border-radius:8px;border:1px solid var(--border-glow);cursor:pointer;transition:transform 0.2s,box-shadow 0.2s}
+.home-photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:12px}
+.home-photos img{width:100%;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--border-glow);cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;background:#141432}
 .home-photos img:hover{transform:scale(1.05);box-shadow:0 0 15px rgba(255,107,157,0.4)}
-.home-diary-preview{margin-bottom:12px}
-.home-video-preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.home-video-preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
 .home-video-preview video{width:100%;aspect-ratio:16/9;border-radius:8px;object-fit:cover;background:#000;cursor:pointer}
+
+/* ===== Tasks ===== */
+.task-section{background:rgba(20,20,50,0.6);border:1px solid rgba(199,125,255,0.2);border-radius:12px;padding:14px;margin-bottom:12px}
+.task-section-title{font-family:var(--font-fun);color:var(--cyan);font-size:1em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.task-item{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(10,10,30,0.4);border-radius:8px;margin-bottom:8px;transition:all 0.2s}
+.task-item:hover{background:rgba(10,10,30,0.6)}
+.task-checkbox{width:20px;height:20px;border-radius:50%;border:2px solid var(--pink);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s}
+.task-checkbox:hover{border-color:var(--cyan)}
+.task-checkbox.checked{background:var(--pink);border-color:var(--pink)}
+.task-checkbox.checked::after{content:'✓';color:#fff;font-size:12px}
+.task-text{flex:1;font-size:0.9em;line-height:1.4}
+.task-text.done{text-decoration:line-through;color:#888}
+.task-reward{color:var(--gold);font-size:0.8em;white-space:nowrap}
 
 /* ===== 闪字 Effect ===== */
 .flash-text{animation:flashColors 0.8s infinite}
 @keyframes flashColors{0%{color:var(--pink)}25%{color:var(--cyan)}50%{color:var(--purple)}75%{color:var(--gold)}100%{color:var(--pink)}}
 
-/* ===== Admin Link ===== */
-.admin-link{position:fixed;top:8px;right:8px;z-index:300;font-size:0.7em;color:#555;background:rgba(20,20,40,0.5);padding:4px 8px;border-radius:8px;opacity:0.5;transition:opacity 0.3s}
-.admin-link:hover{opacity:1;color:var(--cyan)}
-
 /* ===== Responsive ===== */
 @media(max-width:768px){
 .sidebar{display:none}
 .main-wrap{padding:8px}
-.nav-brand{font-size:1em;margin-right:8px}
-.nav-tab{padding:6px 12px;font-size:0.85em}
+.nav-bar{padding:6px 8px}
+.nav-brand{font-size:1em}
+.nav-tab{padding:5px 10px;font-size:0.8em}
+.nav-admin{font-size:0.7em;padding:4px 8px}
 .section-header{font-size:1.4em}
-.album-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.album-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
 .video-grid{grid-template-columns:1fr}
-.home-photos{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}
-.home-photos img{height:100px}
+.home-photos{grid-template-columns:repeat(auto-fill,minmax(90px,1fr))}
+.home-photos img{height:90px}
+.card{padding:14px}
 .music-progress{width:60px}
 }
 @media(max-width:480px){
-.nav-tab{padding:5px 10px;font-size:0.8em}
+.nav-tab{padding:4px 8px;font-size:0.75em}
 .card{padding:12px}
 .music-info .song-name{animation-duration:5s}
+.welcome-btn{padding:14px 28px}
 }
 
 /* ===== Scrollbar ===== */
@@ -246,32 +265,56 @@ a:hover{text-decoration:underline;color:#ff6b9d}
 <!-- Welcome Overlay -->
 <div class="welcome-overlay" id="welcomeOverlay">
     <div class="welcome-stars" id="welcomeStars"></div>
-    <div class="welcome-title flash-text">灬果果の钪间灬</div>
-    <div class="welcome-sub">✿ 歡迎來到果果の小钪間 ✿</div>
+    <div class="welcome-title flash-text">灬果果の树洞空间灬</div>
+    <div class="welcome-sub">✿ 歡迎來到果果の小树洞 ✿</div>
     <button class="welcome-btn" id="welcomeBtn" onclick="enterSpace(event)">点击进入果果的空间 ♡</button>
-    <div style="color:#a0a0c0;font-size:0.85em;margin-top:12px;letter-spacing:1px;">点击屏幕任意处也可以进入哦 ~</div>
+    <div class="welcome-hint">点击屏幕任意处也可以进入哦 ~</div>
     <div class="welcome-visitor" id="welcomeVisitor"></div>
 </div>
 
 <!-- Audio -->
-<audio id="bgmAudio" loop preload="auto">
+<audio id="bgmAudio" loop preload="metadata">
     <source src="images/guoguo-music.mp3" type="audio/mpeg" />
 </audio>
 
 <!-- Navigation -->
 <nav class="nav-bar">
     <div class="nav-brand" onclick="switchTab('home')">
-        <span class="diamond">◆</span> 灬果果の钪间灬
+        <span class="diamond">◆</span> 灬果果の树洞空间灬
     </div>
+    <a class="nav-admin" href="admin.html" target="_blank">管理</a>
     <div class="nav-tabs">
         <button class="nav-tab active" onclick="switchTab('home')">主页</button>
         <button class="nav-tab" onclick="switchTab('shuoshuo')">说说</button>
         <button class="nav-tab" onclick="switchTab('diary')">日志</button>
         <button class="nav-tab" onclick="switchTab('album')">相册</button>
         <button class="nav-tab" onclick="switchTab('video')">视频</button>
+        <button class="nav-tab" onclick="switchTab('task')">任务</button>
         <button class="nav-tab" onclick="switchTab('guestbook')">留言板</button>
     </div>
 </nav>
+
+<!-- Mobile Profile Card (only shown on small screens) -->
+<div class="mobile-profile" id="mobileProfile" style="display:none;padding:12px;background:var(--card-bg);border-bottom:1px solid var(--border-glow)">
+    <div style="display:flex;align-items:center;gap:12px">
+        <div class="profile-avatar-wrap" style="width:70px;height:70px;margin:0">
+            <img class="profile-avatar" style="width:70px;height:70px" src="images/avatar-main-v3.jpg" alt="果果" loading="lazy" />
+            <div class="yellow-diamond" style="width:24px;height:24px;top:-4px;right:-4px">
+                <svg viewBox="0 0 40 40" style="width:24px;height:24px">
+                    <defs><linearGradient id="yzGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#fff6a8"/><stop offset="40%" style="stop-color:#ffd700"/><stop offset="100%" style="stop-color:#d4a000"/></linearGradient></defs>
+                    <path d="M20 2 L36 14 L28 36 L12 36 L4 14 Z" fill="url(#yzGrad)" stroke="#b8860b" stroke-width="1"/>
+                    <path d="M12 14 L20 20 L28 14 L20 8 Z" fill="#fff" opacity="0.6"/>
+                    <text x="20" y="26" text-anchor="middle" font-size="14" font-weight="bold" fill="#8B4513" font-family="Arial">Z</text>
+                </svg>
+            </div>
+        </div>
+        <div style="flex:1">
+            <div style="font-family:var(--font-fun);color:var(--pink);font-size:1.1em">灬果果の树洞空间灬</div>
+            <div style="color:var(--cyan);font-size:0.8em">果果 · 6歲 · 黄钻Lv.3</div>
+            <div style="color:var(--purple);font-size:0.75em;margin-top:4px">鈊裡裝的全是ηι ✿</div>
+        </div>
+    </div>
+</div>
 
 <!-- Main Layout -->
 <div class="main-wrap">
@@ -280,12 +323,17 @@ a:hover{text-decoration:underline;color:#ff6b9d}
         <!-- Profile Card -->
         <div class="profile-card">
             <div class="profile-avatar-wrap">
-                <img class="profile-avatar" src="images/avatar-main-v3.jpg" alt="果果" />
+                <img class="profile-avatar" src="images/avatar-main-v3.jpg" alt="果果" loading="lazy" />
                 <div class="yellow-diamond">
-                    <svg viewBox="0 0 20 20"><polygon points="10,0 13,7 20,7 14,12 16,20 10,15 4,20 6,12 0,7 7,7" fill="#ffd700" stroke="#b8860b" stroke-width="0.5"/></svg>
+                    <svg viewBox="0 0 40 40">
+                        <defs><linearGradient id="yzGrad2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#fff6a8"/><stop offset="40%" style="stop-color:#ffd700"/><stop offset="100%" style="stop-color:#d4a000"/></linearGradient></defs>
+                        <path d="M20 2 L36 14 L28 36 L12 36 L4 14 Z" fill="url(#yzGrad2)" stroke="#b8860b" stroke-width="1"/>
+                        <path d="M12 14 L20 20 L28 14 L20 8 Z" fill="#fff" opacity="0.6"/>
+                        <text x="20" y="26" text-anchor="middle" font-size="14" font-weight="bold" fill="#8B4513" font-family="Arial">Z</text>
+                    </svg>
                 </div>
             </div>
-            <div class="profile-name flash-text">灬果果の钪间灬</div>
+            <div class="profile-name flash-text">灬果果の树洞空间灬</div>
             <div class="profile-real-name">果果 · 6歲 · ♡</div>
             <div class="profile-sig">鈊裡裝的全是ηι ✿<br>世界上最鈊疼的尐囡孩</div>
             <div class="profile-level">
@@ -349,7 +397,7 @@ a:hover{text-decoration:underline;color:#ff6b9d}
 
         <!-- Home Section -->
         <div class="section active" id="sec-home">
-            <div class="section-header">✿ 果果の钪间 ✿</div>
+            <div class="section-header">✿ 果果の树洞空间 ✿</div>
             <div class="home-feed" id="homeFeed"></div>
         </div>
 
@@ -375,6 +423,12 @@ a:hover{text-decoration:underline;color:#ff6b9d}
         <div class="section" id="sec-video">
             <div class="section-header">✿ 果果の视频 ✿</div>
             <div class="video-grid" id="videoGrid"></div>
+        </div>
+
+        <!-- Task Section -->
+        <div class="section" id="sec-task">
+            <div class="section-header">✿ 粑粑麻麻の任务 ✿</div>
+            <div id="taskList"></div>
         </div>
 
         <!-- Guestbook Section -->
@@ -404,9 +458,6 @@ a:hover{text-decoration:underline;color:#ff6b9d}
     </div>
 </div>
 
-<!-- Admin Link -->
-<a class="admin-link" href="admin.html" target="_blank">管理后台</a>
-
 <!-- Music Player -->
 <div class="music-player">
     <button class="music-btn" id="musicToggle" onclick="toggleMusic()">▶</button>
@@ -435,13 +486,12 @@ function utf8ToBase64(str) {
 
 const DEFAULT_DATA = {
     profile: {
-        name: '灬果果の钪间灬',
+        name: '灬果果の树洞空间灬',
         signature: '鈊裡裝的全是ηι ✿ 世界上最鈊疼的尐囡孩',
         birthday: '2020-05-31'
     },
-    visitors: { total: 156, today: 3 },
-    spaceLike: 0,
-    spaceStep: 0,
+    visitors: { total: 156, today: 3, lastDate: new Date().toISOString().slice(0,10) },
+    space: { like: 0, step: 0 },
     shuoshuo: [
         { id: 1, text: '今天和蛋卷一起玩了好开心！仓鼠跑圈圈太可爱啦~ ✿', date: '2026-07-25', likes: 5 },
         { id: 2, text: '糖糖教我画了一幅画，画的是我的城堡！❀', date: '2026-07-22', likes: 3 },
@@ -492,7 +542,32 @@ const DEFAULT_DATA = {
         { id: 1, name: '小美', content: '果果好可爱呀！❀ 我也好想养一只仓鼠~', date: '2026-07-25', likes: 3 },
         { id: 2, name: '蛋卷粉丝', content: '蛋卷也太可爱了吧！🐹 跑轮小马达~', date: '2026-07-24', likes: 2 },
         { id: 3, name: '街舞达人', content: '果果跳街舞太酷了！下次一起跳！✿', date: '2026-07-23', likes: 1 }
-    ]
+    ],
+    tasks: {
+        today: [
+            { id: 1, text: '陪果果读一本绘本', reward: '❤ +5', done: false },
+            { id: 2, text: '和果果一起观察蛋卷', reward: '❤ +3', done: false },
+            { id: 3, text: '记录果果今天的开心小事', reward: '❤ +3', done: false }
+        ],
+        week: [
+            { id: 4, text: '周末带果果去公园', reward: '🌟 +10', done: false },
+            { id: 5, text: '和果果一起完成一幅画', reward: '🌟 +8', done: false },
+            { id: 6, text: '教果果一个新的AI小技巧', reward: '🌟 +10', done: false }
+        ]
+    },
+    homeModules: {
+        profile: true,
+        photos: true,
+        shuoshuo: true,
+        diary: true,
+        album: true,
+        video: true,
+        task: true,
+        guestbook: false,
+        visitor: true,
+        likeStep: true,
+        flower: true
+    }
 };
 
 /* Data Manager - GitHub Cloud + localStorage cache */
@@ -530,20 +605,14 @@ class DataManager {
                     localStorage.setItem('guoguo_' + k, JSON.stringify(data[k]));
                 });
                 this._ghLoaded = true;
-                // Refresh UI with fresh data
-                if (typeof updateLikeStepDisplay === 'function') updateLikeStepDisplay();
-                if (typeof updateVisitorDisplay === 'function') updateVisitorDisplay();
-                if (typeof updateFlower === 'function') updateFlower();
-                if (typeof renderHome === 'function') renderHome();
+                this._refreshUI();
                 console.log('✿ GitHub data loaded');
             } else if (resp.status === 404) {
-                // db.json not yet created, push initial data
                 this._syncToGitHub();
             }
         } catch(e) {
             console.log('GitHub load fallback to localStorage:', e);
         }
-        // Get SHA for future writes
         this._getSha();
     }
     async _getSha() {
@@ -559,10 +628,9 @@ class DataManager {
     }
     async _syncToGitHub() {
         const allData = {};
-        const keys = ['profile', 'visitors', 'spaceLike', 'spaceStep', 'shuoshuo', 'diaries', 'albums', 'videos', 'guestbook'];
+        const keys = ['profile', 'visitors', 'space', 'shuoshuo', 'diaries', 'albums', 'videos', 'guestbook', 'tasks', 'homeModules'];
         keys.forEach(k => { allData[k] = this.get(k); });
         const content = utf8ToBase64(JSON.stringify(allData));
-        // Get fresh SHA
         await this._getSha();
         const payload = {
             message: '数据同步 ' + new Date().toLocaleString('zh-CN'),
@@ -585,7 +653,6 @@ class DataManager {
                 this._ghSha = result.content.sha;
                 console.log('✿ GitHub sync OK');
             } else if (resp.status === 409) {
-                // SHA conflict - retry
                 await this._getSha();
                 payload.sha = this._ghSha;
                 await fetch(GH_API_URL, {
@@ -602,6 +669,13 @@ class DataManager {
             console.log('GitHub sync error:', e);
         }
     }
+    _refreshUI() {
+        if (typeof updateLikeStepDisplay === 'function') updateLikeStepDisplay();
+        if (typeof updateVisitorDisplay === 'function') updateVisitorDisplay();
+        if (typeof updateFlower === 'function') updateFlower();
+        if (typeof renderHome === 'function') renderHome();
+        if (typeof renderTasks === 'function') renderTasks();
+    }
 }
 const DM = new DataManager();
 
@@ -615,10 +689,11 @@ function switchTab(tab) {
     document.querySelectorAll('.nav-tab').forEach(t => {
         if (t.textContent.includes(getTabLabel(tab))) t.classList.add('active');
     });
+    window.scrollTo(0, 0);
     renderCurrentTab();
 }
 function getTabLabel(tab) {
-    const map = { home:'主页', shuoshuo:'说说', diary:'日志', album:'相册', video:'视频', guestbook:'留言板' };
+    const map = { home:'主页', shuoshuo:'说说', diary:'日志', album:'相册', video:'视频', task:'任务', guestbook:'留言板' };
     return map[tab] || tab;
 }
 function renderCurrentTab() {
@@ -628,6 +703,7 @@ function renderCurrentTab() {
         case 'diary': renderDiary(); break;
         case 'album': renderAlbum(); break;
         case 'video': renderVideo(); break;
+        case 'task': renderTasks(); break;
         case 'guestbook': renderGuestbook(); break;
     }
 }
@@ -648,7 +724,6 @@ function toggleSpaceStep() {
     const count = DM.increment('space', 'step', 1);
     document.getElementById('spaceStepCount').textContent = count;
     document.getElementById('spaceStepBtn').classList.add('stepped');
-    // Record visit
     DM.increment('visitors', 'total', 1);
     DM.increment('visitors', 'today', 1);
     updateVisitorDisplay();
@@ -673,51 +748,158 @@ function updateVisitorDisplay() {
 
 /* ===== Home Section ===== */
 function renderHome() {
+    const modules = DM.get('homeModules') || DEFAULT_DATA.homeModules;
     const ss = DM.get('shuoshuo');
     const diaries = DM.get('diaries');
     const albums = DM.get('albums');
     const videos = DM.get('videos');
+    const tasks = DM.get('tasks');
 
     let html = '';
 
-    // Recent photos
-    html += '<div class="card"><div class="card-title"><span class="icon">📷</span> 果果的照片</div>';
-    html += '<div class="home-photos">';
-    albums.forEach(album => {
-        album.photos.slice(0, 2).forEach(photo => {
-            html += `<img src="${photo.url}" alt="${photo.desc}" onclick="openPhotoViewer('${photo.url}','${photo.desc}')" />`;
+    // Photos
+    if (modules.photos) {
+        html += '<div class="card"><div class="card-title"><span class="icon">📷</span> 果果的照片</div>';
+        html += '<div class="home-photos">';
+        let count = 0;
+        albums.forEach(album => {
+            album.photos.slice(0, 2).forEach(photo => {
+                if (count < 6) {
+                    html += `<img src="${photo.url}" alt="${photo.desc}" loading="lazy" onclick="openPhotoViewer('${photo.url}','${photo.desc}')" />`;
+                    count++;
+                }
+            });
         });
-    });
-    html += '</div></div>';
+        html += '</div>';
+        html += '<div class="card-more"><button onclick="switchTab(\'album\')">查看更多相册 ❯</button></div></div>';
+    }
 
-    // Recent shuoshuo
-    html += '<div class="card"><div class="card-title"><span class="icon">💭</span> 果果最近的说说</div>';
-    ss.slice(0, 3).forEach(item => {
-        html += `<div class="shuoshuo-item"><div class="shuoshuo-text">${item.text}</div>`;
-        html += `<div class="shuoshuo-meta"><span class="shuoshuo-date">${item.date}</span>`;
-        html += `<div class="shuoshuo-actions"><div class="shuoshuo-like">❤ ${item.likes}</div></div></div></div>`;
-    });
-    html += '</div>';
+    // Shuoshuo
+    if (modules.shuoshuo) {
+        html += '<div class="card"><div class="card-title"><span class="icon">💭</span> 果果最近的说说</div>';
+        ss.slice(0, 3).forEach(item => {
+            html += `<div class="shuoshuo-item"><div class="shuoshuo-text">${item.text}</div>`;
+            html += `<div class="shuoshuo-meta"><span class="shuoshuo-date">${item.date}</span>`;
+            html += `<div class="shuoshuo-actions"><div class="shuoshuo-like">❤ ${item.likes}</div></div></div></div>`;
+        });
+        html += '<div class="card-more"><button onclick="switchTab(\'shuoshuo\')">查看更多说说 ❯</button></div></div>';
+    }
 
-    // Recent diary
-    html += '<div class="card"><div class="card-title"><span class="icon">📖</span> 果果的日志</div>';
-    diaries.slice(0, 2).forEach(d => {
-        html += `<div class="diary-item" onclick="toggleDiary(this)"><div class="diary-title">${d.title}</div>`;
-        html += `<div class="diary-excerpt">${d.excerpt}</div>`;
-        html += `<div class="diary-full">${d.content}</div>`;
-        html += `<div class="diary-meta"><span class="views">👁 ${d.views}人看过</span><span>${d.date}</span></div></div>`;
-    });
-    html += '</div>';
+    // Diary
+    if (modules.diary) {
+        html += '<div class="card"><div class="card-title"><span class="icon">📖</span> 果果的日志</div>';
+        diaries.slice(0, 2).forEach(d => {
+            html += `<div class="diary-item" onclick="toggleDiary(this)"><div class="diary-title">${d.title}</div>`;
+            html += `<div class="diary-excerpt">${d.excerpt}</div>`;
+            html += `<div class="diary-full">${d.content}</div>`;
+            html += `<div class="diary-meta"><span class="views">👁 ${d.views}人看过</span><span>${d.date}</span></div></div>`;
+        });
+        html += '<div class="card-more"><button onclick="switchTab(\'diary\')">查看更多日志 ❯</button></div></div>';
+    }
+
+    // Albums preview
+    if (modules.album) {
+        html += '<div class="card"><div class="card-title"><span class="icon">🖼</span> 果果的相册</div>';
+        html += '<div class="album-grid" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr))">';
+        albums.slice(0, 4).forEach(a => {
+            html += `<div class="album-card" onclick="openAlbum(${a.id})">`;
+            html += `<img class="album-cover" src="${a.cover}" alt="${a.name}" loading="lazy" />`;
+            html += `<div class="album-info"><div class="album-name">❀ ${a.name}</div>`;
+            html += `<div class="album-count">${a.count} 张照片</div></div></div>`;
+        });
+        html += '</div>';
+        html += '<div class="card-more"><button onclick="switchTab(\'album\')">查看更多相册 ❯</button></div></div>';
+    }
 
     // Video preview
-    html += '<div class="card"><div class="card-title"><span class="icon">🎬</span> 果果的视频</div>';
-    html += '<div class="home-video-preview">';
-    videos.slice(0, 3).forEach(v => {
-        html += `<video src="${v.url}" controls preload="metadata" onclick="switchTab('video')"></video>`;
-    });
-    html += '</div></div>';
+    if (modules.video) {
+        html += '<div class="card"><div class="card-title"><span class="icon">🎬</span> 果果的视频</div>';
+        html += '<div class="home-video-preview">';
+        videos.slice(0, 3).forEach(v => {
+            html += `<video src="${v.url}" poster="${getVideoPoster(v.url)}" preload="none" controls onclick="pauseEvent(event);switchTab('video')" playsinline></video>`;
+        });
+        html += '</div>';
+        html += '<div class="card-more"><button onclick="switchTab(\'video\')">查看更多视频 ❯</button></div></div>';
+    }
+
+    // Tasks
+    if (modules.task && tasks) {
+        html += '<div class="card"><div class="card-title"><span class="icon">📝</span> 粑粑麻麻的任务</div>';
+        html += '<div class="task-section"><div class="task-section-title">📅 今日任务</div>';
+        tasks.today.slice(0, 3).forEach(t => {
+            html += renderTaskItem(t);
+        });
+        html += '</div>';
+        html += '<div class="task-section"><div class="task-section-title">📆 本周任务</div>';
+        tasks.week.slice(0, 2).forEach(t => {
+            html += renderTaskItem(t);
+        });
+        html += '</div>';
+        html += '<div class="card-more"><button onclick="switchTab(\'task\')">查看全部任务 ❯</button></div></div>';
+    }
+
+    // Guestbook preview
+    if (modules.guestbook) {
+        const msgs = DM.get('guestbook');
+        html += '<div class="card"><div class="card-title"><span class="icon">💌</span> 最新留言</div>';
+        msgs.slice(0, 2).forEach(m => {
+            html += `<div class="guestbook-msg"><div class="msg-author">✿ ${m.name}</div>`;
+            html += `<div class="msg-content">${m.content}</div>`;
+            html += `<div class="msg-time">${m.date}</div></div>`;
+        });
+        html += '<div class="card-more"><button onclick="switchTab(\'guestbook\')">查看更多留言 ❯</button></div></div>';
+    }
 
     document.getElementById('homeFeed').innerHTML = html;
+}
+function renderTaskItem(t) {
+    return `<div class="task-item"><div class="task-checkbox ${t.done?'checked':''}" onclick="toggleTask(${t.id},event)"></div>` +
+           `<div class="task-text ${t.done?'done':''}">${t.text}</div>` +
+           `<div class="task-reward">${t.reward}</div></div>`;
+}
+function getVideoPoster(url) {
+    // Use a tiny transparent pixel as placeholder; browser will use first frame if possible
+    return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+}
+function pauseEvent(e) {
+    e.stopPropagation();
+    if (e.target.pause) e.target.pause();
+}
+
+/* ===== Tasks ===== */
+function renderTasks() {
+    const tasks = DM.get('tasks');
+    let html = '';
+    html += '<div class="task-section"><div class="task-section-title">📅 今日任务</div>';
+    tasks.today.forEach(t => { html += renderTaskItem(t); });
+    html += '</div>';
+    html += '<div class="task-section"><div class="task-section-title">📆 本周任务</div>';
+    tasks.week.forEach(t => { html += renderTaskItem(t); });
+    html += '</div>';
+    html += '<div style="background:rgba(125,249,255,0.1);border:1px solid rgba(125,249,255,0.3);border-radius:8px;padding:12px;color:var(--cyan);font-size:0.85em">';
+    html += '✿ 完成任务可以获得爱心，让果果的花藤长得更高哦 ~';
+    html += '</div>';
+    document.getElementById('taskList').innerHTML = html;
+}
+function toggleTask(id, e) {
+    e.stopPropagation();
+    const tasks = DM.get('tasks');
+    ['today','week'].forEach(k => {
+        const t = tasks[k].find(x => x.id === id);
+        if (t) {
+            t.done = !t.done;
+            if (t.done) {
+                const sp = DM.get('space');
+                sp.like = (sp.like || 0) + 1;
+                DM.set('space', sp);
+                updateLikeStepDisplay();
+                updateFlower();
+            }
+        }
+    });
+    DM.set('tasks', tasks);
+    renderTasks();
+    renderHome();
 }
 
 /* ===== Shuoshuo ===== */
@@ -766,7 +948,7 @@ function renderAlbum() {
     let html = '';
     albums.forEach(a => {
         html += `<div class="album-card" onclick="openAlbum(${a.id})">`;
-        html += `<img class="album-cover" src="${a.cover}" alt="${a.name}" />`;
+        html += `<img class="album-cover" src="${a.cover}" alt="${a.name}" loading="lazy" />`;
         html += `<div class="album-info"><div class="album-name">❀ ${a.name}</div>`;
         html += `<div class="album-count">${a.count} 张照片</div></div></div>`;
     });
@@ -809,11 +991,33 @@ function renderVideo() {
     const videos = DM.get('videos');
     let html = '';
     videos.forEach(v => {
-        html += `<div class="video-card"><video src="${v.url}" controls preload="metadata"></video>`;
+        html += `<div class="video-card"><video src="${v.url}" controls preload="none" playsinline onplay="pauseBgmForVideo()" onended="resumeBgmAfterVideo()" onpause="resumeBgmAfterVideo()"></video>`;
         html += `<div class="video-info"><div class="video-title">🎬 ${v.title}</div>`;
         html += `<div class="video-date">✿ ${v.date}</div></div></div>`;
     });
     document.getElementById('videoGrid').innerHTML = html;
+}
+let bgmPausedByVideo = false;
+function pauseBgmForVideo() {
+    if (musicPlaying) {
+        bgm.pause();
+        bgmPausedByVideo = true;
+        musicPlaying = false;
+        document.getElementById('musicToggle').textContent = '▶';
+    }
+}
+function resumeBgmAfterVideo() {
+    // Small delay to avoid resuming when switching between videos
+    setTimeout(() => {
+        const anyPlaying = Array.from(document.querySelectorAll('video')).some(v => !v.paused);
+        if (!anyPlaying && bgmPausedByVideo) {
+            bgm.play().then(() => {
+                musicPlaying = true;
+                document.getElementById('musicToggle').textContent = '⏸';
+            }).catch(() => {});
+            bgmPausedByVideo = false;
+        }
+    }, 300);
 }
 
 /* ===== Guestbook ===== */
@@ -888,12 +1092,10 @@ function enterSpace(e) {
     const overlay = document.getElementById('welcomeOverlay');
     if (overlay.classList.contains('hidden')) return;
     overlay.classList.add('hidden');
-    // BGM play is non-blocking - overlay hides regardless
     bgm.play().then(() => {
         musicPlaying = true;
         document.getElementById('musicToggle').textContent = '⏸';
     }).catch(() => {
-        // Auto-retry after 1s, some browsers need a moment
         setTimeout(() => {
             bgm.play().then(() => {
                 musicPlaying = true;
@@ -901,7 +1103,6 @@ function enterSpace(e) {
             }).catch(() => {});
         }, 1000);
     });
-    // Count visitor
     DM.increment('visitors', 'total', 1);
     DM.increment('visitors', 'today', 1);
     updateVisitorDisplay();
@@ -921,12 +1122,10 @@ function enterSpace(e) {
     }
 })();
 
-// Click anywhere on welcome overlay to enter
 document.getElementById('welcomeOverlay').addEventListener('click', function(e) {
     enterSpace(e);
 });
 
-// Press Enter or Space to enter
 document.addEventListener('keydown', function(e) {
     const overlay = document.getElementById('welcomeOverlay');
     if (!overlay.classList.contains('hidden') && (e.key === 'Enter' || e.key === ' ')) {
@@ -938,7 +1137,7 @@ document.addEventListener('keydown', function(e) {
 /* ===== Background Stars ===== */
 (function() {
     const container = document.getElementById('bgStars');
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 30; i++) {
         const star = document.createElement('div');
         star.className = 'welcome-star';
         star.style.left = Math.random() * 100 + '%';
@@ -953,20 +1152,24 @@ document.addEventListener('keydown', function(e) {
 
 /* ===== Falling Petals ===== */
 (function() {
+    let petalCount = 0;
+    const maxPetals = 8;
     function createPetal() {
+        if (petalCount >= maxPetals) return;
         const petal = document.createElement('div');
         petal.className = 'petal';
         const inner = document.createElement('div');
         inner.className = 'petal-inner';
         petal.appendChild(inner);
         petal.style.left = Math.random() * 100 + '%';
-        petal.style.animationDuration = (5 + Math.random() * 10) + 's';
+        petal.style.animationDuration = (8 + Math.random() * 12) + 's';
         petal.style.animationDelay = Math.random() * 5 + 's';
         document.body.appendChild(petal);
-        setTimeout(() => petal.remove(), 20000);
+        petalCount++;
+        setTimeout(() => { petal.remove(); petalCount--; }, 25000);
     }
-    for (let i = 0; i < 15; i++) createPetal();
-    setInterval(createPetal, 3000);
+    createPetal();
+    setInterval(createPetal, 5000);
 })();
 
 /* ===== Mouse Trail ===== */
@@ -975,6 +1178,7 @@ document.addEventListener('keydown', function(e) {
     const ctx = canvas.getContext('2d');
     let particles = [];
     let mouseX = 0, mouseY = 0;
+    let lastMove = 0;
 
     function resize() {
         canvas.width = window.innerWidth;
@@ -984,6 +1188,9 @@ document.addEventListener('keydown', function(e) {
     window.addEventListener('resize', resize);
 
     document.addEventListener('mousemove', e => {
+        const now = Date.now();
+        if (now - lastMove < 50) return; // throttle
+        lastMove = now;
         mouseX = e.clientX;
         mouseY = e.clientY;
         particles.push({
@@ -994,7 +1201,7 @@ document.addEventListener('keydown', function(e) {
             size: 2 + Math.random() * 3,
             color: Math.random() > 0.5 ? '#ff6b9d' : '#7df9ff'
         });
-        if (particles.length > 50) particles.shift();
+        if (particles.length > 30) particles.shift();
     });
 
     function animate() {
@@ -1002,7 +1209,7 @@ document.addEventListener('keydown', function(e) {
         particles.forEach(p => {
             p.x += p.vx;
             p.y += p.vy;
-            p.life -= 0.02;
+            p.life -= 0.03;
             if (p.life > 0) {
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
@@ -1018,6 +1225,16 @@ document.addEventListener('keydown', function(e) {
     animate();
 })();
 
+/* ===== Mobile profile visibility ===== */
+(function() {
+    function checkMobile() {
+        const isMobile = window.innerWidth <= 768;
+        document.getElementById('mobileProfile').style.display = isMobile ? 'block' : 'none';
+    }
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+})();
+
 /* ===== Profile Age ===== */
 (function() {
     const birthday = new Date('2020-05-31');
@@ -1030,21 +1247,18 @@ document.addEventListener('keydown', function(e) {
 
 /* ===== Init ===== */
 (function() {
-    // Initialize localStorage defaults if not set
-    const keys = ['visitors', 'space', 'shuoshuo', 'diaries', 'albums', 'videos', 'guestbook'];
+    const keys = ['visitors', 'space', 'shuoshuo', 'diaries', 'albums', 'videos', 'guestbook', 'tasks', 'homeModules'];
     keys.forEach(k => {
         if (!localStorage.getItem('guoguo_' + k)) {
             DM.set(k, DEFAULT_DATA[k]);
         }
     });
 
-    // Display initial data from localStorage cache
     updateLikeStepDisplay();
     updateVisitorDisplay();
     updateFlower();
     renderHome();
 
-    // Load latest data from GitHub cloud (async, refreshes UI when done)
     DM.loadFromGitHub();
 })();
 </script>
