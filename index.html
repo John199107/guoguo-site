@@ -206,7 +206,7 @@ a:hover{text-decoration:underline;color:#ff6b9d}
 @keyframes flashColors{0%{color:var(--pink)}25%{color:var(--cyan)}50%{color:var(--purple)}75%{color:var(--gold)}100%{color:var(--pink)}}
 
 /* ===== Admin Link ===== */
-.admin-link{position:fixed;top:8px;right:8px;z-index:300;font-size:0.7em;color:#555;background:rgba(20,20,40,0.5);padding:4px 8px;border-radius:8px;opacity:0.4;transition:opacity 0.3s}
+.admin-link{position:fixed;top:8px;right:8px;z-index:300;font-size:0.7em;color:#555;background:rgba(20,20,40,0.5);padding:4px 8px;border-radius:8px;opacity:0.5;transition:opacity 0.3s}
 .admin-link:hover{opacity:1;color:var(--cyan)}
 
 /* ===== Responsive ===== */
@@ -472,7 +472,10 @@ const DEFAULT_DATA = {
         { id: 4, title: '果果跳街舞', url: 'videos/video-4.mp4', date: '2026-07-23' },
         { id: 5, title: '果果和蛋卷', url: 'videos/video-5.mp4', date: '2026-07-22' },
         { id: 6, title: '果果和蛋卷 Vol.2', url: 'videos/video-6.mp4', date: '2026-07-22' },
-        { id: 7, title: '果果的开心时光', url: 'videos/video-7.mp4', date: '2026-07-21' }
+        { id: 7, title: '果果的开心时光', url: 'videos/video-7.mp4', date: '2026-07-21' },
+        { id: 8, title: '果果的快乐日常', url: 'videos/video-8.mp4', date: '2026-07-28' },
+        { id: 9, title: '果果的精彩瞬间', url: 'videos/video-9.mp4', date: '2026-07-28' },
+        { id: 10, title: '果果的冒险故事', url: 'videos/video-10.mp4', date: '2026-07-28' }
     ],
     guestbook: [
         { id: 1, name: '小美', content: '果果好可爱呀！❀ 我也好想养一只仓鼠~', date: '2026-07-25', likes: 3 },
@@ -792,10 +795,19 @@ bgm.addEventListener('timeupdate', () => {
 /* ===== Welcome Overlay ===== */
 function enterSpace() {
     document.getElementById('welcomeOverlay').classList.add('hidden');
+    // BGM play is non-blocking - overlay hides regardless
     bgm.play().then(() => {
         musicPlaying = true;
         document.getElementById('musicToggle').textContent = '⏸';
-    }).catch(() => {});
+    }).catch(() => {
+        // Auto-retry after 1s, some browsers need a moment
+        setTimeout(() => {
+            bgm.play().then(() => {
+                musicPlaying = true;
+                document.getElementById('musicToggle').textContent = '⏸';
+            }).catch(() => {});
+        }, 1000);
+    });
     // Count visitor
     DM.increment('visitors', 'total', 1);
     DM.increment('visitors', 'today', 1);
