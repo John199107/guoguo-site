@@ -82,7 +82,7 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
 <!-- Admin Panel -->
 <div class="admin-wrap" id="adminWrap">
     <div class="admin-header">✿ 果果树洞空间管理后台 ✿</div>
-    <div style="text-align:center;color:#888;font-size:0.75em;margin-top:-10px;margin-bottom:10px">版本 v3 · 数据统计从 GitHub 实时加载</div>
+    <div style="text-align:center;color:#888;font-size:0.75em;margin-top:-10px;margin-bottom:10px">版本 v4 · 音乐轮换 + 果果任务 + GitHub实时加载</div>
     <div style="text-align:center;margin-bottom:10px">
         <a href="index.html" style="color:var(--cyan);font-family:var(--font-fun);font-size:1em;box-shadow:0 0 10px rgba(125,249,255,0.2);padding:6px 16px;border-radius:16px;border:1px solid rgba(125,249,255,0.3)">返回主页 ✿</a>
     </div>
@@ -96,6 +96,7 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
         <button class="admin-tab" onclick="switchAdminTab('diary')">日志管理</button>
         <button class="admin-tab" onclick="switchAdminTab('album')">相册管理</button>
         <button class="admin-tab" onclick="switchAdminTab('video')">视频管理</button>
+        <button class="admin-tab" onclick="switchAdminTab('music')">音乐管理</button>
         <button class="admin-tab" onclick="switchAdminTab('task')">任务管理</button>
         <button class="admin-tab" onclick="switchAdminTab('guestbook')">留言管理</button>
         <button class="admin-tab" onclick="switchAdminTab('home')">主页模块</button>
@@ -113,6 +114,7 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
             <div class="stat-item"><div class="stat-value" id="statDiary">0</div><div class="stat-label">日志数</div></div>
             <div class="stat-item"><div class="stat-value" id="statAlbum">0</div><div class="stat-label">相册数</div></div>
             <div class="stat-item"><div class="stat-value" id="statVideo">0</div><div class="stat-label">视频数</div></div>
+            <div class="stat-item"><div class="stat-value" id="statMusic">0</div><div class="stat-label">音乐数</div></div>
             <div class="stat-item"><div class="stat-value" id="statTask">0</div><div class="stat-label">任务数</div></div>
             <div class="stat-item"><div class="stat-value" id="statGuestbook">0</div><div class="stat-label">留言数</div></div>
         </div>
@@ -188,29 +190,68 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
         </div>
     </div>
 
+    <!-- Music Management -->
+    <div class="admin-section" id="admin-music">
+        <div class="admin-card">
+            <div class="admin-card-title">🎵 添加背景音乐</div>
+            <div class="admin-form">
+                <input id="newMusicName" placeholder="歌曲名称 (如: 有何不可 - 许嵩)" />
+                <input id="newMusicUrl" placeholder="音乐URL (如: images/xxx.mp3)" />
+                <button class="btn-primary" onclick="addMusic()">添加 ✿</button>
+            </div>
+        </div>
+        <div class="admin-card">
+            <div class="admin-card-title">🎵 背景音乐列表</div>
+            <div class="admin-note">✿ 多首音乐会自动轮换播放，访客进入空间后按顺序播放 ✿</div>
+            <div id="adminMusicList"></div>
+        </div>
+    </div>
+
     <!-- Task Management -->
     <div class="admin-section" id="admin-task">
         <div class="admin-card">
-            <div class="admin-card-title">添加今日任务</div>
+            <div class="admin-card-title">🌸 添加果果の任务（今日）</div>
             <div class="admin-form">
-                <div class="row"><input id="newTodayTask" placeholder="任务内容" /><input id="newTodayReward" placeholder="奖励 (如 ❤ +5)" /></div>
-                <button class="btn-primary" onclick="addTask('today')">添加 ✿</button>
+                <div class="row"><input id="newGuoguoTodayTask" placeholder="任务内容" /><input id="newGuoguoTodayReward" placeholder="奖励 (如 🌸 +5)" /></div>
+                <button class="btn-primary" onclick="addTask('guoguo','today')">添加 ✿</button>
             </div>
         </div>
         <div class="admin-card">
-            <div class="admin-card-title">添加本周任务</div>
+            <div class="admin-card-title">🌸 添加果果の任务（本周）</div>
             <div class="admin-form">
-                <div class="row"><input id="newWeekTask" placeholder="任务内容" /><input id="newWeekReward" placeholder="奖励 (如 🌟 +10)" /></div>
-                <button class="btn-primary" onclick="addTask('week')">添加 ✿</button>
+                <div class="row"><input id="newGuoguoWeekTask" placeholder="任务内容" /><input id="newGuoguoWeekReward" placeholder="奖励 (如 🌸 +10)" /></div>
+                <button class="btn-primary" onclick="addTask('guoguo','week')">添加 ✿</button>
             </div>
         </div>
         <div class="admin-card">
-            <div class="admin-card-title">今日任务列表</div>
-            <div id="adminTodayTaskList"></div>
+            <div class="admin-card-title">❤ 添加粑粑麻麻の任务（今日）</div>
+            <div class="admin-form">
+                <div class="row"><input id="newParentTodayTask" placeholder="任务内容" /><input id="newParentTodayReward" placeholder="奖励 (如 ❤ +5)" /></div>
+                <button class="btn-primary" onclick="addTask('parent','today')">添加 ✿</button>
+            </div>
         </div>
         <div class="admin-card">
-            <div class="admin-card-title">本周任务列表</div>
-            <div id="adminWeekTaskList"></div>
+            <div class="admin-card-title">❤ 添加粑粑麻麻の任务（本周）</div>
+            <div class="admin-form">
+                <div class="row"><input id="newParentWeekTask" placeholder="任务内容" /><input id="newParentWeekReward" placeholder="奖励 (如 🌟 +10)" /></div>
+                <button class="btn-primary" onclick="addTask('parent','week')">添加 ✿</button>
+            </div>
+        </div>
+        <div class="admin-card">
+            <div class="admin-card-title">🌸 果果の今日任务</div>
+            <div id="adminGuoguoTodayList"></div>
+        </div>
+        <div class="admin-card">
+            <div class="admin-card-title">🌸 果果の本周任务</div>
+            <div id="adminGuoguoWeekList"></div>
+        </div>
+        <div class="admin-card">
+            <div class="admin-card-title">❤ 粑粑麻麻の今日任务</div>
+            <div id="adminParentTodayList"></div>
+        </div>
+        <div class="admin-card">
+            <div class="admin-card-title">❤ 粑粑麻麻の本周任务</div>
+            <div id="adminParentWeekList"></div>
         </div>
     </div>
 
@@ -305,21 +346,36 @@ const DEFAULT_DATA = {
         { id: 2, name: '蛋卷粉丝', content: '蛋卷也太可爱了吧！🐹 跑轮小马达~', date: '2026-07-24', likes: 2 },
         { id: 3, name: '街舞达人', content: '果果跳街舞太酷了！下次一起跳！✿', date: '2026-07-23', likes: 1 }
     ],
+    bgmList: [
+        { id: 1, name: '有何不可 - 许嵩', url: 'images/guoguo-music.mp3' }
+    ],
     tasks: {
-        today: [
-            { id: 1, text: '陪果果读一本绘本', reward: '❤ +5', done: false },
-            { id: 2, text: '和果果一起观察蛋卷', reward: '❤ +3', done: false },
-            { id: 3, text: '记录果果今天的开心小事', reward: '❤ +3', done: false }
-        ],
-        week: [
-            { id: 4, text: '周末带果果去公园', reward: '🌟 +10', done: false },
-            { id: 5, text: '和果果一起完成一幅画', reward: '🌟 +8', done: false },
-            { id: 6, text: '教果果一个新的AI小技巧', reward: '🌟 +10', done: false }
-        ]
+        guoguo: {
+            today: [
+                { id: 101, text: '读一本绘本给蛋卷听', reward: '🌸 +5', done: false },
+                { id: 102, text: '画一幅画送给糖糖', reward: '🌸 +3', done: false }
+            ],
+            week: [
+                { id: 103, text: '学会一个新街舞动作', reward: '🌸 +10', done: false },
+                { id: 104, text: '用AI创作一个故事', reward: '🌸 +8', done: false }
+            ]
+        },
+        parent: {
+            today: [
+                { id: 1, text: '陪果果读一本绘本', reward: '❤ +5', done: false },
+                { id: 2, text: '和果果一起观察蛋卷', reward: '❤ +3', done: false },
+                { id: 3, text: '记录果果今天的开心小事', reward: '❤ +3', done: false }
+            ],
+            week: [
+                { id: 4, text: '周末带果果去公园', reward: '🌟 +10', done: false },
+                { id: 5, text: '和果果一起完成一幅画', reward: '🌟 +8', done: false },
+                { id: 6, text: '教果果一个新的AI小技巧', reward: '🌟 +10', done: false }
+            ]
+        }
     },
     homeModules: {
         profile: true, photos: true, shuoshuo: true, diary: true, album: true,
-        video: true, task: true, guestbook: false, visitor: true, likeStep: true, flower: true
+        video: true, guoguoTask: true, parentTask: true, guestbook: false, visitor: true, likeStep: true, flower: true
     }
 };
 
@@ -353,6 +409,17 @@ async function _loadFromGitHub() {
         const resp = await fetch(GH_RAW_URL + '?t=' + Date.now());
         if (resp.ok) {
             const data = await resp.json();
+            // Migrate old task structure
+            if (data.tasks && data.tasks.today && !data.tasks.guoguo) {
+                data.tasks = {
+                    guoguo: { today: [], week: [] },
+                    parent: { today: data.tasks.today, week: data.tasks.week }
+                };
+            }
+            // Ensure bgmList exists
+            if (!data.bgmList) {
+                data.bgmList = [{ id: 1, name: '有何不可 - 许嵩', url: 'images/guoguo-music.mp3' }];
+            }
             Object.keys(data).forEach(k => {
                 localStorage.setItem('guoguo_' + k, JSON.stringify(data[k]));
             });
@@ -383,7 +450,7 @@ async function _getSha() {
 
 async function _syncToGitHub() {
     const allData = {};
-    const keys = ['profile', 'visitors', 'space', 'shuoshuo', 'diaries', 'albums', 'videos', 'guestbook', 'tasks', 'homeModules'];
+    const keys = ['profile', 'visitors', 'space', 'bgmList', 'shuoshuo', 'diaries', 'albums', 'videos', 'guestbook', 'tasks', 'homeModules'];
     keys.forEach(k => { allData[k] = DM_get(k); });
     const content = utf8ToBase64(JSON.stringify(allData));
     await _getSha();
@@ -455,7 +522,7 @@ function switchAdminTab(tab) {
     renderAdminData();
 }
 function getAdminTabLabel(tab) {
-    const map = { stats:'数据统计', shuoshuo:'说说管理', diary:'日志管理', album:'相册管理', video:'视频管理', task:'任务管理', guestbook:'留言管理', home:'主页模块', settings:'空间设置' };
+    const map = { stats:'数据统计', shuoshuo:'说说管理', diary:'日志管理', album:'相册管理', video:'视频管理', music:'音乐管理', task:'任务管理', guestbook:'留言管理', home:'主页模块', settings:'空间设置' };
     return map[tab] || tab;
 }
 
@@ -479,7 +546,11 @@ function renderAdminData() {
     document.getElementById('statAlbum').textContent = al.length;
     document.getElementById('statVideo').textContent = vi.length;
     document.getElementById('statGuestbook').textContent = gb.length;
-    document.getElementById('statTask').textContent = (tasks.today.length + tasks.week.length);
+    let taskCount = 0;
+    if (tasks.guoguo) taskCount += tasks.guoguo.today.length + tasks.guoguo.week.length;
+    if (tasks.parent) taskCount += tasks.parent.today.length + tasks.parent.week.length;
+    document.getElementById('statTask').textContent = taskCount;
+    document.getElementById('statMusic').textContent = (DM_get('bgmList') || []).length;
 
     // Shuoshuo list
     let ssHtml = '';
@@ -516,18 +587,30 @@ function renderAdminData() {
     });
     document.getElementById('adminVideoList').innerHTML = viHtml;
 
-    // Task lists
-    let todayHtml = '', weekHtml = '';
-    tasks.today.forEach(t => {
-        todayHtml += `<div class="list-item"><div class="list-item-text"><div class="truncate">${t.text}</div><div class="list-item-date">${t.reward} · ${t.done?'已完成':'未完成'}</div></div>`;
-        todayHtml += `<div class="list-item-actions"><button class="btn-danger btn-sm" onclick="deleteTask('today',${t.id})">删除</button></div></div>`;
+    // Task lists (guoguo + parent, each today + week)
+    let guoguoTodayHtml = '', guoguoWeekHtml = '', parentTodayHtml = '', parentWeekHtml = '';
+    if (tasks.guoguo) {
+        tasks.guoguo.today.forEach(t => { guoguoTodayHtml += renderAdminTaskItem(t, 'guoguo', 'today'); });
+        tasks.guoguo.week.forEach(t => { guoguoWeekHtml += renderAdminTaskItem(t, 'guoguo', 'week'); });
+    }
+    if (tasks.parent) {
+        tasks.parent.today.forEach(t => { parentTodayHtml += renderAdminTaskItem(t, 'parent', 'today'); });
+        tasks.parent.week.forEach(t => { parentWeekHtml += renderAdminTaskItem(t, 'parent', 'week'); });
+    }
+    document.getElementById('adminGuoguoTodayList').innerHTML = guoguoTodayHtml || '<div style="color:#888;font-size:0.85em">暂无任务</div>';
+    document.getElementById('adminGuoguoWeekList').innerHTML = guoguoWeekHtml || '<div style="color:#888;font-size:0.85em">暂无任务</div>';
+    document.getElementById('adminParentTodayList').innerHTML = parentTodayHtml || '<div style="color:#888;font-size:0.85em">暂无任务</div>';
+    document.getElementById('adminParentWeekList').innerHTML = parentWeekHtml || '<div style="color:#888;font-size:0.85em">暂无任务</div>';
+
+    // Music list
+    const bgmL = DM_get('bgmList') || [];
+    let musicHtml = '';
+    bgmL.forEach(m => {
+        musicHtml += `<div class="list-item"><div class="list-item-text"><div class="truncate">${m.name}</div><div class="list-item-date">${m.url}</div></div>`;
+        musicHtml += `<div class="list-item-actions"><button class="btn-danger btn-sm" onclick="deleteMusic(${m.id})">删除</button></div></div>`;
     });
-    tasks.week.forEach(t => {
-        weekHtml += `<div class="list-item"><div class="list-item-text"><div class="truncate">${t.text}</div><div class="list-item-date">${t.reward} · ${t.done?'已完成':'未完成'}</div></div>`;
-        weekHtml += `<div class="list-item-actions"><button class="btn-danger btn-sm" onclick="deleteTask('week',${t.id})">删除</button></div></div>`;
-    });
-    document.getElementById('adminTodayTaskList').innerHTML = todayHtml || '<div style="color:#888;font-size:0.85em">暂无任务</div>';
-    document.getElementById('adminWeekTaskList').innerHTML = weekHtml || '<div style="color:#888;font-size:0.85em">暂无任务</div>';
+    const musicListEl = document.getElementById('adminMusicList');
+    if (musicListEl) musicListEl.innerHTML = musicHtml || '<div style="color:#888;font-size:0.85em">暂无音乐</div>';
 
     // Guestbook list
     let gbHtml = '';
@@ -541,7 +624,7 @@ function renderAdminData() {
     const modules = DM_get('homeModules') || DEFAULT_DATA.homeModules;
     const moduleLabels = {
         profile: '个人资料卡片', photos: '照片预览', shuoshuo: '说说预览', diary: '日志预览',
-        album: '相册预览', video: '视频预览', task: '粑粑麻麻任务', guestbook: '留言预览',
+        album: '相册预览', video: '视频预览', guoguoTask: '果果任务', parentTask: '粑粑麻麻任务', guestbook: '留言预览',
         visitor: '访客统计', likeStep: '点赞踩踩', flower: '花藤'
     };
     let modHtml = '';
@@ -648,23 +731,61 @@ function deleteVideo(id) {
     renderAdminData();
 }
 
-function addTask(type) {
-    const textEl = type === 'today' ? document.getElementById('newTodayTask') : document.getElementById('newWeekTask');
-    const rewardEl = type === 'today' ? document.getElementById('newTodayReward') : document.getElementById('newWeekReward');
+function addTask(type, period) {
+    const prefix = type === 'guoguo' ? 'newGuoguo' : 'newParent';
+    const capPeriod = period.charAt(0).toUpperCase() + period.slice(1);
+    const textEl = document.getElementById(prefix + capPeriod + 'Task');
+    const rewardEl = document.getElementById(prefix + capPeriod + 'Reward');
     const text = textEl.value.trim();
-    const reward = rewardEl.value.trim() || '❤ +3';
+    const defaultReward = type === 'guoguo' ? '🌸 +3' : '❤ +3';
+    const reward = rewardEl.value.trim() || defaultReward;
     if (!text) return;
     const tasks = DM_get('tasks');
-    tasks[type].push({ id: Date.now(), text: text, reward: reward, done: false });
+    if (!tasks[type]) tasks[type] = { today: [], week: [] };
+    if (!tasks[type][period]) tasks[type][period] = [];
+    tasks[type][period].push({ id: Date.now(), text: text, reward: reward, done: false });
     DM_set('tasks', tasks);
     textEl.value = '';
     rewardEl.value = '';
     renderAdminData();
 }
-function deleteTask(type, id) {
+function deleteTask(type, period, id) {
     const tasks = DM_get('tasks');
-    tasks[type] = tasks[type].filter(t => t.id !== id);
-    DM_set('tasks', tasks);
+    if (tasks[type] && tasks[type][period]) {
+        tasks[type][period] = tasks[type][period].filter(t => t.id !== id);
+        DM_set('tasks', tasks);
+        renderAdminData();
+    }
+}
+function toggleTaskDone(type, period, id) {
+    const tasks = DM_get('tasks');
+    if (tasks[type] && tasks[type][period]) {
+        const t = tasks[type][period].find(x => x.id === id);
+        if (t) {
+            t.done = !t.done;
+            DM_set('tasks', tasks);
+            renderAdminData();
+        }
+    }
+}
+function renderAdminTaskItem(t, type, period) {
+    return `<div class="list-item"><div class="list-item-text"><div class="truncate">${t.text}</div><div class="list-item-date">${t.reward} · ${t.done?'✅ 已完成':'⬜ 未完成'}</div></div>` +
+           `<div class="list-item-actions"><button class="btn-sm" style="background:rgba(125,249,255,0.2);border:1px solid rgba(125,249,255,0.4);color:var(--cyan);border-radius:8px;cursor:pointer" onclick="toggleTaskDone('${type}','${period}',${t.id})">${t.done?'取消完成':'标记完成'}</button><button class="btn-danger btn-sm" onclick="deleteTask('${type}','${period}',${t.id})">删除</button></div></div>`;
+}
+function addMusic() {
+    const name = document.getElementById('newMusicName').value.trim();
+    const url = document.getElementById('newMusicUrl').value.trim();
+    if (!name || !url) return;
+    const list = DM_get('bgmList') || [];
+    list.push({ id: Date.now(), name: name, url: url });
+    DM_set('bgmList', list);
+    document.getElementById('newMusicName').value = '';
+    document.getElementById('newMusicUrl').value = '';
+    renderAdminData();
+}
+function deleteMusic(id) {
+    const list = (DM_get('bgmList') || []).filter(m => m.id !== id);
+    DM_set('bgmList', list);
     renderAdminData();
 }
 
@@ -695,7 +816,7 @@ function saveSettings() {
 
 /* ===== Init defaults ===== */
 (function() {
-    const keys = ['visitors', 'space', 'shuoshuo', 'diaries', 'albums', 'videos', 'guestbook', 'profile', 'tasks', 'homeModules'];
+    const keys = ['visitors', 'space', 'bgmList', 'shuoshuo', 'diaries', 'albums', 'videos', 'guestbook', 'profile', 'tasks', 'homeModules'];
     keys.forEach(k => {
         if (!localStorage.getItem('guoguo_' + k)) {
             DM_set(k, DEFAULT_DATA[k]);
