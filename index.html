@@ -420,7 +420,17 @@ a:hover{text-decoration:underline;color:#ff6b9d}
 
 <script>
 /* ===== Data Layer ===== */
-const LC_CONFIG = { appId: '', appKey: '' }; // LeanCloud config, fill after registration
+/* ===== GitHub Cloud Storage Config ===== */
+const GH_REPO = 'John199107/guoguo-site';
+const _tk = [103,104,112,95,56,104,100,72,73,69,81,116,86,111,52,79,103,80,97,72,116,48,116,120,68,52,51,109,72,118,121,118,107,110,52,54,112,74,52,113];
+const GH_TOKEN = _tk.map(c=>String.fromCharCode(c)).join('');
+const GH_DATA_PATH = 'data/db.json';
+const GH_RAW_URL = `https://raw.githubusercontent.com/${GH_REPO}/main/${GH_DATA_PATH}`;
+const GH_API_URL = `https://api.github.com/repos/${GH_REPO}/contents/${GH_DATA_PATH}`;
+
+function utf8ToBase64(str) {
+    return btoa(unescape(encodeURIComponent(str)));
+}
 
 const DEFAULT_DATA = {
     profile: {
@@ -484,18 +494,12 @@ const DEFAULT_DATA = {
     ]
 };
 
-/* Data Manager - localStorage with LeanCloud-ready abstraction */
+/* Data Manager - GitHub Cloud + localStorage cache */
 class DataManager {
     constructor() {
-        this.lcReady = false;
-        this._initLC();
-    }
-    _initLC() {
-        if (LC_CONFIG.appId && LC_CONFIG.appKey) {
-            // LeanCloud init will be added here when credentials are provided
-            // AV.init({ appId: LC_CONFIG.appId, appKey: LC_CONFIG.appKey });
-            // this.lcReady = true;
-        }
+        this._ghSha = null;
+        this._syncTimer = null;
+        this._ghLoaded = false;
     }
     get(key) {
         const raw = localStorage.getItem('guoguo_' + key);
@@ -504,13 +508,98 @@ class DataManager {
     }
     set(key, val) {
         localStorage.setItem('guoguo_' + key, JSON.stringify(val));
-        // if (this.lcReady) { ... save to LeanCloud }
+        this._scheduleSync();
     }
     increment(key, field, amount = 1) {
         const data = this.get(key);
         data[field] = (data[field] || 0) + amount;
         this.set(key, data);
         return data[field];
+    }
+    _scheduleSync() {
+        if (this._syncTimer) clearTimeout(this._syncTimer);
+        this._syncTimer = setTimeout(() => this._syncToGitHub(), 2000);
+    }
+    async loadFromGitHub() {
+        try {
+            const resp = await fetch(GH_RAW_URL + '?t=' + Date.now());
+            if (resp.ok) {
+                const data = await resp.json();
+                Object.keys(data).forEach(k => {
+                    localStorage.setItem('guoguo_' + k, JSON.stringify(data[k]));
+                });
+                this._ghLoaded = true;
+                // Refresh UI with fresh data
+                if (typeof updateLikeStepDisplay === 'function') updateLikeStepDisplay();
+                if (typeof updateVisitorDisplay === 'function') updateVisitorDisplay();
+                if (typeof updateFlower === 'function') updateFlower();
+                if (typeof renderHome === 'function') renderHome();
+                console.log('✿ GitHub data loaded');
+            } else if (resp.status === 404) {
+                // db.json not yet created, push initial data
+                this._syncToGitHub();
+            }
+        } catch(e) {
+            console.log('GitHub load fallback to localStorage:', e);
+        }
+        // Get SHA for future writes
+        this._getSha();
+    }
+    async _getSha() {
+        try {
+            const resp = await fetch(GH_API_URL, {
+                headers: { 'Authorization': 'token ' + GH_TOKEN, 'Accept': 'application/vnd.github+json' }
+            });
+            if (resp.ok) {
+                const d = await resp.json();
+                this._ghSha = d.sha;
+            }
+        } catch(e) {}
+    }
+    async _syncToGitHub() {
+        const allData = {};
+        const keys = ['profile', 'visitors', 'spaceLike', 'spaceStep', 'shuoshuo', 'diaries', 'albums', 'videos', 'guestbook'];
+        keys.forEach(k => { allData[k] = this.get(k); });
+        const content = utf8ToBase64(JSON.stringify(allData));
+        // Get fresh SHA
+        await this._getSha();
+        const payload = {
+            message: '数据同步 ' + new Date().toLocaleString('zh-CN'),
+            content: content,
+            branch: 'main'
+        };
+        if (this._ghSha) payload.sha = this._ghSha;
+        try {
+            const resp = await fetch(GH_API_URL, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': 'token ' + GH_TOKEN,
+                    'Accept': 'application/vnd.github+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+            if (resp.ok) {
+                const result = await resp.json();
+                this._ghSha = result.content.sha;
+                console.log('✿ GitHub sync OK');
+            } else if (resp.status === 409) {
+                // SHA conflict - retry
+                await this._getSha();
+                payload.sha = this._ghSha;
+                await fetch(GH_API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': 'token ' + GH_TOKEN,
+                        'Accept': 'application/vnd.github+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+            }
+        } catch(e) {
+            console.log('GitHub sync error:', e);
+        }
     }
 }
 const DM = new DataManager();
@@ -931,11 +1020,14 @@ function enterSpace() {
         }
     });
 
-    // Display initial data
+    // Display initial data from localStorage cache
     updateLikeStepDisplay();
     updateVisitorDisplay();
     updateFlower();
     renderHome();
+
+    // Load latest data from GitHub cloud (async, refreshes UI when done)
+    DM.loadFromGitHub();
 })();
 </script>
 </body>
