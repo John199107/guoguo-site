@@ -638,6 +638,7 @@ class DataManager {
     }
     set(key, val) {
         localStorage.setItem('guoguo_' + key, JSON.stringify(val));
+        localStorage.setItem('guoguo_lastLocalModify', Date.now().toString());
         this._scheduleSync();
     }
     increment(key, field, amount = 1) {
@@ -652,7 +653,9 @@ class DataManager {
     }
     async loadFromGitHub() {
         try {
-            const resp = await fetch(cdnUrl(GH_DATA_PATH) + '?t=' + Date.now());
+            // Use raw.githubusercontent.com for data file (no CDN cache delay)
+            // jsDelivr CDN is only for static assets like images/videos
+            const resp = await fetch(GH_RAW_URL + '?t=' + Date.now());
             if (resp.ok) {
                 const data = await resp.json();
                 // Migrate old task structure (today → week with deadline)
@@ -682,12 +685,29 @@ class DataManager {
                 if (!data.bgmList) {
                     data.bgmList = [{ id: 1, name: '有何不可 - 许嵩', url: 'images/guoguo-music.mp3' }];
                 }
-                Object.keys(data).forEach(k => {
-                    localStorage.setItem('guoguo_' + k, JSON.stringify(data[k]));
-                });
+                // Smart merge: only overwrite localStorage with GitHub data if
+                // no recent local modification exists (within 60s = admin just edited)
+                const lastLocalModify = parseInt(localStorage.getItem('guoguo_lastLocalModify') || '0');
+                const now = Date.now();
+                const isRecentlyModified = (now - lastLocalModify) < 60000; // 60 seconds
+
+                if (!isRecentlyModified) {
+                    // No recent local changes → safe to use GitHub data as the latest version
+                    Object.keys(data).forEach(k => {
+                        localStorage.setItem('guoguo_' + k, JSON.stringify(data[k]));
+                    });
+                } else {
+                    // Recent local modification → merge: only update keys that localStorage doesn't have
+                    // This preserves task edits made in admin.html while still getting any new data from GitHub
+                    Object.keys(data).forEach(k => {
+                        if (!localStorage.getItem('guoguo_' + k)) {
+                            localStorage.setItem('guoguo_' + k, JSON.stringify(data[k]));
+                        }
+                    });
+                }
                 this._ghLoaded = true;
                 this._refreshUI();
-                console.log('✿ GitHub data loaded');
+                console.log('✿ GitHub data loaded (smart merge, localModify=' + (isRecentlyModified ? 'recent' : 'none'));
             } else if (resp.status === 404) {
                 this._syncToGitHub();
             }
