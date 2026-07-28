@@ -82,6 +82,7 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
 <!-- Admin Panel -->
 <div class="admin-wrap" id="adminWrap">
     <div class="admin-header">✿ 果果树洞空间管理后台 ✿</div>
+    <div style="text-align:center;color:#888;font-size:0.75em;margin-top:-10px;margin-bottom:10px">版本 v3 · 数据统计从 GitHub 实时加载</div>
     <div style="text-align:center;margin-bottom:10px">
         <a href="index.html" style="color:var(--cyan);font-family:var(--font-fun);font-size:1em;box-shadow:0 0 10px rgba(125,249,255,0.2);padding:6px 16px;border-radius:16px;border:1px solid rgba(125,249,255,0.3)">返回主页 ✿</a>
     </div>
@@ -269,7 +270,7 @@ function utf8ToBase64(str) { return btoa(unescape(encodeURIComponent(str))); }
 /* ===== Data Layer (same as index.html) ===== */
 const DEFAULT_DATA = {
     profile: { name: '灬果果の树洞空间灬', signature: '鈊裡裝的全是ηι ✿ 世界上最鈊疼的尐囡孩', birthday: '2020-05-31' },
-    visitors: { total: 156, today: 3, lastDate: new Date().toISOString().slice(0,10) },
+    visitors: { total: 156, today: 3, lastDate: new Date().toISOString().slice(0,10), recent: [] },
     space: { like: 0, step: 0 },
     shuoshuo: [
         { id: 1, text: '今天和蛋卷一起玩了好开心！仓鼠跑圈圈太可爱啦~ ✿', date: '2026-07-25', likes: 5 },
@@ -356,11 +357,16 @@ async function _loadFromGitHub() {
                 localStorage.setItem('guoguo_' + k, JSON.stringify(data[k]));
             });
             console.log('✿ GitHub data loaded (admin)');
+            return true;
+        } else if (resp.status === 404) {
+            await _syncToGitHub();
+            return true;
         }
     } catch(e) {
         console.log('GitHub load fallback:', e);
     }
     _getSha();
+    return false;
 }
 
 async function _getSha() {
@@ -410,11 +416,13 @@ async function _syncToGitHub() {
 
 /* ===== Login ===== */
 const ADMIN_PWD_HASH = 'guoguo2026';
-function doLogin() {
+async function doLogin() {
     const pwd = document.getElementById('loginPassword').value;
     if (pwd === localStorage.getItem('guoguo_admin_pwd') || pwd === ADMIN_PWD_HASH) {
         document.getElementById('loginWrap').style.display = 'none';
         document.getElementById('adminWrap').style.display = 'block';
+        // Wait for GitHub data to load before rendering stats
+        await _loadFromGitHub();
         renderAdminData();
     } else {
         document.getElementById('loginError').style.display = 'block';
