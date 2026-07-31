@@ -76,20 +76,6 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
 .upload-progress.active{display:block}
 .upload-progress-bar{height:100%;background:linear-gradient(90deg,var(--pink),var(--purple));width:0%;transition:width 0.3s}
 
-/* Task status badges */
-.task-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:0.7em;font-weight:bold;vertical-align:middle;margin-right:4px}
-.task-badge.pending{background:rgba(160,160,192,0.2);color:#a0a0c0;border:1px solid rgba(160,160,192,0.3)}
-.task-badge.active{background:rgba(125,249,255,0.2);color:var(--cyan);border:1px solid rgba(125,249,255,0.4)}
-.task-badge.overdue{background:rgba(255,107,157,0.2);color:var(--pink);border:1px solid rgba(255,107,157,0.4)}
-.task-badge.done{background:rgba(255,215,0,0.2);color:var(--gold);border:1px solid rgba(255,215,0,0.4)}
-.task-priority-high{border-left:3px solid #ff6b9d}
-.task-priority-medium{border-left:3px solid var(--cyan)}
-.task-priority-low{border-left:3px solid #7dff7d}
-.task-label{display:inline-block;padding:1px 6px;border-radius:6px;font-size:0.7em;background:rgba(199,125,255,0.15);color:var(--purple);margin-right:4px}
-.task-group-title{font-family:var(--font-fun);font-size:0.9em;margin:8px 0 4px;padding-bottom:4px;border-bottom:1px solid rgba(199,125,255,0.15)}
-
-/* Edit task overlay */
-.edit-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(10,10,46,0.8);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
 .edit-card{background:var(--card-bg);border:1px solid var(--border-glow);border-radius:16px;padding:20px;width:100%;max-width:400px;box-shadow:0 0 30px rgba(255,107,157,0.4)}
 .edit-card-title{font-family:var(--font-fun);color:var(--cyan);font-size:1.1em;margin-bottom:12px}
 </style>
@@ -112,7 +98,7 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
 <!-- Admin Panel -->
 <div class="admin-wrap" id="adminWrap">
     <div class="admin-header">✿ 果果树洞空间管理后台 ✿</div>
-    <div style="text-align:center;color:#888;font-size:0.75em;margin-top:-10px;margin-bottom:10px">版本 v8 · 任务管理重构：状态+编辑+标签+优先级</div>
+    <div style="text-align:center;color:#888;font-size:0.75em;margin-top:-10px;margin-bottom:10px">版本 v9 · 花园系统上线</div>
     <div style="text-align:center;margin-bottom:10px">
         <a href="index.html" style="color:var(--cyan);font-family:var(--font-fun);font-size:1em;box-shadow:0 0 10px rgba(125,249,255,0.2);padding:6px 16px;border-radius:16px;border:1px solid rgba(125,249,255,0.3)">返回主页 ✿</a>
     </div>
@@ -127,7 +113,6 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
         <button class="admin-tab" onclick="switchAdminTab('album')">相册管理</button>
         <button class="admin-tab" onclick="switchAdminTab('video')">视频管理</button>
         <button class="admin-tab" onclick="switchAdminTab('music')">音乐管理</button>
-        <button class="admin-tab" onclick="switchAdminTab('task')">任务管理</button>
         <button class="admin-tab" onclick="switchAdminTab('guestbook')">留言管理</button>
         <button class="admin-tab" onclick="switchAdminTab('home')">主页模块</button>
         <button class="admin-tab" onclick="switchAdminTab('settings')">空间设置</button>
@@ -145,7 +130,6 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
             <div class="stat-item"><div class="stat-value" id="statAlbum">0</div><div class="stat-label">相册数</div></div>
             <div class="stat-item"><div class="stat-value" id="statVideo">0</div><div class="stat-label">视频数</div></div>
             <div class="stat-item"><div class="stat-value" id="statMusic">0</div><div class="stat-label">音乐数</div></div>
-            <div class="stat-item"><div class="stat-value" id="statTask">0</div><div class="stat-label">任务数</div></div>
             <div class="stat-item"><div class="stat-value" id="statGuestbook">0</div><div class="stat-label">留言数</div></div>
         </div>
     </div>
@@ -275,55 +259,6 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
             <div class="admin-card-title">🎵 背景音乐列表</div>
             <div class="admin-note">✿ 多首音乐会自动轮换播放，访客进入空间后按顺序播放 ✿</div>
             <div id="adminMusicList"></div>
-        </div>
-    </div>
-
-    <!-- Task Management -->
-    <div class="admin-section" id="admin-task">
-        <div class="admin-note">
-            ✿ 任务状态自动判断：<span style="color:#a0a0c0">📋 待开始</span>（开始日期>今天） → <span style="color:var(--cyan)">🔵 进行中</span>（开始日期≤今天且未到期） → <span style="color:var(--pink)">⏰ 已延迟</span>（到期日已过且未完成） → <span style="color:var(--gold)">✅ 已完成</span>
-        </div>
-        <div class="admin-card">
-            <div class="admin-card-title">✿ 发布新任务</div>
-            <div class="admin-form">
-                <div class="row" style="gap:8px">
-                    <select id="newTaskType" style="flex:1;min-width:120px;background:rgba(20,20,50,0.6);border:1px solid rgba(125,249,255,0.2);border-radius:8px;color:#d0d0e8;padding:8px">
-                        <option value="guoguo">🌸 果果の任务</option>
-                        <option value="parent">❤ 粑粑麻麻の任务</option>
-                    </select>
-                    <select id="newTaskLabel" style="flex:1;min-width:100px;background:rgba(20,20,50,0.6);border:1px solid rgba(125,249,255,0.2);border-radius:8px;color:#d0d0e8;padding:8px">
-                        <option value="">无标签</option>
-                        <option value="📚 学习">📚 学习</option>
-                        <option value="🎨 创意">🎨 创意</option>
-                        <option value="💪 运动">💪 运动</option>
-                        <option value="🏠 家庭">🏠 家庭</option>
-                        <option value="🤖 AI探索">🤖 AI探索</option>
-                        <option value="🐹 蛋卷">🐹 蛋卷</option>
-                        <option value="✿ 其他">✿ 其他</option>
-                    </select>
-                    <select id="newTaskPriority" style="flex:1;min-width:80px;background:rgba(20,20,50,0.6);border:1px solid rgba(125,249,255,0.2);border-radius:8px;color:#d0d0e8;padding:8px">
-                        <option value="medium">🟡 中优先级</option>
-                        <option value="high">🔴 高优先级</option>
-                        <option value="low">🟢 低优先级</option>
-                    </select>
-                </div>
-                <input id="newTaskText" placeholder="任务内容" />
-                <div class="row" style="gap:8px">
-                    <input id="newTaskReward" placeholder="奖励 (如 🌸 +10)" style="flex:1" />
-                    <input id="newTaskPublishTime" type="date" style="flex:1" />
-                    <input id="newTaskDeadline" type="date" style="flex:1" />
-                </div>
-                <div class="admin-note" style="font-size:0.8em;margin:4px 0">开始日期=今天 → 立即出现在"今日任务"；到期日=今天 → 今日截止；到期日已过 → 自动标为"已延迟"</div>
-                <button class="btn-primary" onclick="addTask()">发布任务 ✿</button>
-            </div>
-        </div>
-        <div class="admin-card">
-            <div class="admin-card-title">🌸 果果の任务</div>
-            <div id="adminGuoguoList"></div>
-        </div>
-        <div class="admin-card">
-            <div class="admin-card-title">❤ 粑粑麻麻の任务</div>
-            <div id="adminParentList"></div>
         </div>
     </div>
 
@@ -584,29 +519,9 @@ const DEFAULT_DATA = {
     bgmList: [
         { id: 1, name: '有何不可 - 许嵩', url: 'images/guoguo-music.mp3' }
     ],
-    tasks: {
-        guoguo: {
-            week: [
-                { id: 101, text: '读一本绘本给蛋卷听', reward: '🌸 +5', done: false, publishTime: '2026-07-28', deadline: '2026-07-28' },
-                { id: 102, text: '画一幅画送给糖糖', reward: '🌸 +3', done: false, publishTime: '2026-07-28', deadline: '2026-07-29' },
-                { id: 103, text: '学会一个新街舞动作', reward: '🌸 +10', done: false, publishTime: '2026-07-28', deadline: '2026-08-03' },
-                { id: 104, text: '用AI创作一个故事', reward: '🌸 +8', done: false, publishTime: '2026-07-28', deadline: '2026-08-03' }
-            ]
-        },
-        parent: {
-            week: [
-                { id: 1, text: '陪果果读一本绘本', reward: '❤ +5', done: false, publishTime: '2026-07-28', deadline: '2026-07-28' },
-                { id: 2, text: '和果果一起观察蛋卷', reward: '❤ +3', done: false, publishTime: '2026-07-28', deadline: '2026-07-28' },
-                { id: 3, text: '记录果果今天的开心小事', reward: '❤ +3', done: false, publishTime: '2026-07-28', deadline: '2026-07-29' },
-                { id: 4, text: '周末带果果去公园', reward: '🌟 +10', done: false, publishTime: '2026-07-28', deadline: '2026-08-03' },
-                { id: 5, text: '和果果一起完成一幅画', reward: '🌟 +8', done: false, publishTime: '2026-07-28', deadline: '2026-08-03' },
-                { id: 6, text: '教果果一个新的AI小技巧', reward: '🌟 +10', done: false, publishTime: '2026-07-28', deadline: '2026-08-03' }
-            ]
-        }
-    },
     homeModules: {
         profile: true, photos: true, shuoshuo: true, diary: true, album: true,
-        video: true, guoguoTask: true, parentTask: true, guestbook: false, visitor: true, likeStep: true, flower: true
+        video: true, guestbook: false, visitor: true, likeStep: true, flower: true
     }
 };
 
@@ -641,24 +556,6 @@ async function _loadFromGitHub() {
         const resp = await fetch(GH_RAW_URL + '?t=' + Date.now());
         if (resp.ok) {
             const data = await resp.json();
-            // Migrate old task structure (today → week with deadline)
-            if (data.tasks && data.tasks.guoguo && data.tasks.guoguo.today) {
-                const todayStr = new Date().toISOString().slice(0,10);
-                const oldToday = data.tasks.guoguo.today || [];
-                const oldWeek = data.tasks.guoguo.week || [];
-                // Merge old today items into week, setting deadline = today
-                oldToday.forEach(t => { t.publishTime = todayStr; t.deadline = todayStr; });
-                oldWeek.forEach(t => { if (!t.deadline) t.deadline = todayStr; if (!t.publishTime) t.publishTime = todayStr; });
-                data.tasks.guoguo = { week: [...oldToday, ...oldWeek] };
-            }
-            if (data.tasks && data.tasks.parent && data.tasks.parent.today) {
-                const todayStr = new Date().toISOString().slice(0,10);
-                const oldToday = data.tasks.parent.today || [];
-                const oldWeek = data.tasks.parent.week || [];
-                oldToday.forEach(t => { t.publishTime = todayStr; t.deadline = todayStr; });
-                oldWeek.forEach(t => { if (!t.deadline) t.deadline = todayStr; if (!t.publishTime) t.publishTime = todayStr; });
-                data.tasks.parent = { week: [...oldToday, ...oldWeek] };
-            }
             // Ensure bgmList exists
             if (!data.bgmList) {
                 data.bgmList = [{ id: 1, name: '有何不可 - 许嵩', url: 'images/guoguo-music.mp3' }];
@@ -705,7 +602,7 @@ async function _getSha() {
 
 async function _syncToGitHub() {
     const allData = {};
-    const keys = ['profile', 'visitors', 'space', 'bgmList', 'shuoshuo', 'diaries', 'albums', 'videos', 'guestbook', 'tasks', 'homeModules'];
+    const keys = ['profile', 'visitors', 'space', 'bgmList', 'shuoshuo', 'diaries', 'albums', 'videos', 'guestbook', 'homeModules'];
     keys.forEach(k => { allData[k] = DM_get(k); });
     const content = utf8ToBase64(JSON.stringify(allData));
     await _getSha();
@@ -777,7 +674,7 @@ function switchAdminTab(tab) {
     renderAdminData();
 }
 function getAdminTabLabel(tab) {
-    const map = { stats:'数据统计', shuoshuo:'说说管理', diary:'日志管理', album:'相册管理', video:'视频管理', music:'音乐管理', task:'任务管理', guestbook:'留言管理', home:'主页模块', settings:'空间设置' };
+    const map = { stats:'数据统计', shuoshuo:'说说管理', diary:'日志管理', album:'相册管理', video:'视频管理', music:'音乐管理', guestbook:'留言管理', home:'主页模块', settings:'空间设置' };
     return map[tab] || tab;
 }
 
@@ -790,7 +687,6 @@ function renderAdminData() {
     const al = DM_get('albums');
     const vi = DM_get('videos');
     const gb = DM_get('guestbook');
-    const tasks = DM_get('tasks');
 
     document.getElementById('statVisitors').textContent = v.total;
     document.getElementById('statToday').textContent = v.today;
@@ -801,19 +697,6 @@ function renderAdminData() {
     document.getElementById('statAlbum').textContent = al.length;
     document.getElementById('statVideo').textContent = vi.length;
     document.getElementById('statGuestbook').textContent = gb.length;
-    let taskCount = 0, overdueCount = 0, doneCount = 0;
-    if (tasks.guoguo && tasks.guoguo.week) {
-        taskCount += tasks.guoguo.week.length;
-        tasks.guoguo.week.forEach(t => { if (getTaskStatus(t) === 'overdue') overdueCount++; if (t.done) doneCount++; });
-    }
-    if (tasks.parent && tasks.parent.week) {
-        taskCount += tasks.parent.week.length;
-        tasks.parent.week.forEach(t => { if (getTaskStatus(t) === 'overdue') overdueCount++; if (t.done) doneCount++; });
-    }
-    document.getElementById('statTask').textContent = taskCount + '/' + doneCount;
-    // Show overdue in stats if exists
-    const taskStatLabel = document.getElementById('statTask').parentElement.querySelector('.stat-label');
-    if (taskStatLabel) taskStatLabel.textContent = overdueCount > 0 ? `任务(⏰${overdueCount}延迟)` : '任务';
     document.getElementById('statMusic').textContent = (DM_get('bgmList') || []).length;
 
     // Shuoshuo list
@@ -863,65 +746,6 @@ function renderAdminData() {
     });
     document.getElementById('adminVideoList').innerHTML = viHtml;
 
-    // Task lists (guoguo + parent, grouped by status)
-    const todayStr = getToday();
-    function renderTaskGroup(type, label, icon) {
-        const weekTasks = tasks[type] && tasks[type].week ? tasks[type].week : [];
-        if (weekTasks.length === 0) return '<div style="color:#888;font-size:0.85em;text-align:center;padding:8px">暂无任务 ✿</div>';
-        // Sort: priority high > medium > low, then overdue > active > pending > done
-        const priorityOrder = { high: 0, medium: 1, low: 2 };
-        const statusOrder = { overdue: 0, active: 1, pending: 2, done: 3 };
-        const sorted = [...weekTasks].sort((a, b) => {
-            const sa = getTaskStatus(a), sb = getTaskStatus(b);
-            if (statusOrder[sa] !== statusOrder[sb]) return statusOrder[sa] - statusOrder[sb];
-            const pa = priorityOrder[a.priority||'medium'], pb = priorityOrder[b.priority||'medium'];
-            return pa - pb;
-        });
-        // Group by status
-        const groups = { overdue: [], active: [], pending: [], done: [] };
-        sorted.forEach(t => { groups[getTaskStatus(t)].push(t); });
-        let html = '';
-        // Summary bar
-        const total = weekTasks.length;
-        const doneCount = groups.done.length;
-        const overdueCount = groups.overdue.length;
-        const pct = total > 0 ? Math.round(doneCount/total*100) : 0;
-        html += `<div style="display:flex;gap:12px;justify-content:center;margin-bottom:8px;font-size:0.85em">`;
-        html += `<span style="color:var(--gold)">✅ 完成${doneCount}</span>`;
-        html += `<span style="color:var(--cyan)">🔵 进行${groups.active.length}</span>`;
-        html += `<span style="color:var(--pink)">⏰ 延迟${overdueCount}</span>`;
-        html += `<span style="color:#a0a0c0">📋 待开始${groups.pending.length}</span>`;
-        html += `<span>完成率 ${pct}%</span></div>`;
-        if (groups.overdue.length > 0) {
-            html += `<div class="task-group-title" style="color:var(--pink)">⏰ 已延迟（需关注）</div>`;
-            groups.overdue.forEach(t => { html += renderAdminTaskItem(t, type); });
-        }
-        if (groups.active.length > 0) {
-            html += `<div class="task-group-title" style="color:var(--cyan)">🔵 进行中</div>`;
-            // Sub-group: today tasks first
-            const todayTasks = groups.active.filter(t => t.publishTime <= todayStr);
-            const otherActive = groups.active.filter(t => t.publishTime > todayStr);
-            if (todayTasks.length > 0) {
-                html += `<div style="color:var(--pink);font-size:0.8em;margin:4px 0 2px;padding-left:4px">【今日任务】</div>`;
-                todayTasks.forEach(t => { html += renderAdminTaskItem(t, type); });
-            }
-            if (otherActive.length > 0) {
-                otherActive.forEach(t => { html += renderAdminTaskItem(t, type); });
-            }
-        }
-        if (groups.pending.length > 0) {
-            html += `<div class="task-group-title" style="color:#a0a0c0">📋 待开始</div>`;
-            groups.pending.forEach(t => { html += renderAdminTaskItem(t, type); });
-        }
-        if (groups.done.length > 0) {
-            html += `<div class="task-group-title" style="color:var(--gold)">✅ 已完成</div>`;
-            groups.done.forEach(t => { html += renderAdminTaskItem(t, type); });
-        }
-        return html;
-    }
-    document.getElementById('adminGuoguoList').innerHTML = renderTaskGroup('guoguo', '果果', '🌸');
-    document.getElementById('adminParentList').innerHTML = renderTaskGroup('parent', '粑粑麻麻', '❤');
-
     // Music list
     const bgmL = DM_get('bgmList') || [];
     let musicHtml = '';
@@ -944,7 +768,7 @@ function renderAdminData() {
     const modules = DM_get('homeModules') || DEFAULT_DATA.homeModules;
     const moduleLabels = {
         profile: '个人资料卡片', photos: '照片预览', shuoshuo: '说说预览', diary: '日志预览',
-        album: '相册预览', video: '视频预览', guoguoTask: '果果任务', parentTask: '粑粑麻麻任务', guestbook: '留言预览',
+        album: '相册预览', video: '视频预览', guestbook: '留言预览',
         visitor: '访客统计', likeStep: '点赞踩踩', flower: '花藤'
     };
     let modHtml = '';
@@ -1099,181 +923,12 @@ function renameVideo(id) {
         flashAdminMsg('✿ 视频名称已更新 ✿');
     }
 }
-
-function addTask() {
-    const type = document.getElementById('newTaskType').value;
-    const label = document.getElementById('newTaskLabel').value;
-    const priority = document.getElementById('newTaskPriority').value;
-    const text = document.getElementById('newTaskText').value.trim();
-    const defaultReward = type === 'guoguo' ? '🌸 +3' : '❤ +3';
-    const reward = document.getElementById('newTaskReward').value.trim() || defaultReward;
-    const todayStr = getToday();
-    const publishTime = document.getElementById('newTaskPublishTime').value || todayStr;
-    const deadline = document.getElementById('newTaskDeadline').value || todayStr;
-    if (!text) { alert('请填写任务内容 ✿'); return; }
-    if (!deadline) { alert('请填写计划完成日期 ✿'); return; }
-    const tasks = DM_get('tasks');
-    if (!tasks[type]) tasks[type] = { week: [] };
-    if (!tasks[type].week) tasks[type].week = [];
-    tasks[type].week.push({ id: Date.now(), text: text, reward: reward, done: false, publishTime: publishTime, deadline: deadline, priority: priority, label: label || '' });
-    DM_set('tasks', tasks);
-    document.getElementById('newTaskText').value = '';
-    document.getElementById('newTaskReward').value = '';
-    document.getElementById('newTaskPublishTime').value = '';
-    document.getElementById('newTaskDeadline').value = '';
-    renderAdminData();
-    flashAdminMsg('✿ 任务已发布 ✿');
-}
-
-function getTaskStatus(t) {
-    const todayStr = getToday();
-    if (t.done) return 'done';
-    if (t.publishTime && t.publishTime > todayStr) return 'pending';
-    if (t.deadline && t.deadline < todayStr) return 'overdue';
-    return 'active';
-}
-
-function getTaskStatusBadge(status) {
-    const map = {
-        pending: '<span class="task-badge pending">📋 待开始</span>',
-        active: '<span class="task-badge active">🔵 进行中</span>',
-        overdue: '<span class="task-badge overdue">⏰ 已延迟</span>',
-        done: '<span class="task-badge done">✅ 已完成</span>'
-    };
-    return map[status] || '';
-}
-
-function getTaskStatusLabel(status) {
-    const map = { pending: '📋 待开始', active: '🔵 进行中', overdue: '⏰ 已延迟', done: '✅ 已完成' };
-    return map[status] || '未知';
-}
-
-function deleteTask(type, id) {
-    const tasks = DM_get('tasks');
-    if (tasks[type] && tasks[type].week) {
-        tasks[type].week = tasks[type].week.filter(t => t.id !== id);
-        DM_set('tasks', tasks);
-        renderAdminData();
-    }
-}
-
-function toggleTaskDone(type, id) {
-    const tasks = DM_get('tasks');
-    if (tasks[type] && tasks[type].week) {
-        const t = tasks[type].week.find(x => x.id === id);
-        if (t) {
-            t.done = !t.done;
-            if (t.done) t.doneTime = getToday();
-            else t.doneTime = '';
-            DM_set('tasks', tasks);
-            renderAdminData();
-            const reward = t.reward || '';
-            const msg = t.done ? '✿ 任务完成 ' + reward : '已取消完成';
-            flashAdminMsg(msg);
-        }
-    }
-}
-
-function editTask(type, id) {
-    const tasks = DM_get('tasks');
-    const t = tasks[type].week.find(x => x.id === id);
-    if (!t) return;
-
-    const overlay = document.createElement('div');
-    overlay.className = 'edit-overlay';
-    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
-    overlay.innerHTML = `
-        <div class="edit-card">
-            <div class="edit-card-title">✿ 编辑任务 ✿</div>
-            <div class="admin-form">
-                <input id="editTaskText" value="${t.text}" placeholder="任务内容" />
-                <div class="row" style="gap:8px">
-                    <select id="editTaskLabel" style="flex:1;background:rgba(20,20,50,0.6);border:1px solid rgba(125,249,255,0.2);border-radius:8px;color:#d0d0e8;padding:8px">
-                        <option value="">无标签</option>
-                        <option value="📚 学习">📚 学习</option>
-                        <option value="🎨 创意">🎨 创意</option>
-                        <option value="💪 运动">💪 运动</option>
-                        <option value="🏠 家庭">🏠 家庭</option>
-                        <option value="🤖 AI探索">🤖 AI探索</option>
-                        <option value="🐹 蛋卷">🐹 蛋卷</option>
-                        <option value="✿ 其他">✿ 其他</option>
-                    </select>
-                    <select id="editTaskPriority" style="flex:1;background:rgba(20,20,50,0.6);border:1px solid rgba(125,249,255,0.2);border-radius:8px;color:#d0d0e8;padding:8px">
-                        <option value="medium">🟡 中优先级</option>
-                        <option value="high">🔴 高优先级</option>
-                        <option value="low">🟢 低优先级</option>
-                    </select>
-                </div>
-                <input id="editTaskReward" value="${t.reward}" placeholder="奖励" />
-                <div class="row" style="gap:8px">
-                    <input id="editTaskPublishTime" type="date" value="${t.publishTime||''}" style="flex:1" />
-                    <input id="editTaskDeadline" type="date" value="${t.deadline||''}" style="flex:1" />
-                </div>
-                <div style="display:flex;gap:8px;margin-top:8px">
-                    <button class="btn-primary" onclick="saveEditTask('${type}',${id})">保存修改 ✿</button>
-                    <button class="btn-danger" style="padding:8px 20px;border-radius:16px;font-family:var(--font-fun);font-size:0.9em" onclick="document.querySelector('.edit-overlay').remove()">取消</button>
-                </div>
-            </div>
-        </div>`;
-    document.body.appendChild(overlay);
-
-    // Set selected values for label and priority
-    setTimeout(() => {
-        document.getElementById('editTaskLabel').value = t.label || '';
-        document.getElementById('editTaskPriority').value = t.priority || 'medium';
-    }, 50);
-}
-
-function saveEditTask(type, id) {
-    const tasks = DM_get('tasks');
-    const t = tasks[type].week.find(x => x.id === id);
-    if (!t) return;
-    const newText = document.getElementById('editTaskText').value.trim();
-    if (!newText) { alert('任务内容不能为空 ✿'); return; }
-    t.text = newText;
-    t.label = document.getElementById('editTaskLabel').value;
-    t.priority = document.getElementById('editTaskPriority').value;
-    t.reward = document.getElementById('editTaskReward').value.trim() || (type === 'guoguo' ? '🌸 +3' : '❤ +3');
-    t.publishTime = document.getElementById('editTaskPublishTime').value || getToday();
-    t.deadline = document.getElementById('editTaskDeadline').value || getToday();
-    DM_set('tasks', tasks);
-    document.querySelector('.edit-overlay').remove();
-    renderAdminData();
-    flashAdminMsg('✿ 任务已更新 ✿');
-}
 function flashAdminMsg(text) {
     const el = document.createElement('div');
     el.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;padding:12px 24px;border-radius:20px;font-family:var(--font-fun);box-shadow:0 0 20px rgba(255,107,157,0.5);z-index:10000;animation:flashIn 1.6s ease-out forwards';
     el.textContent = text;
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 1700);
-}
-function renderAdminTaskItem(t, type) {
-    const status = getTaskStatus(t);
-    const badge = getTaskStatusBadge(status);
-    const priorityClass = t.priority === 'high' ? 'task-priority-high' : (t.priority === 'low' ? 'task-priority-low' : 'task-priority-medium');
-    const labelHtml = t.label ? `<span class="task-label">${t.label}</span>` : '';
-    const todayStr = getToday();
-    const isTodayTask = t.publishTime <= todayStr && !t.done;
-    const todayTag = isTodayTask ? '<span style="color:var(--pink);font-size:0.7em;margin-right:2px">【今日】</span>' : '';
-    // Time display
-    let timeInfo = '';
-    if (t.publishTime) timeInfo += '开始 ' + t.publishTime;
-    if (t.deadline) timeInfo += ' → 截止 ' + t.deadline;
-    if (t.doneTime) timeInfo += ' · 完成 ' + t.doneTime;
-    // Overdue days
-    let overdueInfo = '';
-    if (status === 'overdue') {
-        const deadlineDate = new Date(t.deadline);
-        const todayDate = new Date(todayStr);
-        const days = Math.round((todayDate - deadlineDate) / (1000*60*60*24));
-        overdueInfo = `<span style="color:var(--pink);font-size:0.75em"> (延迟${days}天)</span>`;
-    }
-    return `<div class="list-item ${priorityClass}" style="flex-wrap:wrap;align-items:flex-start">${badge}${todayTag}` +
-           `<div class="list-item-text" style="flex:1;min-width:0">${labelHtml}<div class="truncate" style="${t.done?'color:#a0a0c0':''}">${t.text}</div><div class="list-item-date">${timeInfo}${overdueInfo} · ${t.reward}</div></div>` +
-           `<div class="list-item-actions" style="flex-shrink:0"><button class="btn-sm" style="background:rgba(199,125,255,0.2);border:1px solid rgba(199,125,255,0.4);color:var(--purple);border-radius:8px;cursor:pointer" onclick="editTask('${type}',${t.id})">编辑</button>` +
-           `<button class="btn-sm" style="background:${t.done?'rgba(160,160,192,0.2)':'rgba(125,249,255,0.2)'};border:1px solid ${t.done?'rgba(160,160,192,0.4)':'rgba(125,249,255,0.4)'};color:${t.done?'#a0a0c0':'var(--cyan)'};border-radius:8px;cursor:pointer" onclick="toggleTaskDone('${type}',${t.id})">${t.done?'取消完成':'标记完成'}</button>` +
-           `<button class="btn-danger btn-sm" onclick="deleteTask('${type}',${t.id})">删除</button></div></div>`;
 }
 function addMusic() {
     const name = document.getElementById('newMusicName').value.trim();
@@ -1310,7 +965,7 @@ function saveHomeModules() {
     const modules = {};
     const moduleLabels = {
         profile: '个人资料卡片', photos: '照片预览', shuoshuo: '说说预览', diary: '日志预览',
-        album: '相册预览', video: '视频预览', guoguoTask: '果果任务', parentTask: '粑粑麻麻任务', guestbook: '留言预览',
+        album: '相册预览', video: '视频预览', guestbook: '留言预览',
         visitor: '访客统计', likeStep: '点赞踩踩', flower: '花藤'
     };
     Object.keys(moduleLabels).forEach(key => {
@@ -1337,18 +992,12 @@ function saveSettings() {
 
 /* ===== Init defaults ===== */
 (function() {
-    const keys = ['visitors', 'space', 'bgmList', 'shuoshuo', 'diaries', 'albums', 'videos', 'guestbook', 'profile', 'tasks', 'homeModules'];
+    const keys = ['visitors', 'space', 'bgmList', 'shuoshuo', 'diaries', 'albums', 'videos', 'guestbook', 'profile', 'homeModules'];
     keys.forEach(k => {
         if (!localStorage.getItem('guoguo_' + k)) {
             DM_set(k, DEFAULT_DATA[k]);
         }
     });
-    // Set default publish date to today
-    const today = getToday();
-    const ptEl = document.getElementById('newTaskPublishTime');
-    if (ptEl) ptEl.value = today;
-    const dlEl = document.getElementById('newTaskDeadline');
-    if (dlEl) dlEl.value = today;
     _loadFromGitHub();
 })();
 </script>
