@@ -111,22 +111,49 @@ a:hover{text-decoration:underline;color:#ff6b9d}
     20%{opacity:1}
     100%{opacity:0;transform:translateY(60px)}
 }
+.garden-water-sparkle{opacity:0}
+.garden-water-sparkle.active{animation:sparklePop 1s ease-out forwards}
+@keyframes sparklePop{
+    0%{opacity:0;transform:scale(0)}
+    30%{opacity:1;transform:scale(1.2)}
+    100%{opacity:0;transform:scale(0)}
+}
 .garden-plant-bloom{animation:bloomSway 4s ease-in-out infinite}
 @keyframes bloomSway{
     0%,100%{transform:rotate(-4deg)}
     50%{transform:rotate(4deg)}
 }
-.garden-plant-grow{animation:growUp 0.8s ease-out}
+.garden-plant-grow{animation:growUp 1s ease-out}
 @keyframes growUp{
-    0%{transform:scaleY(0);opacity:0}
-    60%{transform:scaleY(1.1);opacity:1}
-    100%{transform:scaleY(1);opacity:1}
+    0%{transform:scale(0);opacity:0}
+    50%{transform:scale(1.15);opacity:1}
+    100%{transform:scale(1);opacity:1}
 }
-.garden-bloom-pop{animation:bloomPop 0.6s ease-out}
+.garden-plant-sprout{animation:sproutUp 1.2s ease-out}
+@keyframes sproutUp{
+    0%{transform:scale(0) translateY(20px);opacity:0}
+    40%{transform:scale(0.6) translateY(10px);opacity:0.7}
+    70%{transform:scale(1.1) translateY(-2px);opacity:1}
+    100%{transform:scale(1) translateY(0);opacity:1}
+}
+.garden-bloom-pop{animation:bloomPop 0.7s ease-out}
 @keyframes bloomPop{
     0%{transform:scale(0.3);opacity:0.5}
-    50%{transform:scale(1.3)}
+    50%{transform:scale(1.4)}
     100%{transform:scale(1);opacity:1}
+}
+.garden-bloom-glow{animation:bloomGlow 1.2s ease-out}
+@keyframes bloomGlow{
+    0%{filter:none;transform:scale(1)}
+    50%{filter:drop-shadow(0 0 8px #ffd700);transform:scale(1.12)}
+    100%{filter:none;transform:scale(1)}
+}
+.garden-level-up{animation:levelUpPop 1.5s ease-out}
+@keyframes levelUpPop{
+    0%{opacity:0;transform:translate(-50%,0) scale(0.5)}
+    20%{opacity:1;transform:translate(-50%,-20px) scale(1.2)}
+    80%{opacity:1;transform:translate(-50%,-40px) scale(1)}
+    100%{opacity:0;transform:translate(-50%,-60px) scale(0.8)}
 }
 .garden-butterfly-fly{animation:butterflyFlight 3s ease-in-out}
 @keyframes butterflyFlight{
@@ -162,6 +189,22 @@ a:hover{text-decoration:underline;color:#ff6b9d}
     25%{transform:rotate(8deg)}
     75%{transform:rotate(-8deg)}
 }
+
+/* ===== Garden Info Module ===== */
+.garden-info-card{background:var(--card-bg);border:1px solid rgba(199,125,255,0.3);border-radius:16px;padding:14px;box-shadow:0 0 15px rgba(199,125,255,0.15);margin-top:12px}
+.garden-info-title{font-family:var(--font-fun);color:var(--purple);font-size:1em;margin-bottom:10px;text-align:center}
+.garden-progress-wrap{margin-bottom:10px}
+.garden-progress-label{display:flex;justify-content:space-between;font-size:0.75em;color:#a0a0c0;margin-bottom:4px}
+.garden-progress-bar{height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden}
+.garden-progress-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--purple));border-radius:4px;transition:width 0.8s ease;box-shadow:0 0 8px rgba(255,107,157,0.4)}
+.garden-rules{font-size:0.78em;color:#d0d0e8;line-height:1.6;margin-bottom:10px;padding:8px;background:rgba(199,125,255,0.08);border-radius:8px}
+.garden-rules .rule{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.garden-rules .rule:last-child{margin-bottom:0}
+.garden-levels{font-size:0.7em;color:#a0a0c0;line-height:1.5;max-height:110px;overflow-y:auto;padding-right:4px}
+.garden-levels::-webkit-scrollbar{width:4px}
+.garden-levels::-webkit-scrollbar-thumb{background:var(--purple);border-radius:2px}
+.garden-levels .lv{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.garden-levels .lv.current{color:var(--gold)}
 
 /* ===== Like & Step Widget ===== */
 .space-stats{background:var(--card-bg);border:1px solid var(--border-glow);border-radius:16px;padding:16px;display:flex;gap:12px;justify-content:center;box-shadow:0 0 15px rgba(255,107,157,0.15)}
@@ -448,6 +491,45 @@ a:hover{text-decoration:underline;color:#ff6b9d}
                             <stop offset="0%" stop-color="#fff8e0" stop-opacity="0.3"/>
                             <stop offset="100%" stop-color="#fff8e0" stop-opacity="0"/>
                         </radialGradient>
+                        <radialGradient id="petalGradPink" cx="50%" cy="30%" r="70%">
+                            <stop offset="0%" stop-color="#ffb8d0"/>
+                            <stop offset="50%" stop-color="#ff6b9d"/>
+                            <stop offset="100%" stop-color="#c23a6a"/>
+                        </radialGradient>
+                        <radialGradient id="petalGradPurple" cx="50%" cy="30%" r="70%">
+                            <stop offset="0%" stop-color="#e0b8ff"/>
+                            <stop offset="50%" stop-color="#c77dff"/>
+                            <stop offset="100%" stop-color="#7a3fa0"/>
+                        </radialGradient>
+                        <radialGradient id="petalGradBlue" cx="50%" cy="30%" r="70%">
+                            <stop offset="0%" stop-color="#b8f0ff"/>
+                            <stop offset="50%" stop-color="#7dc8ff"/>
+                            <stop offset="100%" stop-color="#3a7eb5"/>
+                        </radialGradient>
+                        <radialGradient id="petalGradGold" cx="50%" cy="30%" r="70%">
+                            <stop offset="0%" stop-color="#fff6a8"/>
+                            <stop offset="50%" stop-color="#ffd700"/>
+                            <stop offset="100%" stop-color="#d4a000"/>
+                        </radialGradient>
+                        <radialGradient id="centerGrad" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#fff"/>
+                            <stop offset="40%" stop-color="#ffd700"/>
+                            <stop offset="100%" stop-color="#ff9d00"/>
+                        </radialGradient>
+                        <filter id="flowerGlow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="2" result="blur"/>
+                            <feMerge>
+                                <feMergeNode in="blur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                        <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="1.5" result="blur"/>
+                            <feMerge>
+                                <feMergeNode in="blur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
                     </defs>
                     <!-- Sky -->
                     <rect width="200" height="115" fill="url(#skyGrad)" rx="8"/>
@@ -477,12 +559,34 @@ a:hover{text-decoration:underline;color:#ff6b9d}
                     </g>
                     <!-- Water drops (animation) -->
                     <g id="gardenWaterDrops"></g>
+                    <!-- Sparkles (animation) -->
+                    <g id="gardenSparkles"></g>
                 </svg>
             </div>
             <div class="garden-info">
                 <span>❀ 爱心指数: <span id="flowerScore">0</span> ❀</span>
                 <span class="garden-level" id="gardenLevel">Lv.1 荒地</span>
             </div>
+        </div>
+
+        <!-- Garden Info / Management Module -->
+        <div class="garden-info-card">
+            <div class="garden-info-title">✿ 花园手册 ✿</div>
+            <div class="garden-progress-wrap">
+                <div class="garden-progress-label">
+                    <span id="gardenProgressText">距离下一级还差 1 爱心</span>
+                    <span id="gardenNextLevel">Lv.2 发芽</span>
+                </div>
+                <div class="garden-progress-bar">
+                    <div class="garden-progress-fill" id="gardenProgressFill" style="width:0%"></div>
+                </div>
+            </div>
+            <div class="garden-rules">
+                <div class="rule"><span>❤</span> <span>点赞一次，浇灌花园 +10 爱心</span></div>
+                <div class="rule"><span>👣</span> <span>踩踩空间，召唤蝴蝶 +2 爱心</span></div>
+                <div class="rule"><span>✨</span> <span>爱心越多，花园越茂盛，花朵越好看</span></div>
+            </div>
+            <div class="garden-levels" id="gardenLevels"></div>
         </div>
     </div>
 
@@ -837,7 +941,9 @@ function toggleSpaceLike() {
     const count = DM.increment('space', 'like', 1);
     document.getElementById('spaceLikeCount').textContent = count;
     document.getElementById('spaceLikeBtn').classList.add('liked');
-    updateFlower();
+    // Only update score text; actual growth happens after watering animation
+    const score = getFlowerScore();
+    updateFlowerText(score);
     waterGarden();
 }
 function toggleSpaceStep() {
@@ -867,39 +973,89 @@ const GARDEN_STAGES = [
     { min: 401, max: 999999, level: 'Lv.7', name: '花园', plants: 4, stage: 'bloom', butterflies: true, sparkles: true, fireflies: true }
 ];
 const PLANT_POSITIONS = [55, 100, 145, 78, 122];
-const FLOWER_COLORS = ['#ff6b9d', '#ffd700', '#c77dff', '#7dff7d'];
+const FLOWER_COLORS = ['#ff6b9d', '#c77dff', '#7dc8ff', '#ffd700'];
+const FLOWER_GRADIENTS = ['petalGradPink', 'petalGradPurple', 'petalGradBlue', 'petalGradGold'];
+let gardenPrevScore = null;
 
 function getGardenStage(score) {
     return GARDEN_STAGES.find(s => score >= s.min && score <= s.max) || GARDEN_STAGES[0];
 }
 
 function updateFlower() {
-    renderGarden();
+    renderGarden(false);
 }
 
-function renderGarden() {
+function getFlowerScore() {
     const data = DM.get('space');
-    const score = (data.like || 0) * 10 + (data.step || 0) * 2;
-    const stage = getGardenStage(score);
+    return (data.like || 0) * 10 + (data.step || 0) * 2;
+}
 
+function updateFlowerText(score) {
+    const stage = getGardenStage(score);
     document.getElementById('flowerScore').textContent = score;
     document.getElementById('gardenLevel').textContent = stage.level + ' ' + stage.name;
 
+    // Update progress bar and next level info
+    const idx = GARDEN_STAGES.indexOf(stage);
+    const next = GARDEN_STAGES[idx + 1];
+    const progressText = document.getElementById('gardenProgressText');
+    const nextLevel = document.getElementById('gardenNextLevel');
+    const fill = document.getElementById('gardenProgressFill');
+    if (next) {
+        const need = next.min - score;
+        const range = next.min - stage.min;
+        const pct = Math.min(100, Math.max(0, ((score - stage.min) / range) * 100));
+        if (progressText) progressText.textContent = '距离 ' + next.name + ' 还差 ' + need + ' 爱心';
+        if (nextLevel) nextLevel.textContent = next.level + ' ' + next.name;
+        if (fill) fill.style.width = pct + '%';
+    } else {
+        if (progressText) progressText.textContent = '花园已满级，继续浇水会更茂盛 ✿';
+        if (nextLevel) nextLevel.textContent = 'MAX';
+        if (fill) fill.style.width = '100%';
+    }
+
+    // Update levels list highlight
+    const lvContainer = document.getElementById('gardenLevels');
+    if (lvContainer) {
+        let h = '';
+        GARDEN_STAGES.forEach(s => {
+            const current = (score >= s.min && score <= s.max) ? ' current' : '';
+            h += '<div class="lv' + current + '"><span>' + s.level + ' ' + s.name + '</span><span>' + s.min + ' 爱心</span></div>';
+        });
+        lvContainer.innerHTML = h;
+    }
+}
+
+function renderGarden(animate) {
+    const score = getFlowerScore();
+    const stage = getGardenStage(score);
+    const prevStage = gardenPrevScore !== null ? getGardenStage(gardenPrevScore) : stage;
+
+    updateFlowerText(score);
+
     // Render grass
     let grassHtml = '';
-    for (let i = 0; i < 18; i++) {
-        const x = 3 + i * 11 + (i % 3) * 2;
-        const h = 4 + (i % 3) * 3;
-        grassHtml += '<path d="M' + x + ' 112 Q' + (x+1) + ' ' + (110-h) + ' ' + (x+2) + ' ' + (109-h) + '" stroke="#4a7c28" stroke-width="1.2" fill="none" opacity="0.5"/>';
+    for (let i = 0; i < 22; i++) {
+        const x = 2 + i * 9 + (i % 3) * 2;
+        const h = 4 + (i % 4) * 3;
+        grassHtml += '<path d="M' + x + ' 112 Q' + (x+1) + ' ' + (110-h) + ' ' + (x+2) + ' ' + (109-h) + '" stroke="#4a7c28" stroke-width="1.2" fill="none" opacity="0.6"/>';
     }
     const grassEl = document.getElementById('gardenGrass');
     if (grassEl) grassEl.innerHTML = grassHtml;
+
+    // Decide animation class for plants
+    const hasProgressed = animate && score > (gardenPrevScore || 0);
+    const bloomGlow = hasProgressed ? ' garden-bloom-glow' : '';
 
     // Render plants
     let plantsHtml = '';
     for (let i = 0; i < stage.plants; i++) {
         const x = PLANT_POSITIONS[i];
-        plantsHtml += renderPlant(x, 112, stage.stage, i);
+        // Newly added plants (index >= prev count) should sprout from ground
+        const isNew = animate && i >= prevStage.plants;
+        const pClass = isNew ? 'garden-plant-clickable garden-plant-sprout' : 'garden-plant-clickable';
+        const bClass = isNew ? 'garden-plant-bloom' : ('garden-plant-bloom' + bloomGlow);
+        plantsHtml += renderPlant(x, 112, stage.stage, i, pClass, bClass);
     }
     const plantsEl = document.getElementById('gardenPlants');
     if (plantsEl) plantsEl.innerHTML = plantsHtml;
@@ -948,46 +1104,75 @@ function renderGarden() {
         }
         firefliesEl.innerHTML = fh;
     }
+
+    gardenPrevScore = score;
 }
 
-function renderPlant(x, baseY, stage, index) {
+function renderPlant(x, baseY, stage, index, plantClass, bloomClass) {
     const color = FLOWER_COLORS[index % FLOWER_COLORS.length];
+    const grad = FLOWER_GRADIENTS[index % FLOWER_GRADIENTS.length];
+    const glow = (stage === 'bloom') ? 'filter="url(#flowerGlow)"' : '';
     if (stage === 'sprout') {
-        return '<g class="garden-plant-grow garden-plant-clickable" style="transform-origin:' + x + 'px ' + baseY + 'px" onclick="event.stopPropagation();wigglePlant(this)">' +
-            '<path d="M' + x + ' ' + baseY + ' Q' + (x-3) + ' ' + (baseY-8) + ' ' + x + ' ' + (baseY-13) + '" stroke="#5a9c38" stroke-width="2" fill="none"/>' +
-            '<ellipse cx="' + (x-3) + '" cy="' + (baseY-10) + '" rx="3.5" ry="2" fill="#5a9c38" opacity="0.9"/>' +
-            '<ellipse cx="' + (x+3) + '" cy="' + (baseY-8) + '" rx="3.5" ry="2" fill="#5a9c38" opacity="0.9"/>' +
+        return '<g class="' + plantClass + '" style="transform-origin:' + x + 'px ' + baseY + 'px" onclick="event.stopPropagation();wigglePlant(this)">' +
+            '<path d="M' + x + ' ' + baseY + ' Q' + (x-3) + ' ' + (baseY-8) + ' ' + x + ' ' + (baseY-13) + '" stroke="#5a9c38" stroke-width="2.5" fill="none"/>' +
+            '<ellipse cx="' + (x-4) + '" cy="' + (baseY-10) + '" rx="4" ry="2.2" fill="#6ab848" transform="rotate(-35 ' + (x-4) + ' ' + (baseY-10) + ')"/>' +
+            '<ellipse cx="' + (x+4) + '" cy="' + (baseY-8) + '" rx="4" ry="2.2" fill="#6ab848" transform="rotate(35 ' + (x+4) + ' ' + (baseY-8) + ')"/>' +
+            '<circle cx="' + x + '" cy="' + (baseY-14) + '" r="2.5" fill="url(#centerGrad)"/>' +
             '</g>';
     }
     if (stage === 'seedling') {
-        return '<g class="garden-plant-grow garden-plant-clickable" style="transform-origin:' + x + 'px ' + baseY + 'px" onclick="event.stopPropagation();wigglePlant(this)">' +
-            '<path d="M' + x + ' ' + baseY + ' L' + x + ' ' + (baseY-32) + '" stroke="#3a7c20" stroke-width="2.5" fill="none"/>' +
-            '<ellipse cx="' + (x-6) + '" cy="' + (baseY-18) + '" rx="7" ry="3.5" fill="#4a8c28" transform="rotate(-30 ' + (x-6) + ' ' + (baseY-18) + ')"/>' +
-            '<ellipse cx="' + (x+6) + '" cy="' + (baseY-12) + '" rx="7" ry="3.5" fill="#4a8c28" transform="rotate(30 ' + (x+6) + ' ' + (baseY-12) + ')"/>' +
+        return '<g class="' + plantClass + '" style="transform-origin:' + x + 'px ' + baseY + 'px" onclick="event.stopPropagation();wigglePlant(this)">' +
+            '<path d="M' + x + ' ' + baseY + ' L' + x + ' ' + (baseY-38) + '" stroke="#3a7c20" stroke-width="3" fill="none"/>' +
+            '<ellipse cx="' + (x-8) + '" cy="' + (baseY-22) + '" rx="10" ry="5" fill="#5a9c38" transform="rotate(-35 ' + (x-8) + ' ' + (baseY-22) + ')"/>' +
+            '<ellipse cx="' + (x+8) + '" cy="' + (baseY-16) + '" rx="10" ry="5" fill="#5a9c38" transform="rotate(35 ' + (x+8) + ' ' + (baseY-16) + ')"/>' +
+            '<ellipse cx="' + (x-6) + '" cy="' + (baseY-30) + '" rx="7" ry="3.5" fill="#6ab848" transform="rotate(-30 ' + (x-6) + ' ' + (baseY-30) + ')"/>' +
+            '<ellipse cx="' + (x+6) + '" cy="' + (baseY-26) + '" rx="7" ry="3.5" fill="#6ab848" transform="rotate(30 ' + (x+6) + ' ' + (baseY-26) + ')"/>' +
             '</g>';
     }
     if (stage === 'bud') {
-        return '<g class="garden-plant-grow garden-plant-clickable" style="transform-origin:' + x + 'px ' + baseY + 'px" onclick="event.stopPropagation();wigglePlant(this)">' +
-            '<path d="M' + x + ' ' + baseY + ' L' + x + ' ' + (baseY-42) + '" stroke="#3a7c20" stroke-width="2.5" fill="none"/>' +
-            '<ellipse cx="' + (x-7) + '" cy="' + (baseY-25) + '" rx="8" ry="4" fill="#4a8c28" transform="rotate(-30 ' + (x-7) + ' ' + (baseY-25) + ')"/>' +
-            '<ellipse cx="' + (x+7) + '" cy="' + (baseY-18) + '" rx="8" ry="4" fill="#4a8c28" transform="rotate(30 ' + (x+7) + ' ' + (baseY-18) + ')"/>' +
-            '<circle cx="' + x + '" cy="' + (baseY-44) + '" r="4" fill="' + color + '" opacity="0.7"/>' +
-            '<path d="M' + (x-3) + ' ' + (baseY-46) + ' Q' + x + ' ' + (baseY-50) + ' ' + (x+3) + ' ' + (baseY-46) + '" stroke="' + color + '" stroke-width="1.5" fill="none" opacity="0.5"/>' +
+        return '<g class="' + plantClass + '" style="transform-origin:' + x + 'px ' + baseY + 'px" onclick="event.stopPropagation();wigglePlant(this)">' +
+            '<path d="M' + x + ' ' + baseY + ' L' + x + ' ' + (baseY-48) + '" stroke="#3a7c20" stroke-width="3" fill="none"/>' +
+            '<ellipse cx="' + (x-10) + '" cy="' + (baseY-28) + '" rx="11" ry="5.5" fill="#5a9c38" transform="rotate(-35 ' + (x-10) + ' ' + (baseY-28) + ')"/>' +
+            '<ellipse cx="' + (x+10) + '" cy="' + (baseY-20) + '" rx="11" ry="5.5" fill="#5a9c38" transform="rotate(35 ' + (x+10) + ' ' + (baseY-20) + ')"/>' +
+            '<ellipse cx="' + (x-7) + '" cy="' + (baseY-38) + '" rx="8" ry="4" fill="#6ab848" transform="rotate(-25 ' + (x-7) + ' ' + (baseY-38) + ')"/>' +
+            '<ellipse cx="' + (x+7) + '" cy="' + (baseY-34) + '" rx="8" ry="4" fill="#6ab848" transform="rotate(25 ' + (x+7) + ' ' + (baseY-34) + ')"/>' +
+            '<g ' + glow + '>' +
+            '<ellipse cx="' + x + '" cy="' + (baseY-52) + '" rx="7" ry="10" fill="url(#' + grad + ')" transform="rotate(0)" opacity="0.85"/>' +
+            '<ellipse cx="' + (x+6) + '" cy="' + (baseY-49) + '" rx="7" ry="10" fill="url(#' + grad + ')" transform="rotate(72 ' + (x+6) + ' ' + (baseY-49) + ')" opacity="0.85"/>' +
+            '<ellipse cx="' + (x+4) + '" cy="' + (baseY-41) + '" rx="7" ry="10" fill="url(#' + grad + ')" transform="rotate(144 ' + (x+4) + ' ' + (baseY-41) + ')" opacity="0.85"/>' +
+            '<ellipse cx="' + (x-4) + '" cy="' + (baseY-41) + '" rx="7" ry="10" fill="url(#' + grad + ')" transform="rotate(216 ' + (x-4) + ' ' + (baseY-41) + ')" opacity="0.85"/>' +
+            '<ellipse cx="' + (x-6) + '" cy="' + (baseY-49) + '" rx="7" ry="10" fill="url(#' + grad + ')" transform="rotate(288 ' + (x-6) + ' ' + (baseY-49) + ')" opacity="0.85"/>' +
+            '</g>' +
             '</g>';
     }
     // bloom
-    return '<g class="garden-plant-grow garden-plant-clickable" style="transform-origin:' + x + 'px ' + baseY + 'px" onclick="event.stopPropagation();wigglePlant(this)">' +
-        '<path d="M' + x + ' ' + baseY + ' L' + x + ' ' + (baseY-48) + '" stroke="#3a7c20" stroke-width="2.5" fill="none"/>' +
-        '<ellipse cx="' + (x-8) + '" cy="' + (baseY-28) + '" rx="9" ry="4.5" fill="#4a8c28" transform="rotate(-30 ' + (x-8) + ' ' + (baseY-28) + ')"/>' +
-        '<ellipse cx="' + (x+8) + '" cy="' + (baseY-20) + '" rx="9" ry="4.5" fill="#4a8c28" transform="rotate(30 ' + (x+8) + ' ' + (baseY-20) + ')"/>' +
-        '<g class="garden-plant-bloom" style="transform-origin:' + x + 'px ' + (baseY-50) + 'px">' +
-        '<ellipse cx="' + x + '" cy="' + (baseY-56) + '" rx="4.5" ry="7" fill="' + color + '" opacity="0.9"/>' +
-        '<ellipse cx="' + (x+6) + '" cy="' + (baseY-52) + '" rx="4.5" ry="7" fill="' + color + '" opacity="0.9" transform="rotate(72 ' + (x+6) + ' ' + (baseY-52) + ')"/>' +
-        '<ellipse cx="' + (x+4) + '" cy="' + (baseY-45) + '" rx="4.5" ry="7" fill="' + color + '" opacity="0.9" transform="rotate(144 ' + (x+4) + ' ' + (baseY-45) + ')"/>' +
-        '<ellipse cx="' + (x-4) + '" cy="' + (baseY-45) + '" rx="4.5" ry="7" fill="' + color + '" opacity="0.9" transform="rotate(216 ' + (x-4) + ' ' + (baseY-45) + ')"/>' +
-        '<ellipse cx="' + (x-6) + '" cy="' + (baseY-52) + '" rx="4.5" ry="7" fill="' + color + '" opacity="0.9" transform="rotate(288 ' + (x-6) + ' ' + (baseY-52) + ')"/>' +
-        '<circle cx="' + x + '" cy="' + (baseY-50) + '" r="3" fill="#ffd700"/>' +
+    let bloom = '<g class="' + plantClass + '" style="transform-origin:' + x + 'px ' + baseY + 'px" onclick="event.stopPropagation();wigglePlant(this)">' +
+        '<path d="M' + x + ' ' + baseY + ' L' + x + ' ' + (baseY-56) + '" stroke="#3a7c20" stroke-width="3" fill="none"/>' +
+        '<ellipse cx="' + (x-12) + '" cy="' + (baseY-32) + '" rx="13" ry="6.5" fill="#5a9c38" transform="rotate(-35 ' + (x-12) + ' ' + (baseY-32) + ')"/>' +
+        '<ellipse cx="' + (x+12) + '" cy="' + (baseY-24) + '" rx="13" ry="6.5" fill="#5a9c38" transform="rotate(35 ' + (x+12) + ' ' + (baseY-24) + ')"/>' +
+        '<ellipse cx="' + (x-9) + '" cy="' + (baseY-44) + '" rx="9" ry="4.5" fill="#6ab848" transform="rotate(-25 ' + (x-9) + ' ' + (baseY-44) + ')"/>' +
+        '<ellipse cx="' + (x+9) + '" cy="' + (baseY-40) + '" rx="9" ry="4.5" fill="#6ab848" transform="rotate(25 ' + (x+9) + ' ' + (baseY-40) + ')"/>' +
+        '<g class="' + bloomClass + '" style="transform-origin:' + x + 'px ' + (baseY-58) + 'px" ' + glow + '>';
+    // Outer petals
+    for (let i = 0; i < 6; i++) {
+        const angle = i * 60;
+        const rad = angle * Math.PI / 180;
+        const px = x + Math.sin(rad) * 10;
+        const py = (baseY - 58) - Math.cos(rad) * 10;
+        bloom += '<ellipse cx="' + px.toFixed(1) + '" cy="' + py.toFixed(1) + '" rx="8" ry="13" fill="url(#' + grad + ')" opacity="0.9" transform="rotate(' + angle + ' ' + px.toFixed(1) + ' ' + py.toFixed(1) + ')"/>';
+    }
+    // Inner petals
+    for (let i = 0; i < 6; i++) {
+        const angle = i * 60 + 30;
+        const rad = angle * Math.PI / 180;
+        const px = x + Math.sin(rad) * 6;
+        const py = (baseY - 58) - Math.cos(rad) * 6;
+        bloom += '<ellipse cx="' + px.toFixed(1) + '" cy="' + py.toFixed(1) + '" rx="5" ry="9" fill="url(#' + grad + ')" opacity="0.75" transform="rotate(' + angle + ' ' + px.toFixed(1) + ' ' + py.toFixed(1) + ')"/>';
+    }
+    bloom += '<circle cx="' + x + '" cy="' + (baseY - 58) + '" r="5" fill="url(#centerGrad)"/>' +
+        '<circle cx="' + x + '" cy="' + (baseY - 58) + '" r="2.5" fill="#fff6a8"/>' +
         '</g></g>';
+    return bloom;
 }
 
 function waterGarden() {
@@ -1001,27 +1186,65 @@ function waterGarden() {
     const dropsEl = document.getElementById('gardenWaterDrops');
     if (dropsEl) {
         let dh = '';
-        for (let i = 0; i < 10; i++) {
-            const x = 100 + (i - 5) * 6;
-            const delay = (i * 0.08).toFixed(2);
-            dh += '<circle class="garden-water-drop active" cx="' + x + '" cy="30" r="2" fill="#7dc8ff" opacity="0.8" style="animation-delay:' + delay + 's"/>';
+        for (let i = 0; i < 12; i++) {
+            const x = 100 + (i - 6) * 5;
+            const delay = (i * 0.06).toFixed(2);
+            dh += '<circle class="garden-water-drop active" cx="' + x + '" cy="30" r="2.2" fill="#7dc8ff" opacity="0.85" style="animation-delay:' + delay + 's"/>';
         }
         dropsEl.innerHTML = dh;
     }
 
-    // After watering, re-render and pop flowers
+    // Create sparkle particles
+    const sparklesEl = document.getElementById('gardenSparkles');
+    if (sparklesEl) {
+        let sh = '';
+        for (let i = 0; i < 8; i++) {
+            const x = 90 + Math.random() * 40;
+            const y = 35 + Math.random() * 40;
+            const delay = (0.5 + Math.random() * 0.8).toFixed(2);
+            sh += '<path class="garden-water-sparkle active" d="M' + x + ' ' + (y-3) + ' L' + (x+1) + ' ' + y + ' L' + x + ' ' + (y+3) + ' L' + (x-1) + ' ' + y + ' Z" fill="#fff" opacity="0.9" style="animation-delay:' + delay + 's"/>';
+        }
+        sparklesEl.innerHTML = sh;
+    }
+
+    // After watering, re-render garden with growth animation
     setTimeout(function() {
         if (can) can.classList.remove('active');
         const dropsEl2 = document.getElementById('gardenWaterDrops');
         if (dropsEl2) dropsEl2.innerHTML = '';
-        renderGarden();
-        // Bloom pop animation
+        const sparklesEl2 = document.getElementById('gardenSparkles');
+        if (sparklesEl2) sparklesEl2.innerHTML = '';
+
+        // Compare current score to previous score to decide if real growth happened
+        const score = getFlowerScore();
+        const hasGrown = gardenPrevScore === null || score > gardenPrevScore;
+        renderGarden(hasGrown);
+
+        // Level up notification
+        const stage = getGardenStage(score);
+        const prevStage = gardenPrevScore !== null ? getGardenStage(gardenPrevScore) : stage;
+        if (stage.level !== prevStage.level && stage.level !== 'Lv.1') {
+            showGardenLevelUp(stage.level + ' ' + stage.name);
+        }
+
+        // Pop bloom animation on all current blooms
         var blooms = document.querySelectorAll('.garden-plant-bloom');
         blooms.forEach(function(b) {
             b.classList.add('garden-bloom-pop');
-            setTimeout(function() { b.classList.remove('garden-bloom-pop'); }, 600);
+            setTimeout(function() { b.classList.remove('garden-bloom-pop'); }, 700);
         });
     }, 2000);
+}
+
+function showGardenLevelUp(text) {
+    const scene = document.getElementById('gardenScene');
+    if (!scene) return;
+    const el = document.createElement('div');
+    el.className = 'garden-level-up';
+    el.textContent = '✨ ' + text + ' ✨';
+    el.style.cssText = 'position:absolute;left:50%;top:35%;transform:translateX(-50%);font-family:var(--font-fun);font-size:1.1em;color:#ffd700;text-shadow:0 0 10px rgba(255,215,0,0.8);pointer-events:none;white-space:nowrap;z-index:10;';
+    scene.appendChild(el);
+    setTimeout(function() { if (el.parentNode) el.remove(); }, 1500);
 }
 
 function summonButterfly() {
