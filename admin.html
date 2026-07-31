@@ -98,7 +98,7 @@ body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;backgroun
 <!-- Admin Panel -->
 <div class="admin-wrap" id="adminWrap">
     <div class="admin-header">✿ 果果树洞空间管理后台 ✿</div>
-    <div style="text-align:center;color:#888;font-size:0.75em;margin-top:-10px;margin-bottom:10px">版本 v9 · 花园系统上线</div>
+    <div style="text-align:center;color:#888;font-size:0.75em;margin-top:-10px;margin-bottom:10px">版本 v10 · 花园升级</div>
     <div style="text-align:center;margin-bottom:10px">
         <a href="index.html" style="color:var(--cyan);font-family:var(--font-fun);font-size:1em;box-shadow:0 0 10px rgba(125,249,255,0.2);padding:6px 16px;border-radius:16px;border:1px solid rgba(125,249,255,0.3)">返回主页 ✿</a>
     </div>
@@ -769,7 +769,7 @@ function renderAdminData() {
     const moduleLabels = {
         profile: '个人资料卡片', photos: '照片预览', shuoshuo: '说说预览', diary: '日志预览',
         album: '相册预览', video: '视频预览', guestbook: '留言预览',
-        visitor: '访客统计', likeStep: '点赞踩踩', flower: '花藤'
+        visitor: '访客统计', likeStep: '点赞踩踩', flower: '花园'
     };
     let modHtml = '';
     Object.keys(moduleLabels).forEach(key => {
@@ -966,7 +966,7 @@ function saveHomeModules() {
     const moduleLabels = {
         profile: '个人资料卡片', photos: '照片预览', shuoshuo: '说说预览', diary: '日志预览',
         album: '相册预览', video: '视频预览', guestbook: '留言预览',
-        visitor: '访客统计', likeStep: '点赞踩踩', flower: '花藤'
+        visitor: '访客统计', likeStep: '点赞踩踩', flower: '花园'
     };
     Object.keys(moduleLabels).forEach(key => {
         const cb = document.getElementById('mod-' + key);
